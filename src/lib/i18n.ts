@@ -18,6 +18,8 @@ export interface Translations {
   navCustomers: string;
   navAlerts: string;
   navAnalytics: string;
+  navSecurity: string;
+  navAudit: string;
   navSimulator: string;
 
   // Actions
@@ -167,6 +169,8 @@ export const translations: Record<Language, Translations> = {
     navCustomers: "Customer 360",
     navAlerts: "Alert Center",
     navAnalytics: "BFIU Benchmarks & SAR",
+    navSecurity: "Security & IP Tracking",
+    navAudit: "Immutable Audit Trail",
     navSimulator: "Risk Sandbox",
 
     simulateScenario: "Simulate Vector",
@@ -303,6 +307,8 @@ export const translations: Record<Language, Translations> = {
     navCustomers: "গ্রাহক ৩৬০ প্রোফাইল",
     navAlerts: "জরুরি অ্যালার্ট সেন্টার",
     navAnalytics: "বিএফআইইউ বেঞ্চমার্ক ও এসএআর",
+    navSecurity: "নিরাপত্তা ও আইপি ট্র্যাকিং",
+    navAudit: "অপরিবর্তনীয় অডিট ট্রেইল",
     navSimulator: "ঝুঁকি সিমুলেটর",
 
     simulateScenario: "প্রতারণা সিমুলেট করুন",

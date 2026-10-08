@@ -71,9 +71,6 @@ export const Topbar: React.FC<TopbarProps> = ({
             onChange={(e) => setSearchQuery(e.target.value)}
             aria-label="Search"
           />
-          <kbd className="hidden sm:flex items-center text-[10px] text-slate-500 bg-white border border-slate-200 px-1.5 py-0.5 rounded font-mono leading-none select-none shrink-0">
-            ⌘K
-          </kbd>
         </div>
       </div>
 
