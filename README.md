@@ -311,8 +311,8 @@ AI_DEV_FEST080/
 
 ## Compliance & Disclaimers
 
-**Hackathon Track** :
-# AI DEV FEST 2026 — Track 01: Trust & Risk Intelligence (DIU Computer Programming Club × upay).
-
-**Synthetic Data Disclosure** :
- - All transaction records, wallet identifiers, phone numbers, and geolocation logs are entirely synthetic and generated strictly for evaluation purposes. 
+**Hackathon Track** :   
+AI DEV FEST 2026 — Track 01: Trust & Risk Intelligence (DIU Computer Programming Club × upay).     
+    
+**Synthetic Data Disclosure** :     
+All transaction records, wallet identifiers, phone numbers, and geolocation logs are entirely synthetic and generated strictly for evaluation purposes. 
