@@ -33,7 +33,15 @@ export interface SecurityContextResult {
 }
 
 export class SecurityService {
+  private inMemoryProfiles: Map<string, UserProfileRecord> = new Map();
+  private inMemoryIpHistory: Map<string, any[]> = new Map();
+  private inMemorySecurityEvents: Map<string, any[]> = new Map();
+
   constructor(private supabase: SupabaseClient) {}
+
+  getInMemoryIpHistory(idOrUid: string): any[] {
+    return this.inMemoryIpHistory.get(idOrUid) || [];
+  }
 
   /**
    * Resolves or creates user profile in Supabase.
@@ -146,12 +154,17 @@ export class SecurityService {
 
     if (insertErr || !created) {
       console.warn("[SecurityService] Profile insertion note (falling back to generated object):", insertErr?.message);
-      return {
+      const fallbackObj = {
         id: `local-${firebaseUid}`,
         ...newProfile,
       } as UserProfileRecord;
+      this.inMemoryProfiles.set(fallbackObj.id, fallbackObj);
+      this.inMemoryProfiles.set(firebaseUid, fallbackObj);
+      return fallbackObj;
     }
 
+    this.inMemoryProfiles.set(created.id, created as UserProfileRecord);
+    this.inMemoryProfiles.set(firebaseUid, created as UserProfileRecord);
     return created as UserProfileRecord;
   }
 
@@ -225,38 +238,49 @@ export class SecurityService {
     // Fetch existing IP history for this user
     let userIpHistory: any[] = [];
     if (isDbUser) {
-      const { data, error } = await this.supabase
-        .from("login_ip_history")
-        .select("*")
-        .eq("firebase_uid", firebaseUid)
-        .order("last_seen_at", { ascending: false });
+      try {
+        const { data, error } = await this.supabase
+          .from("login_ip_history")
+          .select("*")
+          .eq("firebase_uid", firebaseUid)
+          .order("last_seen_at", { ascending: false });
 
-      if (!error && data) {
-        userIpHistory = data;
-      }
+        if (!error && data && data.length > 0) {
+          userIpHistory = data;
+        }
+      } catch {}
+    }
+    if (userIpHistory.length === 0) {
+      userIpHistory = this.inMemoryIpHistory.get(firebaseUid) || [];
     }
 
     // 1. First Ever Login for this user
     if (userIpHistory.length === 0) {
+      const firstRecord = {
+        id: `local-iph-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        user_id: userId,
+        firebase_uid: firebaseUid,
+        ip_address: currentIp,
+        first_seen_at: new Date().toISOString(),
+        last_seen_at: new Date().toISOString(),
+        login_count: 1,
+        is_current: true,
+        is_new_ip: true,
+        previous_ip: null,
+        change_detected: false,
+        user_agent: userAgent,
+        device_fingerprint: deviceFingerprint || null,
+        risk_level: "NORMAL",
+      };
+
       if (isDbUser) {
-        await this.supabase.from("login_ip_history").insert([
-          {
-            user_id: userId,
-            firebase_uid: firebaseUid,
-            ip_address: currentIp,
-            first_seen_at: new Date().toISOString(),
-            last_seen_at: new Date().toISOString(),
-            login_count: 1,
-            is_current: true,
-            is_new_ip: true,
-            previous_ip: null,
-            change_detected: false,
-            user_agent: userAgent,
-            device_fingerprint: deviceFingerprint || null,
-            risk_level: "NORMAL",
-          },
-        ]);
+        try {
+          await this.supabase.from("login_ip_history").insert([firstRecord]);
+        } catch {}
       }
+
+      this.inMemoryIpHistory.set(firebaseUid, [firstRecord]);
+      this.inMemoryIpHistory.set(userId, [firstRecord]);
 
       // Record first login audit
       const auditId = await this.logAuditEvent({
@@ -296,6 +320,12 @@ export class SecurityService {
           })
           .eq("id", currentActiveRecord.id);
       }
+
+      currentActiveRecord.login_count = (currentActiveRecord.login_count || 1) + 1;
+      currentActiveRecord.last_seen_at = new Date().toISOString();
+      currentActiveRecord.is_current = true;
+      this.inMemoryIpHistory.set(firebaseUid, userIpHistory);
+      this.inMemoryIpHistory.set(userId, userIpHistory);
 
       // Security event for successful repeat login
       await this.logSecurityEvent({
@@ -357,26 +387,34 @@ export class SecurityService {
       riskReason += " (returning from previously known IP in user history)";
     }
 
+    const newIpRecord = {
+      id: `local-iph-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      user_id: userId,
+      firebase_uid: firebaseUid,
+      ip_address: currentIp,
+      first_seen_at: existingHistoricalRecord?.first_seen_at || new Date().toISOString(),
+      last_seen_at: new Date().toISOString(),
+      login_count: (existingHistoricalRecord?.login_count || 0) + 1,
+      is_current: true,
+      is_new_ip: isBrandNewIp,
+      previous_ip: previousIp,
+      change_detected: true,
+      user_agent: userAgent,
+      device_fingerprint: deviceFingerprint || null,
+      risk_level: securityRisk,
+    };
+
     // Insert new IP record
     if (isDbUser) {
-      await this.supabase.from("login_ip_history").insert([
-        {
-          user_id: userId,
-          firebase_uid: firebaseUid,
-          ip_address: currentIp,
-          first_seen_at: existingHistoricalRecord?.first_seen_at || new Date().toISOString(),
-          last_seen_at: new Date().toISOString(),
-          login_count: (existingHistoricalRecord?.login_count || 0) + 1,
-          is_current: true,
-          is_new_ip: isBrandNewIp,
-          previous_ip: previousIp,
-          change_detected: true,
-          user_agent: userAgent,
-          device_fingerprint: deviceFingerprint || null,
-          risk_level: securityRisk,
-        },
-      ]);
+      try {
+        await this.supabase.from("login_ip_history").insert([newIpRecord]);
+      } catch {}
     }
+
+    userIpHistory.forEach((r) => { r.is_current = false; });
+    userIpHistory.unshift(newIpRecord);
+    this.inMemoryIpHistory.set(firebaseUid, userIpHistory);
+    this.inMemoryIpHistory.set(userId, userIpHistory);
 
     // Record Security Event (Phase 12)
     const secEventId = await this.logSecurityEvent({
@@ -451,18 +489,43 @@ export class SecurityService {
       metadata: metadata || {},
     };
 
-    const { data, error } = await this.supabase
-      .from("security_events")
-      .insert([payload])
-      .select("id")
-      .single();
-
-    if (error) {
-      console.warn("[SecurityService] Security event logging note:", error.message);
-      return `sec-${Date.now()}`;
+    let data: any = null;
+    let error: any = null;
+    try {
+      const res = await this.supabase
+        .from("security_events")
+        .insert([payload])
+        .select("id")
+        .single();
+      data = res.data;
+      error = res.error;
+    } catch (e: any) {
+      error = e;
     }
 
-    return data.id;
+    const eventId = data?.id || `sec-${Date.now()}`;
+    const eventRecord = {
+      id: eventId,
+      created_at: new Date().toISOString(),
+      ...payload,
+    };
+
+    if (firebaseUid) {
+      const existing = this.inMemorySecurityEvents.get(firebaseUid) || [];
+      existing.unshift(eventRecord);
+      this.inMemorySecurityEvents.set(firebaseUid, existing);
+    }
+    if (userId) {
+      const existing = this.inMemorySecurityEvents.get(userId) || [];
+      existing.unshift(eventRecord);
+      this.inMemorySecurityEvents.set(userId, existing);
+    }
+
+    if (error) {
+      console.warn("[SecurityService] Security event logging note:", error?.message);
+    }
+
+    return eventId;
   }
 
   /**
@@ -505,39 +568,81 @@ export class SecurityService {
   }
 
   /**
+   * Retrieves in-memory IP history for tests/fallbacks.
+   */
+  getInMemoryIpHistory(userIdOrUid: string): any[] {
+    return this.inMemoryIpHistory.get(userIdOrUid) || [];
+  }
+
+  /**
    * Retrieves security profile telemetry for a user.
    */
   async getUserSecurityProfile(userIdOrUid: string): Promise<any> {
-    // Check if query is UUID or firebase_uid
-    let profileQuery = this.supabase.from("profiles").select("*");
-    if (userIdOrUid.includes("-") && userIdOrUid.length === 36) {
-      profileQuery = profileQuery.eq("id", userIdOrUid);
-    } else {
-      profileQuery = profileQuery.or(`id.eq.${userIdOrUid},firebase_uid.eq.${userIdOrUid}`);
-    }
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userIdOrUid);
+    let profile: any = null;
 
-    const { data: profile } = await profileQuery.maybeSingle();
+    try {
+      let profileQuery = this.supabase.from("profiles").select("*");
+      if (isUuid) {
+        profileQuery = profileQuery.or(`id.eq.${userIdOrUid},firebase_uid.eq.${userIdOrUid}`);
+      } else {
+        profileQuery = profileQuery.eq("firebase_uid", userIdOrUid);
+      }
+      const { data } = await profileQuery.maybeSingle();
+      profile = data;
+    } catch {}
+
+    if (!profile) {
+      profile = this.inMemoryProfiles.get(userIdOrUid);
+    }
 
     if (!profile) {
       return null;
     }
 
     // Get current IP and IP history summary
-    const { data: ipHistory } = await this.supabase
-      .from("login_ip_history")
-      .select("*")
-      .eq("firebase_uid", profile.firebase_uid)
-      .order("last_seen_at", { ascending: false });
+    let ipHistory: any[] = [];
+    try {
+      const { data, error } = await this.supabase
+        .from("login_ip_history")
+        .select("*")
+        .eq("firebase_uid", profile.firebase_uid)
+        .order("last_seen_at", { ascending: false });
 
-    const currentIpRecord = ipHistory?.find((r) => r.is_current) || ipHistory?.[0];
+      if (!error && data && data.length > 0) {
+        ipHistory = data;
+      }
+    } catch {}
+
+    if (ipHistory.length === 0) {
+      ipHistory = this.inMemoryIpHistory.get(profile.firebase_uid) || this.inMemoryIpHistory.get(profile.id) || [];
+    }
+
+    const currentIpRecord = ipHistory.find((r) => r.is_current) || ipHistory[0];
 
     // Get recent security events
-    const { data: events } = await this.supabase
-      .from("security_events")
-      .select("*")
-      .or(`user_id.eq.${profile.id},firebase_uid.eq.${profile.firebase_uid}`)
-      .order("created_at", { ascending: false })
-      .limit(10);
+    let events: any[] = [];
+    try {
+      let eventsQuery = this.supabase.from("security_events").select("*");
+      if (isUuid) {
+        eventsQuery = eventsQuery.or(`user_id.eq.${profile.id},firebase_uid.eq.${profile.firebase_uid}`);
+      } else {
+        eventsQuery = eventsQuery.eq("firebase_uid", profile.firebase_uid);
+      }
+      const { data, error } = await eventsQuery
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (!error && data && data.length > 0) {
+        events = data;
+      }
+    } catch {}
+
+    if (events.length === 0) {
+      events =
+        this.inMemorySecurityEvents.get(profile.firebase_uid) ||
+        this.inMemorySecurityEvents.get(profile.id) ||
+        [];
+    }
 
     return {
       userId: profile.id,
@@ -550,8 +655,8 @@ export class SecurityService {
       ipDescription: "Observed login IP address (approximate network routing)",
       ipChanged: Boolean(currentIpRecord?.change_detected),
       newIpDetected: Boolean(currentIpRecord?.is_new_ip),
-      totalKnownIps: ipHistory?.length || 0,
-      totalLogins: ipHistory?.reduce((acc, r) => acc + (r.login_count || 1), 0) || 1,
+      totalKnownIps: ipHistory.length || 0,
+      totalLogins: ipHistory.reduce((acc, r) => acc + (r.login_count || 1), 0) || 1,
       securityRisk: currentIpRecord?.risk_level || "NORMAL",
       recentSecurityEvents: events || [],
     };

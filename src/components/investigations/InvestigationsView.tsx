@@ -121,52 +121,60 @@ export const InvestigationsView: React.FC<InvestigationsViewProps> = ({
         </div>
 
         {/* Case Table */}
-        <div className="table-scroll">
-          <table>
+        <div className="table-scroll overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr>
-                <th>{language === "bn" ? "কেস আইডি" : "Case Identifier"}</th>
-                <th>{language === "bn" ? "অগ্রাধিকার" : "Priority"}</th>
-                <th>{language === "bn" ? "গ্রাহক ওয়ালেট" : "Subject Customer"}</th>
-                <th>{language === "bn" ? "তহবিলের পরিমাণ" : "Disputed Exposure"}</th>
-                <th>{language === "bn" ? "ঝুঁকির কারণ" : "Primary Threat Vector"}</th>
-                <th>{language === "bn" ? "দায়িত্বপ্রাপ্ত" : "Assigned Lead"}</th>
-                <th>{language === "bn" ? "স্ট্যাটাস" : "Workflow Status"}</th>
-                <th>{language === "bn" ? "সর্বশেষ আপডেট" : "Last Update"}</th>
-                <th className="text-right">{language === "bn" ? "পদক্ষেপ" : "Action"}</th>
+              <tr className="border-b border-slate-200 bg-slate-50 text-slate-500 font-mono text-[11px] uppercase tracking-wider">
+                <th className="py-3 px-3.5 font-bold">{language === "bn" ? "কেস আইডি" : "Case Identifier"}</th>
+                <th className="py-3 px-3.5 font-bold">{language === "bn" ? "অগ্রাধিকার" : "Priority"}</th>
+                <th className="py-3 px-3.5 font-bold">{language === "bn" ? "গ্রাহক ওয়ালেট" : "Subject Customer"}</th>
+                <th className="py-3 px-3.5 font-bold">{language === "bn" ? "তহবিলের পরিমাণ" : "Disputed Exposure"}</th>
+                <th className="py-3 px-3.5 font-bold">{language === "bn" ? "ঝুঁকির কারণ" : "Primary Threat Vector"}</th>
+                <th className="py-3 px-3.5 font-bold">{language === "bn" ? "দায়িত্বপ্রাপ্ত" : "Assigned Lead"}</th>
+                <th className="py-3 px-3.5 font-bold">{language === "bn" ? "স্ট্যাটাস" : "Workflow Status"}</th>
+                <th className="py-3 px-3.5 font-bold">{language === "bn" ? "সর্বশেষ আপডেট" : "Last Update"}</th>
+                <th className="py-3 px-3.5 font-bold text-right">{language === "bn" ? "পদক্ষেপ" : "Action"}</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-slate-100">
               {filteredCases.map((c) => (
                 <tr
                   key={c.id}
                   onClick={() => onSelectCase(c)}
-                  className="hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="hover:bg-blue-50/40 transition-colors cursor-pointer group"
                 >
-                  <td className="mono font-bold text-slate-900 flex items-center gap-1.5">
-                    <Briefcase size={13} className="text-emerald-700" />
-                    <span>{c.id}</span>
+                  <td className="py-3 px-3.5 font-mono font-bold text-slate-900">
+                    <div className="flex items-center gap-2">
+                      <Briefcase size={14} className="text-emerald-700 shrink-0" />
+                      <span>{c.id}</span>
+                    </div>
                   </td>
-                  <td>
+                  <td className="py-3 px-3.5">
                     <span
-                      className={`badge ${
+                      className={`inline-flex items-center px-2 py-0.5 rounded text-[10.5px] font-mono font-bold border tracking-wide uppercase ${
                         c.riskLevel === "Critical"
-                          ? "badge-critical"
+                          ? "bg-rose-50 text-rose-700 border-rose-200"
                           : c.riskLevel === "High"
-                          ? "badge-high"
-                          : "badge-medium"
+                          ? "bg-amber-50 text-amber-700 border-amber-200"
+                          : "bg-blue-50 text-blue-700 border-blue-200"
                       }`}
                     >
                       {c.riskLevel}
                     </span>
                   </td>
-                  <td className="link font-mono">{c.customer}</td>
-                  <td className="amount font-bold text-slate-900 font-mono">
+                  <td className="py-3 px-3.5 font-mono text-blue-600 font-medium group-hover:underline">
+                    {c.customer}
+                  </td>
+                  <td className="py-3 px-3.5 font-mono font-bold text-slate-900">
                     ৳{(c.exposure || c.amount || 0).toLocaleString()}
                   </td>
-                  <td className="text-slate-800 font-medium text-xs">{c.reason}</td>
-                  <td className="text-slate-500 text-xs">{c.analyst}</td>
-                  <td>
+                  <td className="py-3 px-3.5 text-slate-800 font-medium text-xs">
+                    {c.reason}
+                  </td>
+                  <td className="py-3 px-3.5 text-slate-500 text-xs font-mono">
+                    {c.analyst}
+                  </td>
+                  <td className="py-3 px-3.5">
                     <span
                       className={`px-2 py-0.5 rounded text-[10.5px] font-mono font-semibold border ${
                         c.status === "Investigating"
@@ -179,17 +187,19 @@ export const InvestigationsView: React.FC<InvestigationsViewProps> = ({
                       {c.status}
                     </span>
                   </td>
-                  <td className="text-slate-400 text-xs font-mono">{c.updated}</td>
-                  <td className="text-right">
+                  <td className="py-3 px-3.5 text-slate-400 text-xs font-mono">
+                    {c.updated}
+                  </td>
+                  <td className="py-3 px-3.5 text-right">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectCase(c);
                       }}
-                      className="btn btn-ghost text-xs p-1"
+                      className="p-1 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
                       title="Inspect Case Dossier"
                     >
-                      <ChevronRight size={14} />
+                      <ChevronRight size={15} />
                     </button>
                   </td>
                 </tr>

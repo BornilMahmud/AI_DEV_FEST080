@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { BangladeshTransactionMap } from "./BangladeshTransactionMap";
 import { BangladeshMuleGraph } from "./BangladeshMuleGraph";
+import { fetchMoneyTrail, MoneyTrailStep } from "@/lib/backend-api";
 
 interface FraudNetworkViewProps {
   onNavigate: (page: NavigationPage) => void;
@@ -32,7 +33,15 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
 }) => {
   const { language, t } = useSentinel();
   const [viewMode, setViewMode] = useState<"trail" | "map">("trail");
+  const [trailModalOpen, setTrailModalOpen] = useState<boolean>(false);
+  const [trailSteps, setTrailSteps] = useState<MoneyTrailStep[]>([]);
   const isBn = language === "bn";
+
+  const handleOpenTrail = async () => {
+    setTrailModalOpen(true);
+    const steps = await fetchMoneyTrail("01712-894102");
+    setTrailSteps(steps);
+  };
 
   return (
     <div className="space-y-4 animate-fadeIn">
@@ -79,6 +88,14 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
               <span>{isBn ? "বাংলাদেশ ভৌগোলিক প্রবাহ" : "Bangladesh Geo Flow"}</span>
             </button>
           </div>
+
+          <button
+            onClick={handleOpenTrail}
+            className="btn btn-secondary text-xs flex items-center gap-1.5"
+          >
+            <Layers size={13} />
+            <span>{isBn ? "হপ সিকোয়েন্স পরিদর্শন" : "Inspect Multi-Hop Trail"}</span>
+          </button>
 
           <button
             onClick={() => onNavigate("investigations")}
@@ -212,6 +229,69 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
         <BangladeshMuleGraph onOpenCase={onOpenCase} onNotify={onNotify} />
       ) : (
         <BangladeshTransactionMap />
+      )}
+
+      {/* Multi-Hop Money Trail Modal */}
+      {trailModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-xl w-full p-5 space-y-4 shadow-modal">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div>
+                <span className="text-[10px] font-mono font-bold text-blue-600 block">
+                  GRAPH DISCOVERY ENGINE
+                </span>
+                <h3 className="text-sm font-extrabold text-slate-900">
+                  {isBn ? "মাল্টি-হপ ফান্ড ট্রেইল অনুক্রম" : "Multi-Hop Fund Liquidation Sequence"}
+                </h3>
+              </div>
+              <button
+                onClick={() => setTrailModalOpen(false)}
+                className="w-7 h-7 rounded flex items-center justify-center text-slate-500 hover:bg-slate-100"
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {trailSteps.map((step, idx) => (
+                <div
+                  key={step.hop}
+                  className="p-3 rounded-lg border border-slate-200 bg-slate-50 flex items-start gap-3 text-xs"
+                >
+                  <div className="w-6 h-6 rounded-full bg-blue-600 text-white font-mono font-extrabold text-xs flex items-center justify-center shrink-0">
+                    {step.hop}
+                  </div>
+                  <div className="flex-1 space-y-0.5">
+                    <div className="flex items-center justify-between">
+                      <b className="text-slate-900 font-semibold">{step.name}</b>
+                      <span className="font-mono font-bold text-rose-600">৳{step.amount.toLocaleString()}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                      <span>{step.entity} &bull; {step.location}</span>
+                      <span>{step.timestamp}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[10.5px] pt-1 border-t border-slate-200/60 mt-1">
+                      <span className="text-slate-600 font-medium">Channel: {step.channel}</span>
+                      <span className="badge badge-high text-[9.5px]">Risk {step.riskScore}/100</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-3 border-t border-slate-200 flex justify-between items-center">
+              <span className="text-[11px] text-slate-500 font-mono">
+                Speed: 4 hops under 13 minutes
+              </span>
+              <button
+                onClick={() => setTrailModalOpen(false)}
+                className="btn btn-secondary text-xs"
+              >
+                Close Trail
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

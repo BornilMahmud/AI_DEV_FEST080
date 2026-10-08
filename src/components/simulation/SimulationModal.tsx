@@ -13,6 +13,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useSentinel } from "@/context/SentinelContext";
+import { runBackendSimulation } from "@/lib/backend-api";
 
 interface SimulationModalProps {
   isOpen: boolean;
@@ -38,7 +39,18 @@ export const SimulationModal: React.FC<SimulationModalProps> = ({
   if (!isOpen) return null;
   const isBn = language === "bn";
 
-  const handleScenario = (scenario: "mule" | "ato" | "velocity" | "normal" | "sim_swap") => {
+  const handleScenario = async (scenario: "mule" | "ato" | "velocity" | "normal" | "sim_swap") => {
+    // Attempt backend simulation execution
+    const scenarioMap: Record<string, "mule_ring" | "smurfing" | "takeover" | "velocity_surge"> = {
+      mule: "mule_ring",
+      ato: "takeover",
+      velocity: "velocity_surge",
+      sim_swap: "smurfing",
+    };
+
+    if (scenarioMap[scenario]) {
+      runBackendSimulation(scenarioMap[scenario]).catch(() => {});
+    }
     if (scenario === "mule") {
       onInjectTransaction({
         customer: "01712-894102",
