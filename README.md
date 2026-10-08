@@ -10,7 +10,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.5_Flash-orange?style=flat-square&logo=google)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Unit_Tests-13_Passing-brightgreen?style=flat-square)](#4-run-automated-unit--benchmark-tests)      
+[![Tests](https://img.shields.io/badge/Unit_Tests-13_Passing-brightgreen?style=flat-square)](#4-run-automated-unit--benchmark-tests)
 [![Accuracy](https://img.shields.io/badge/Benchmark_Accuracy-100%25-success?style=flat-square)](#grounded-model-evaluation--benchmark-metrics)
 [![Bilingual](https://img.shields.io/badge/i18n-English_%7C_বাংলা-purple?style=flat-square)](#6-bilingual-localization--enterprise-design-system)
 
@@ -108,12 +108,29 @@ flowchart TD
 
 Instead of static descriptions, the money trail is visualized as a responsive **4-Stage Sequential Liquidation Pipeline** with directional connector arrows:
 
-| Stage | Entity | Description | Metric |
-| :--- | :--- | :--- | :--- |
-| **01 · Origin (উৎস)** | **Victim Wallets (ভুক্তভোগী ওয়ালেট)** | Initial compromise via phished PINs, OTP traps, or SIM swap hijacks. | *৳48,500 avg loss* |
-| **02 · Layering (লেয়ারিং)** | **Intermediary Mule Conduits (মিউল কনডুইট ওয়ালেট)** | Rapid multi-hop fan-out across dormant and student wallets. | *4–6 hops < 90s* |
-| **03 · Cash-Out (ক্যাশ-আউট)** | **Rogue Agent Points (অসাধু এজেন্ট পয়েন্ট)** | Coordinated off-hours OTC cash extraction bypassing KYC limits. | *88% night OTC* |
-| **04 · Exfiltration (পাচার)** | **Underground Liquidation (অবৈধ চ্যানেল ও হুন্ডি)** | Cross-border Hawala/Hundi conversion and P2P crypto exfiltration. | *Black-box siphon* |
+```mermaid
+flowchart LR
+    S1["<b>STAGE 01 · ORIGIN</b><br/>উৎস<br/>━━━━━━━━━━━━<br/><b>Victim Wallets</b><br/>ভুক্তভোগী ওয়ালেট<br/><br/>Initial compromise via phished PINs,<br/>OTP traps, or SIM swap hijacks<br/>━━━━━━━━━━━━<br/><b>৳48,500 avg loss</b>"]
+    S2["<b>STAGE 02 · LAYERING</b><br/>লেয়ারিং<br/>━━━━━━━━━━━━<br/><b>Intermediary Mule Conduits</b><br/>মিউল কনডুইট ওয়ালেট<br/><br/>Rapid multi-hop fan-out across<br/>dormant and student wallets<br/>━━━━━━━━━━━━<br/><b>4–6 hops #lt; 90s</b>"]
+    S3["<b>STAGE 03 · CASH-OUT</b><br/>ক্যাশ-আউট<br/>━━━━━━━━━━━━<br/><b>Rogue Agent Points</b><br/>অসাধু এজেন্ট পয়েন্ট<br/><br/>Coordinated off-hours OTC cash<br/>extraction bypassing KYC limits<br/>━━━━━━━━━━━━<br/><b>88% night OTC</b>"]
+    S4["<b>STAGE 04 · EXFILTRATION</b><br/>পাচার<br/>━━━━━━━━━━━━<br/><b>Underground Liquidation</b><br/>অবৈধ চ্যানেল ও হুন্ডি<br/><br/>Cross-border Hawala/Hundi conversion<br/>and P2P crypto exfiltration<br/>━━━━━━━━━━━━<br/><b>Black-box siphon</b>"]
+
+    S1 ==>|"multi-hop fan-out"| S2
+    S2 ==>|"off-hours OTC"| S3
+    S3 ==>|"Hawala / Hundi"| S4
+
+    classDef origin fill:#FEF3C7,stroke:#D97706,stroke-width:3px,color:#451A03
+    classDef layering fill:#FFEDD5,stroke:#EA580C,stroke-width:3px,color:#431407
+    classDef cashout fill:#FEE2E2,stroke:#DC2626,stroke-width:3px,color:#450A0A
+    classDef exfil fill:#1F2937,stroke:#7F1D1D,stroke-width:3px,color:#F9FAFB
+
+    class S1 origin
+    class S2 layering
+    class S3 cashout
+    class S4 exfil
+```
+
+<sub>Risk intensity escalates left to right: from the initial compromise of a victim wallet, through mule layering and agent cash-out, to untraceable cross-border exfiltration.</sub>
 
 ---
 
