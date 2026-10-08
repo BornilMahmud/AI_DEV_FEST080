@@ -41,7 +41,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({
       aria-labelledby="help-modal-title"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white border border-slate-200 rounded-xl max-w-xl w-full p-6 text-slate-800 max-h-[90vh] overflow-y-auto animate-scaleUp">
+      <div className="bg-white border border-slate-200 rounded-xl max-w-xl w-full p-6 text-slate-800 max-h-[90vh] overflow-y-auto shadow-modal animate-scaleUp">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-200">
           <div className="flex items-center gap-3">

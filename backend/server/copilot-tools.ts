@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL || "https://odexyyeipgspqvdepvoi.supabase.co";
-const supabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || "sb_publishable_pSbK4D35fp2K5UCtunJN2Q_nKjfzvhB";
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://xhgxmsgsxqpffzmpehtn.supabase.co";
+const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || "";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Disallowed autonomous financial actions

@@ -221,12 +221,12 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
   ];
 
   return (
-    <div className="space-y-4 animate-fadeIn">
-      {/* Page Header */}
-      <div className="page-header">
+    <div className="space-y-4">
+      {/* ─── Group 1: Page Header ─── */}
+      <div className="page-header stagger-1">
         <div>
           <div className="eyebrow flex items-center gap-1.5 text-slate-500">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>DIU CPC &times; UPAY AI HACKATHON &bull; MFS TRUST &amp; RISK INTELLIGENCE</span>
           </div>
           <h1 className="page-title text-slate-900">
@@ -256,8 +256,8 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
         </div>
       </div>
 
-      {/* ─── End-to-End MFS Fraud Pipeline: Colorful Grid Boxy Row with Connected Flow ─── */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-3 sm:p-3.5 shadow-none">
+      {/* ─── Group 2: End-to-End MFS Fraud Pipeline: Connected Flow ─── */}
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-3 sm:p-3.5 shadow-card stagger-2">
         <div className="flex items-center justify-between mb-2.5 px-0.5">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#0052FF] animate-pulse" />
@@ -281,7 +281,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
             <div
               key={idx}
               onClick={() => onNavigate(stage.page)}
-              className={`group relative rounded-xl p-2.5 sm:p-3 border transition-all cursor-pointer flex flex-col justify-between ${stage.bgClass} ${stage.borderClass} ${stage.hoverBorderClass}`}
+              className={`group relative rounded-xl p-2.5 sm:p-3 border hover-lift transition-all cursor-pointer flex flex-col justify-between ${stage.bgClass} ${stage.borderClass} ${stage.hoverBorderClass}`}
               title={isBn ? `${stage.titleBn} মডিউল খুলুন` : `Open ${stage.titleEn}`}
             >
               {/* Top Pill Row + Step + Connected Arrow */}
@@ -321,12 +321,12 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
         </div>
       </div>
 
-      {/* KPI Stat Cards (White Themed, Flat, Crisp Borders, No Shadows) */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+      {/* ─── Group 3: KPI Stat Cards ─── */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 stagger-3">
         {kpiData.map((kpi, index) => (
           <div
             key={index}
-            className="card-base p-3.5 border border-slate-200 bg-white flex flex-col justify-between"
+            className="card-base hover-lift p-3.5 border border-slate-200 bg-white flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-slate-500 text-xs">
               <span className="font-semibold text-slate-600 truncate">{kpi.label}</span>
@@ -346,8 +346,10 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
         ))}
       </div>
 
-      {/* Interactive 2D Bangladesh Regional Fraud Heatmap */}
-      <BangladeshTransactionMap />
+      {/* ─── Group 4: Regional Heatmap ─── */}
+      <div className="stagger-4">
+        <BangladeshTransactionMap />
+      </div>
 
       {/* 1-Click Judge & Officer Demonstration Scenarios */}
       <div className="card-base p-4 border border-slate-200 bg-white">

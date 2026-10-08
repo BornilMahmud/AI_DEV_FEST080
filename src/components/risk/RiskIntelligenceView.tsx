@@ -288,7 +288,7 @@ export const RiskIntelligenceView: React.FC<RiskIntelligenceViewProps> = ({
         </div>
 
         {/* Right: Recommended Analyst Action Card */}
-        <div className="lg:col-span-4 card-base p-5 flex flex-col justify-between border border-slate-200 bg-white">
+        <div className="lg:col-span-4 card-base hover-lift p-5 flex flex-col justify-between border border-slate-200 bg-white">
           <div>
             <div className="w-9 h-9 rounded bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mb-3">
               <AlertOctagon size={20} />
@@ -326,7 +326,7 @@ export const RiskIntelligenceView: React.FC<RiskIntelligenceViewProps> = ({
                     : "Settlement hold executed. Immutable audit logged."
                 );
               }}
-              className="w-full btn btn-danger text-xs flex items-center justify-center gap-1.5"
+              className="w-full btn btn-action-hold text-xs flex items-center justify-center gap-1.5"
             >
               <Lock size={13} />
               <span>{t("actionHold")}</span>
@@ -340,7 +340,7 @@ export const RiskIntelligenceView: React.FC<RiskIntelligenceViewProps> = ({
                     : "Biometric 2FA challenge dispatched to customer."
                 );
               }}
-              className="w-full btn btn-secondary text-xs flex items-center justify-center gap-1.5"
+              className="w-full btn btn-action-stepup text-xs flex items-center justify-center gap-1.5"
             >
               <UserCheck size={13} />
               <span>{t("actionStepUp")}</span>

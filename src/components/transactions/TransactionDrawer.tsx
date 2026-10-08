@@ -54,13 +54,13 @@ export const TransactionDrawer: React.FC<TransactionDrawerProps> = ({
     <>
       {/* Background Scrim Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 transition-opacity"
+        className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 transition-opacity animate-fadeIn"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Slide-out White-Themed Zero-Shadow Workstation Drawer */}
-      <aside className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-white border-l border-slate-200 z-50 flex flex-col overflow-hidden animate-fadeIn">
+      {/* Slide-out White-Themed Workstation Drawer */}
+      <aside className="fixed right-0 top-0 bottom-0 w-full max-w-lg bg-white border-l border-slate-200 z-50 flex flex-col overflow-hidden shadow-drawer animate-slideInRight">
         {/* Drawer Header */}
         <div className="h-14 px-5 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white">
           <div>

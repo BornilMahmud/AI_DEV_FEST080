@@ -83,27 +83,25 @@
   --sidebar-bg:          #FFFFFF;
   --topbar-bg:           rgba(255, 255, 255, 0.97);
 
-  /* STRICT ZERO SHADOWS */
-  --shadow-card:         none;
-  --shadow-md:           none;
-  --shadow-lg:           none;
+  /* ─── Standardized Enterprise Motion Tokens ────── */
+  --motion-fast:         120ms;
+  --motion-normal:       200ms;
+  --motion-emphasis:     300ms;
+  --ease-smooth:         cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring:         cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:            cubic-bezier(0, 0, 0.2, 1);
+
+  /* ─── Calibrated Enterprise Micro-Shadows ──────── */
+  --shadow-subtle:       0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --shadow-card:         0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
+  --shadow-card-hover:   0 6px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+  --shadow-dropdown:     0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
+  --shadow-modal:        0 20px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  --shadow-drawer:       -8px 0 24px -4px rgba(15, 23, 42, 0.10);
 }
 
-/* ─── Universal Shadow Prohibition ──────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
-}
-
-*,
-.card-base,
-.sidebar,
-.topbar,
-.btn,
-.badge,
-.modal,
-.drawer,
-[class*="shadow"] {
-  box-shadow: none !important;
 }
 
 /* ─── Apple Typography & Bengali Clarity ──────────── */
@@ -146,8 +144,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ─── Crystal-Clear Bengali Typography ───────────── */
-/* Hind Siliguri has open counters and clear conjuncts (যুক্তবর্ণ).
-   We ensure zero negative tracking so matras (মাত্রা) never collide or break. */
+/* Hind Siliguri typography: ensure zero negative tracking for matras. */
 :lang(bn),
 .font-bangla,
 [data-lang="bn"] {
@@ -307,13 +304,19 @@ button, input, optgroup, select, textarea {
   cursor: pointer;
   font-weight: 500;
   font-size: 12.5px;
-  transition: all 0.12s ease;
+  transition: all var(--motion-fast) var(--ease-smooth);
   flex-shrink: 0;
   white-space: nowrap;
+}
+.nav-item svg {
+  transition: transform var(--motion-fast) var(--ease-smooth), color var(--motion-fast) ease;
 }
 .nav-item:hover {
   color: var(--ink);
   background: var(--bg-alt);
+}
+.nav-item:hover svg {
+  transform: scale(1.08);
 }
 .nav-item.active {
   color: var(--brand);
@@ -321,6 +324,7 @@ button, input, optgroup, select, textarea {
   font-weight: 600;
   border-left: 2.5px solid var(--brand);
   padding-left: 7.5px;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.1);
 }
 .nav-item.active svg        { color: var(--brand); }
 
@@ -336,6 +340,10 @@ button, input, optgroup, select, textarea {
   min-width: 17px;
   text-align: center;
   font-variant-numeric: tabular-nums;
+  transition: transform var(--motion-fast) var(--ease-smooth);
+}
+.nav-item:hover .nav-count {
+  transform: scale(1.05);
 }
 
 /* ─── Engine Status Box ──────────────────────────── */
@@ -348,6 +356,11 @@ button, input, optgroup, select, textarea {
   display: flex;
   align-items: center;
   gap: 9px;
+  transition: border-color var(--motion-fast) ease, box-shadow var(--motion-fast) var(--ease-smooth);
+}
+.engine-status-box:hover {
+  border-color: rgba(37, 99, 235, 0.28);
+  box-shadow: var(--shadow-subtle);
 }
 .engine-status-box .pulse {
   width: 7px; height: 7px;
@@ -355,10 +368,11 @@ button, input, optgroup, select, textarea {
   background: var(--green);
   flex-shrink: 0;
   animation: pulseGlow 2s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
 }
 @keyframes pulseGlow {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50%       { opacity: 0.7; transform: scale(1.15); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
 }
 .engine-status-box b       { display: block; font-size: 11px; color: var(--ink); font-weight: 600; }
 .engine-status-box small   { display: block; font-size: 10px; color: var(--muted); margin-top: 1px; font-variant-numeric: tabular-nums; }
@@ -442,12 +456,16 @@ button, input, optgroup, select, textarea {
   height: 33px;
   width: min(360px, 100%);
   color: var(--muted);
-  transition: all 0.15s ease;
+  box-shadow: var(--shadow-subtle);
+  transition: border-color var(--motion-fast) ease,
+              background-color var(--motion-fast) ease,
+              box-shadow var(--motion-fast) var(--ease-smooth);
 }
 .global-search:focus-within {
   border-color: var(--brand);
   background: var(--surface);
-  outline: 3px solid rgba(0, 82, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15), var(--shadow-subtle);
+  outline: none;
 }
 .global-search input {
   border: none; background: transparent; outline: none;
@@ -466,11 +484,22 @@ button, input, optgroup, select, textarea {
   cursor: pointer;
   display: grid;
   place-items: center;
-  transition: all 0.12s ease;
+  transition: all var(--motion-fast) var(--ease-smooth);
   position: relative;
   flex-shrink: 0;
+  box-shadow: var(--shadow-subtle);
 }
-.icon-btn:hover             { background: var(--bg-alt); color: var(--ink); border-color: var(--line-strong); }
+.icon-btn:hover {
+  background: var(--bg-alt);
+  color: var(--ink);
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-card);
+}
+.icon-btn:active {
+  transform: scale(0.96) translateY(0.5px);
+  box-shadow: none;
+}
 .icon-btn.has-alert::after  {
   content: ""; position: absolute; top: 7px; right: 7px;
   width: 5px; height: 5px; border-radius: 50%;
@@ -513,14 +542,27 @@ button, input, optgroup, select, textarea {
   border: 1px solid transparent;
   white-space: nowrap;
   user-select: none;
-  transition: all 0.13s ease;
+  box-shadow: var(--shadow-subtle);
+  transition: transform var(--motion-fast) var(--ease-smooth),
+              background-color var(--motion-fast) ease,
+              border-color var(--motion-fast) ease,
+              box-shadow var(--motion-fast) var(--ease-smooth),
+              color var(--motion-fast) ease;
   flex-shrink: 0;
   text-decoration: none;
   font-family: inherit;
 }
+.btn:hover {
+  box-shadow: var(--shadow-card);
+  transform: translateY(-0.5px);
+}
+.btn:active {
+  transform: scale(0.985) translateY(0.5px);
+  box-shadow: none;
+}
 .btn:focus-visible {
-  outline: 3px solid rgba(0, 82, 255, 0.25);
-  outline-offset: 1px;
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
 }
 
 .btn-primary {
@@ -541,8 +583,10 @@ button, input, optgroup, select, textarea {
   background: transparent;
   color: var(--muted);
   border-color: transparent;
+  box-shadow: none;
 }
-.btn-ghost:hover             { background: var(--bg-alt); color: var(--ink); }
+.btn-ghost:hover             { background: var(--bg-alt); color: var(--ink); box-shadow: none; }
+.btn-ghost:active            { box-shadow: none; }
 
 .btn-danger {
   background: var(--red-soft);
@@ -550,6 +594,58 @@ button, input, optgroup, select, textarea {
   border-color: var(--red-border);
 }
 .btn-danger:hover            { background: #FFE4E1; }
+
+/* ─── High-Impact Analyst Action Buttons ──────────── */
+.btn-action-hold {
+  background: #FFF1F0;
+  color: #B42318;
+  border: 1px solid #FECDCA;
+  font-weight: 700;
+}
+.btn-action-hold:hover {
+  background: #FEE4E2;
+  border-color: #FDA29B;
+  color: #912018;
+  box-shadow: 0 2px 6px -1px rgba(217, 45, 32, 0.18);
+}
+
+.btn-action-stepup {
+  background: #FFFAEB;
+  color: #B54708;
+  border: 1px solid #FEDF89;
+  font-weight: 700;
+}
+.btn-action-stepup:hover {
+  background: #FEF0C7;
+  border-color: #FEC84B;
+  color: #93370D;
+  box-shadow: 0 2px 6px -1px rgba(181, 71, 8, 0.18);
+}
+
+.btn-action-release {
+  background: #027A48;
+  color: #FFFFFF;
+  border: 1px solid #05603A;
+  font-weight: 700;
+}
+.btn-action-release:hover {
+  background: #05603A;
+  border-color: #044E2E;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px -1px rgba(2, 122, 72, 0.28);
+}
+
+.btn-action-safe {
+  background: #FFFFFF;
+  color: #3B4453;
+  border: 1px solid var(--line-strong);
+  font-weight: 600;
+}
+.btn-action-safe:hover {
+  background: var(--bg-alt);
+  border-color: #9AA3B2;
+  color: var(--ink);
+}
 
 /* ═══════════════════════════════════════════════════
    BADGES & STATUS
@@ -569,6 +665,7 @@ button, input, optgroup, select, textarea {
   white-space: nowrap;
   width: max-content;
   font-variant-numeric: tabular-nums;
+  transition: all var(--motion-fast) ease;
 }
 
 .badge-critical  { color: var(--red-text);    background: var(--red-soft);    border: 1px solid var(--red-border);    }
@@ -584,9 +681,23 @@ button, input, optgroup, select, textarea {
   background-color: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  transition: border-color 0.13s ease;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--motion-fast) ease,
+              box-shadow var(--motion-normal) var(--ease-smooth),
+              transform var(--motion-normal) var(--ease-smooth);
 }
 .card-base:hover             { border-color: var(--line-strong); }
+
+.hover-lift {
+  transition: transform var(--motion-normal) var(--ease-smooth),
+              box-shadow var(--motion-normal) var(--ease-smooth),
+              border-color var(--motion-fast) ease;
+}
+.hover-lift:hover {
+  transform: translateY(-1.5px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--line-strong);
+}
 
 /* ═══════════════════════════════════════════════════
    LAYOUT SHELL: MAIN
@@ -672,19 +783,48 @@ button, input, optgroup, select, textarea {
 }
 
 /* ═══════════════════════════════════════════════════
-   ANIMATIONS
+   ANIMATIONS & MOTION LANGUAGE
 ═══════════════════════════════════════════════════ */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.animate-fadeIn            { animation: fadeIn 0.2s ease-out forwards; }
+.animate-fadeIn            { animation: fadeIn 0.22s var(--ease-smooth) forwards; }
 
 @keyframes slideInRight {
-  from { opacity: 0; transform: translateX(16px); }
+  from { opacity: 0; transform: translateX(24px); }
   to   { opacity: 1; transform: translateX(0); }
 }
-.animate-slideInRight      { animation: slideInRight 0.22s ease-out forwards; }
+.animate-slideInRight      { animation: slideInRight 0.28s var(--ease-smooth) forwards; }
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.97) translateY(4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-scaleUp           { animation: scaleUp 0.24s var(--ease-smooth) forwards; }
+
+@keyframes rowPulse {
+  0%   { background-color: rgba(0, 82, 255, 0.10); }
+  100% { background-color: transparent; }
+}
+.data-row-pulse            { animation: rowPulse 2s ease-out forwards; }
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #F8FAFC 0%, #E2E8F0 50%, #F8FAFC 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite ease-in-out;
+  border-radius: var(--radius-xs);
+}
+
+/* Stagger entrance classes for 2-5 progressive visual groups */
+.stagger-1                 { animation: fadeIn 0.26s var(--ease-smooth) 0.04s both; }
+.stagger-2                 { animation: fadeIn 0.26s var(--ease-smooth) 0.10s both; }
+.stagger-3                 { animation: fadeIn 0.26s var(--ease-smooth) 0.16s both; }
+.stagger-4                 { animation: fadeIn 0.26s var(--ease-smooth) 0.22s both; }
 
 /* ─── Utility Classes ────────────────────────────── */
 .case-breadcrumb {
@@ -868,5 +1008,19 @@ button, input, optgroup, select, textarea {
 }
 .animate-toastFadeOut {
   animation: toastFadeOut 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ═══════════════════════════════════════════════════
+   ACCESSIBILITY: REDUCED MOTION SUPPORT (WCAG 2.1 AA)
+═══════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 

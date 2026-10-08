@@ -160,7 +160,7 @@ export const Topbar: React.FC<TopbarProps> = ({
         <div className="relative">
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center gap-2 pl-1 pr-1.5 py-1 rounded hover:bg-slate-100 transition-colors cursor-pointer border border-transparent hover:border-slate-200"
+            className="flex items-center gap-2 pl-1 pr-1.5 py-1 rounded-md hover:bg-slate-100 transition-all cursor-pointer border border-transparent hover:border-slate-200 active:scale-95"
             aria-label="User profile options"
             aria-expanded={showUserMenu}
           >
@@ -171,7 +171,7 @@ export const Topbar: React.FC<TopbarProps> = ({
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-56 rounded border border-slate-200 bg-white py-1.5 z-50 animate-fadeIn">
+            <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-white py-1.5 z-50 shadow-modal animate-scaleUp origin-top-right">
               <div className="px-3 py-2 border-b border-slate-100">
                 <div className="text-xs font-bold text-slate-900 truncate">
                   {currentUser?.name || "Risk Analyst"}
@@ -189,7 +189,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                   setShowUserMenu(false);
                   onOpenHelp();
                 }}
-                className="w-full text-left px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+                className="w-full text-left px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors flex items-center gap-2"
               >
                 <HelpCircle size={13} className="text-slate-400" />
                 <span>Documentation & Guide</span>
@@ -200,7 +200,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                   setShowUserMenu(false);
                   onLogout?.();
                 }}
-                className="w-full text-left px-3 py-2 text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2 border-t border-slate-100 mt-1"
+                className="w-full text-left px-3 py-2 text-xs text-rose-600 hover:bg-rose-50 transition-colors flex items-center gap-2 border-t border-slate-100 mt-1"
               >
                 <LogOut size={13} className="text-rose-500" />
                 <span>Sign Out Console</span>

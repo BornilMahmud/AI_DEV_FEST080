@@ -1,0 +1,2602 @@
+{
+  "U-0001": {
+    "customer_id": "U-0001",
+    "median_amount": 4200.0,
+    "primary_district": "Rajshahi",
+    "primary_device": "DEV-U-0001-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0046",
+      "U-0060",
+      "U-0004"
+    ],
+    "account_age_days": 276
+  },
+  "U-0002": {
+    "customer_id": "U-0002",
+    "median_amount": 2150.0,
+    "primary_district": "Mymensingh",
+    "primary_device": "DEV-U-0002-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0091",
+      "U-0053",
+      "U-0094"
+    ],
+    "account_age_days": 349
+  },
+  "U-0003": {
+    "customer_id": "U-0003",
+    "median_amount": 3500.0,
+    "primary_district": "Barishal",
+    "primary_device": "DEV-U-0003-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0002",
+      "U-0028",
+      "U-0064"
+    ],
+    "account_age_days": 914
+  },
+  "U-0004": {
+    "customer_id": "U-0004",
+    "median_amount": 1500.0,
+    "primary_district": "Bogura",
+    "primary_device": "DEV-U-0004-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0070",
+      "U-0053",
+      "U-0032"
+    ],
+    "account_age_days": 343
+  },
+  "U-0005": {
+    "customer_id": "U-0005",
+    "median_amount": 2150.0,
+    "primary_district": "Khulna",
+    "primary_device": "DEV-U-0005-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0051",
+      "U-0010",
+      "U-0091"
+    ],
+    "account_age_days": 1168
+  },
+  "U-0006": {
+    "customer_id": "U-0006",
+    "median_amount": 4200.0,
+    "primary_district": "Dhaka",
+    "primary_device": "DEV-U-0006-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0089",
+      "U-0058",
+      "U-0083"
+    ],
+    "account_age_days": 604
+  },
+  "U-0007": {
+    "customer_id": "U-0007",
+    "median_amount": 3500.0,
+    "primary_district": "Khulna",
+    "primary_device": "DEV-U-0007-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0093",
+      "U-0075",
+      "U-0086"
+    ],
+    "account_age_days": 701
+  },
+  "U-0008": {
+    "customer_id": "U-0008",
+    "median_amount": 1500.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0008-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0099",
+      "U-0004",
+      "U-0008"
+    ],
+    "account_age_days": 785
+  },
+  "U-0009": {
+    "customer_id": "U-0009",
+    "median_amount": 1500.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0009-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0067",
+      "U-0029",
+      "U-0045"
+    ],
+    "account_age_days": 454
+  },
+  "U-0010": {
+    "customer_id": "U-0010",
+    "median_amount": 2150.0,
+    "primary_district": "Bogura",
+    "primary_device": "DEV-U-0010-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0088",
+      "U-0095",
+      "U-0007"
+    ],
+    "account_age_days": 695
+  },
+  "U-0011": {
+    "customer_id": "U-0011",
+    "median_amount": 2800.0,
+    "primary_district": "Dhaka",
+    "primary_device": "DEV-U-0011-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0063",
+      "U-0031",
+      "U-0010"
+    ],
+    "account_age_days": 619
+  },
+  "U-0012": {
+    "customer_id": "U-0012",
+    "median_amount": 2150.0,
+    "primary_district": "Jessore",
+    "primary_device": "DEV-U-0012-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0002",
+      "U-0091",
+      "U-0081"
+    ],
+    "account_age_days": 493
+  },
+  "U-0013": {
+    "customer_id": "U-0013",
+    "median_amount": 4200.0,
+    "primary_district": "Rangpur",
+    "primary_device": "DEV-U-0013-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0013",
+      "U-0051",
+      "U-0037"
+    ],
+    "account_age_days": 767
+  },
+  "U-0014": {
+    "customer_id": "U-0014",
+    "median_amount": 2800.0,
+    "primary_district": "Rangpur",
+    "primary_device": "DEV-U-0014-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0088",
+      "U-0076",
+      "U-0082"
+    ],
+    "account_age_days": 815
+  },
+  "U-0015": {
+    "customer_id": "U-0015",
+    "median_amount": 3500.0,
+    "primary_district": "Chattogram",
+    "primary_device": "DEV-U-0015-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0030",
+      "U-0021",
+      "U-0085"
+    ],
+    "account_age_days": 362
+  },
+  "U-0016": {
+    "customer_id": "U-0016",
+    "median_amount": 1500.0,
+    "primary_district": "Cumilla",
+    "primary_device": "DEV-U-0016-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0045",
+      "U-0081",
+      "U-0024"
+    ],
+    "account_age_days": 584
+  },
+  "U-0017": {
+    "customer_id": "U-0017",
+    "median_amount": 2800.0,
+    "primary_district": "Cumilla",
+    "primary_device": "DEV-U-0017-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0091",
+      "U-0061",
+      "U-0045"
+    ],
+    "account_age_days": 892
+  },
+  "U-0018": {
+    "customer_id": "U-0018",
+    "median_amount": 2800.0,
+    "primary_district": "Khulna",
+    "primary_device": "DEV-U-0018-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0079",
+      "U-0029",
+      "U-0092"
+    ],
+    "account_age_days": 1164
+  },
+  "U-0019": {
+    "customer_id": "U-0019",
+    "median_amount": 3500.0,
+    "primary_district": "Chattogram",
+    "primary_device": "DEV-U-0019-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0058",
+      "U-0051",
+      "U-0053"
+    ],
+    "account_age_days": 398
+  },
+  "U-0020": {
+    "customer_id": "U-0020",
+    "median_amount": 1500.0,
+    "primary_district": "Cumilla",
+    "primary_device": "DEV-U-0020-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0095",
+      "U-0055",
+      "U-0006"
+    ],
+    "account_age_days": 730
+  },
+  "U-0021": {
+    "customer_id": "U-0021",
+    "median_amount": 4200.0,
+    "primary_district": "Sylhet",
+    "primary_device": "DEV-U-0021-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0020",
+      "U-0036",
+      "U-0080"
+    ],
+    "account_age_days": 619
+  },
+  "U-0022": {
+    "customer_id": "U-0022",
+    "median_amount": 3500.0,
+    "primary_district": "Sylhet",
+    "primary_device": "DEV-U-0022-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0007",
+      "U-0009",
+      "U-0081"
+    ],
+    "account_age_days": 466
+  },
+  "U-0023": {
+    "customer_id": "U-0023",
+    "median_amount": 2800.0,
+    "primary_district": "Barishal",
+    "primary_device": "DEV-U-0023-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0080",
+      "U-0062",
+      "U-0050"
+    ],
+    "account_age_days": 302
+  },
+  "U-0024": {
+    "customer_id": "U-0024",
+    "median_amount": 1500.0,
+    "primary_district": "Sylhet",
+    "primary_device": "DEV-U-0024-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0016",
+      "U-0097",
+      "U-0012"
+    ],
+    "account_age_days": 280
+  },
+  "U-0025": {
+    "customer_id": "U-0025",
+    "median_amount": 2150.0,
+    "primary_district": "Jessore",
+    "primary_device": "DEV-U-0025-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0048",
+      "U-0052",
+      "U-0090"
+    ],
+    "account_age_days": 943
+  },
+  "U-0026": {
+    "customer_id": "U-0026",
+    "median_amount": 2150.0,
+    "primary_district": "Rangpur",
+    "primary_device": "DEV-U-0026-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0048",
+      "U-0058",
+      "U-0050"
+    ],
+    "account_age_days": 1051
+  },
+  "U-0027": {
+    "customer_id": "U-0027",
+    "median_amount": 1500.0,
+    "primary_district": "Barishal",
+    "primary_device": "DEV-U-0027-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0074",
+      "U-0068",
+      "U-0014"
+    ],
+    "account_age_days": 1049
+  },
+  "U-0028": {
+    "customer_id": "U-0028",
+    "median_amount": 1500.0,
+    "primary_district": "Barishal",
+    "primary_device": "DEV-U-0028-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0068",
+      "U-0007",
+      "U-0033"
+    ],
+    "account_age_days": 757
+  },
+  "U-0029": {
+    "customer_id": "U-0029",
+    "median_amount": 3500.0,
+    "primary_district": "Dhaka",
+    "primary_device": "DEV-U-0029-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0076",
+      "U-0033",
+      "U-0070"
+    ],
+    "account_age_days": 955
+  },
+  "U-0030": {
+    "customer_id": "U-0030",
+    "median_amount": 2800.0,
+    "primary_district": "Chattogram",
+    "primary_device": "DEV-U-0030-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0001",
+      "U-0076",
+      "U-0072"
+    ],
+    "account_age_days": 1053
+  },
+  "U-0031": {
+    "customer_id": "U-0031",
+    "median_amount": 4200.0,
+    "primary_district": "Rangpur",
+    "primary_device": "DEV-U-0031-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0016",
+      "U-0039",
+      "U-0047"
+    ],
+    "account_age_days": 421
+  },
+  "U-0032": {
+    "customer_id": "U-0032",
+    "median_amount": 2800.0,
+    "primary_district": "Cumilla",
+    "primary_device": "DEV-U-0032-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0048",
+      "U-0078",
+      "U-0091"
+    ],
+    "account_age_days": 565
+  },
+  "U-0033": {
+    "customer_id": "U-0033",
+    "median_amount": 2800.0,
+    "primary_district": "Mymensingh",
+    "primary_device": "DEV-U-0033-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0080",
+      "U-0090",
+      "U-0050"
+    ],
+    "account_age_days": 664
+  },
+  "U-0034": {
+    "customer_id": "U-0034",
+    "median_amount": 3500.0,
+    "primary_district": "Barishal",
+    "primary_device": "DEV-U-0034-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0013",
+      "U-0044",
+      "U-0078"
+    ],
+    "account_age_days": 690
+  },
+  "U-0035": {
+    "customer_id": "U-0035",
+    "median_amount": 2800.0,
+    "primary_district": "Dhaka",
+    "primary_device": "DEV-U-0035-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0008",
+      "U-0097",
+      "U-0037"
+    ],
+    "account_age_days": 301
+  },
+  "U-0036": {
+    "customer_id": "U-0036",
+    "median_amount": 2800.0,
+    "primary_district": "Barishal",
+    "primary_device": "DEV-U-0036-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0063",
+      "U-0099",
+      "U-0002"
+    ],
+    "account_age_days": 314
+  },
+  "U-0037": {
+    "customer_id": "U-0037",
+    "median_amount": 3500.0,
+    "primary_district": "Cumilla",
+    "primary_device": "DEV-U-0037-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0020",
+      "U-0045",
+      "U-0044"
+    ],
+    "account_age_days": 1124
+  },
+  "U-0038": {
+    "customer_id": "U-0038",
+    "median_amount": 4200.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0038-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0042",
+      "U-0043",
+      "U-0069"
+    ],
+    "account_age_days": 421
+  },
+  "U-0039": {
+    "customer_id": "U-0039",
+    "median_amount": 1500.0,
+    "primary_district": "Mymensingh",
+    "primary_device": "DEV-U-0039-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0015",
+      "U-0005",
+      "U-0092"
+    ],
+    "account_age_days": 235
+  },
+  "U-0040": {
+    "customer_id": "U-0040",
+    "median_amount": 2150.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0040-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0024",
+      "U-0007",
+      "U-0022"
+    ],
+    "account_age_days": 843
+  },
+  "U-0041": {
+    "customer_id": "U-0041",
+    "median_amount": 2150.0,
+    "primary_district": "Cumilla",
+    "primary_device": "DEV-U-0041-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0040",
+      "U-0073",
+      "U-0066"
+    ],
+    "account_age_days": 1108
+  },
+  "U-0042": {
+    "customer_id": "U-0042",
+    "median_amount": 1500.0,
+    "primary_district": "Rangpur",
+    "primary_device": "DEV-U-0042-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0027",
+      "U-0054",
+      "U-0075"
+    ],
+    "account_age_days": 1180
+  },
+  "U-0043": {
+    "customer_id": "U-0043",
+    "median_amount": 4200.0,
+    "primary_district": "Khulna",
+    "primary_device": "DEV-U-0043-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0057",
+      "U-0057",
+      "U-0087"
+    ],
+    "account_age_days": 630
+  },
+  "U-0044": {
+    "customer_id": "U-0044",
+    "median_amount": 1500.0,
+    "primary_district": "Cumilla",
+    "primary_device": "DEV-U-0044-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0010",
+      "U-0005",
+      "U-0053"
+    ],
+    "account_age_days": 579
+  },
+  "U-0045": {
+    "customer_id": "U-0045",
+    "median_amount": 1500.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0045-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0073",
+      "U-0053",
+      "U-0002"
+    ],
+    "account_age_days": 660
+  },
+  "U-0046": {
+    "customer_id": "U-0046",
+    "median_amount": 1500.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0046-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0076",
+      "U-0016",
+      "U-0049"
+    ],
+    "account_age_days": 723
+  },
+  "U-0047": {
+    "customer_id": "U-0047",
+    "median_amount": 1500.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0047-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0041",
+      "U-0075",
+      "U-0077"
+    ],
+    "account_age_days": 1150
+  },
+  "U-0048": {
+    "customer_id": "U-0048",
+    "median_amount": 3500.0,
+    "primary_district": "Sylhet",
+    "primary_device": "DEV-U-0048-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0024",
+      "U-0081",
+      "U-0068"
+    ],
+    "account_age_days": 256
+  },
+  "U-0049": {
+    "customer_id": "U-0049",
+    "median_amount": 1500.0,
+    "primary_district": "Jessore",
+    "primary_device": "DEV-U-0049-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0005",
+      "U-0005",
+      "U-0028"
+    ],
+    "account_age_days": 1084
+  },
+  "U-0050": {
+    "customer_id": "U-0050",
+    "median_amount": 2150.0,
+    "primary_district": "Khulna",
+    "primary_device": "DEV-U-0050-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0059",
+      "U-0037",
+      "U-0068"
+    ],
+    "account_age_days": 1128
+  },
+  "U-0051": {
+    "customer_id": "U-0051",
+    "median_amount": 2150.0,
+    "primary_district": "Khulna",
+    "primary_device": "DEV-U-0051-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0092",
+      "U-0068",
+      "U-0040"
+    ],
+    "account_age_days": 888
+  },
+  "U-0052": {
+    "customer_id": "U-0052",
+    "median_amount": 2800.0,
+    "primary_district": "Bogura",
+    "primary_device": "DEV-U-0052-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0032",
+      "U-0036",
+      "U-0071"
+    ],
+    "account_age_days": 1160
+  },
+  "U-0053": {
+    "customer_id": "U-0053",
+    "median_amount": 2150.0,
+    "primary_district": "Rangpur",
+    "primary_device": "DEV-U-0053-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0030",
+      "U-0014",
+      "U-0007"
+    ],
+    "account_age_days": 396
+  },
+  "U-0054": {
+    "customer_id": "U-0054",
+    "median_amount": 2150.0,
+    "primary_district": "Bogura",
+    "primary_device": "DEV-U-0054-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0001",
+      "U-0081",
+      "U-0023"
+    ],
+    "account_age_days": 218
+  },
+  "U-0055": {
+    "customer_id": "U-0055",
+    "median_amount": 1500.0,
+    "primary_district": "Chattogram",
+    "primary_device": "DEV-U-0055-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0093",
+      "U-0010",
+      "U-0041"
+    ],
+    "account_age_days": 943
+  },
+  "U-0056": {
+    "customer_id": "U-0056",
+    "median_amount": 4200.0,
+    "primary_district": "Chattogram",
+    "primary_device": "DEV-U-0056-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0064",
+      "U-0011",
+      "U-0029"
+    ],
+    "account_age_days": 218
+  },
+  "U-0057": {
+    "customer_id": "U-0057",
+    "median_amount": 3500.0,
+    "primary_district": "Khulna",
+    "primary_device": "DEV-U-0057-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0097",
+      "U-0035",
+      "U-0062"
+    ],
+    "account_age_days": 478
+  },
+  "U-0058": {
+    "customer_id": "U-0058",
+    "median_amount": 2800.0,
+    "primary_district": "Chattogram",
+    "primary_device": "DEV-U-0058-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0034",
+      "U-0055",
+      "U-0050"
+    ],
+    "account_age_days": 299
+  },
+  "U-0059": {
+    "customer_id": "U-0059",
+    "median_amount": 2800.0,
+    "primary_district": "Jessore",
+    "primary_device": "DEV-U-0059-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0088",
+      "U-0080",
+      "U-0060"
+    ],
+    "account_age_days": 501
+  },
+  "U-0060": {
+    "customer_id": "U-0060",
+    "median_amount": 3500.0,
+    "primary_district": "Dhaka",
+    "primary_device": "DEV-U-0060-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0032",
+      "U-0018",
+      "U-0068"
+    ],
+    "account_age_days": 764
+  },
+  "U-0061": {
+    "customer_id": "U-0061",
+    "median_amount": 1500.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0061-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0064",
+      "U-0076",
+      "U-0007"
+    ],
+    "account_age_days": 531
+  },
+  "U-0062": {
+    "customer_id": "U-0062",
+    "median_amount": 2150.0,
+    "primary_district": "Rangpur",
+    "primary_device": "DEV-U-0062-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0082",
+      "U-0056",
+      "U-0088"
+    ],
+    "account_age_days": 722
+  },
+  "U-0063": {
+    "customer_id": "U-0063",
+    "median_amount": 2800.0,
+    "primary_district": "Khulna",
+    "primary_device": "DEV-U-0063-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0073",
+      "U-0023",
+      "U-0080"
+    ],
+    "account_age_days": 555
+  },
+  "U-0064": {
+    "customer_id": "U-0064",
+    "median_amount": 3500.0,
+    "primary_district": "Jessore",
+    "primary_device": "DEV-U-0064-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0001",
+      "U-0006",
+      "U-0069"
+    ],
+    "account_age_days": 779
+  },
+  "U-0065": {
+    "customer_id": "U-0065",
+    "median_amount": 3500.0,
+    "primary_district": "Dhaka",
+    "primary_device": "DEV-U-0065-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0017",
+      "U-0036",
+      "U-0060"
+    ],
+    "account_age_days": 912
+  },
+  "U-0066": {
+    "customer_id": "U-0066",
+    "median_amount": 4200.0,
+    "primary_district": "Dhaka",
+    "primary_device": "DEV-U-0066-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0094",
+      "U-0062",
+      "U-0087"
+    ],
+    "account_age_days": 470
+  },
+  "U-0067": {
+    "customer_id": "U-0067",
+    "median_amount": 4200.0,
+    "primary_district": "Mymensingh",
+    "primary_device": "DEV-U-0067-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0092",
+      "U-0082",
+      "U-0002"
+    ],
+    "account_age_days": 238
+  },
+  "U-0068": {
+    "customer_id": "U-0068",
+    "median_amount": 1500.0,
+    "primary_district": "Jessore",
+    "primary_device": "DEV-U-0068-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0095",
+      "U-0071",
+      "U-0025"
+    ],
+    "account_age_days": 431
+  },
+  "U-0069": {
+    "customer_id": "U-0069",
+    "median_amount": 3500.0,
+    "primary_district": "Sylhet",
+    "primary_device": "DEV-U-0069-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0036",
+      "U-0045",
+      "U-0030"
+    ],
+    "account_age_days": 912
+  },
+  "U-0070": {
+    "customer_id": "U-0070",
+    "median_amount": 2800.0,
+    "primary_district": "Cumilla",
+    "primary_device": "DEV-U-0070-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0085",
+      "U-0026",
+      "U-0024"
+    ],
+    "account_age_days": 1117
+  },
+  "U-0071": {
+    "customer_id": "U-0071",
+    "median_amount": 3500.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0071-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0027",
+      "U-0006",
+      "U-0017"
+    ],
+    "account_age_days": 630
+  },
+  "U-0072": {
+    "customer_id": "U-0072",
+    "median_amount": 2150.0,
+    "primary_district": "Cumilla",
+    "primary_device": "DEV-U-0072-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0033",
+      "U-0056",
+      "U-0009"
+    ],
+    "account_age_days": 224
+  },
+  "U-0073": {
+    "customer_id": "U-0073",
+    "median_amount": 3500.0,
+    "primary_district": "Barishal",
+    "primary_device": "DEV-U-0073-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0093",
+      "U-0075",
+      "U-0050"
+    ],
+    "account_age_days": 760
+  },
+  "U-0074": {
+    "customer_id": "U-0074",
+    "median_amount": 3500.0,
+    "primary_district": "Rangpur",
+    "primary_device": "DEV-U-0074-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0043",
+      "U-0068",
+      "U-0054"
+    ],
+    "account_age_days": 662
+  },
+  "U-0075": {
+    "customer_id": "U-0075",
+    "median_amount": 3500.0,
+    "primary_district": "Sylhet",
+    "primary_device": "DEV-U-0075-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0074",
+      "U-0059",
+      "U-0061"
+    ],
+    "account_age_days": 1077
+  },
+  "U-0076": {
+    "customer_id": "U-0076",
+    "median_amount": 4200.0,
+    "primary_district": "Rajshahi",
+    "primary_device": "DEV-U-0076-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0063",
+      "U-0080",
+      "U-0085"
+    ],
+    "account_age_days": 261
+  },
+  "U-0077": {
+    "customer_id": "U-0077",
+    "median_amount": 3500.0,
+    "primary_district": "Mymensingh",
+    "primary_device": "DEV-U-0077-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0098",
+      "U-0092",
+      "U-0078"
+    ],
+    "account_age_days": 427
+  },
+  "U-0078": {
+    "customer_id": "U-0078",
+    "median_amount": 2150.0,
+    "primary_district": "Bogura",
+    "primary_device": "DEV-U-0078-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0026",
+      "U-0033",
+      "U-0075"
+    ],
+    "account_age_days": 463
+  },
+  "U-0079": {
+    "customer_id": "U-0079",
+    "median_amount": 3500.0,
+    "primary_district": "Bogura",
+    "primary_device": "DEV-U-0079-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0077",
+      "U-0054",
+      "U-0076"
+    ],
+    "account_age_days": 1148
+  },
+  "U-0080": {
+    "customer_id": "U-0080",
+    "median_amount": 2800.0,
+    "primary_district": "Sylhet",
+    "primary_device": "DEV-U-0080-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0098",
+      "U-0049",
+      "U-0080"
+    ],
+    "account_age_days": 656
+  },
+  "U-0081": {
+    "customer_id": "U-0081",
+    "median_amount": 1500.0,
+    "primary_district": "Rajshahi",
+    "primary_device": "DEV-U-0081-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0015",
+      "U-0082",
+      "U-0045"
+    ],
+    "account_age_days": 273
+  },
+  "U-0082": {
+    "customer_id": "U-0082",
+    "median_amount": 2800.0,
+    "primary_district": "Bogura",
+    "primary_device": "DEV-U-0082-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0073",
+      "U-0090",
+      "U-0059"
+    ],
+    "account_age_days": 211
+  },
+  "U-0083": {
+    "customer_id": "U-0083",
+    "median_amount": 2800.0,
+    "primary_district": "Chattogram",
+    "primary_device": "DEV-U-0083-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0092",
+      "U-0087",
+      "U-0037"
+    ],
+    "account_age_days": 229
+  },
+  "U-0084": {
+    "customer_id": "U-0084",
+    "median_amount": 2150.0,
+    "primary_district": "Dhaka",
+    "primary_device": "DEV-U-0084-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0088",
+      "U-0092",
+      "U-0099"
+    ],
+    "account_age_days": 837
+  },
+  "U-0085": {
+    "customer_id": "U-0085",
+    "median_amount": 2800.0,
+    "primary_district": "Dhaka",
+    "primary_device": "DEV-U-0085-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0001",
+      "U-0085",
+      "U-0079"
+    ],
+    "account_age_days": 538
+  },
+  "U-0086": {
+    "customer_id": "U-0086",
+    "median_amount": 3500.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0086-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0039",
+      "U-0045",
+      "U-0089"
+    ],
+    "account_age_days": 544
+  },
+  "U-0087": {
+    "customer_id": "U-0087",
+    "median_amount": 2800.0,
+    "primary_district": "Khulna",
+    "primary_device": "DEV-U-0087-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0041",
+      "U-0042",
+      "U-0077"
+    ],
+    "account_age_days": 541
+  },
+  "U-0088": {
+    "customer_id": "U-0088",
+    "median_amount": 3500.0,
+    "primary_district": "Khulna",
+    "primary_device": "DEV-U-0088-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0001",
+      "U-0036",
+      "U-0033"
+    ],
+    "account_age_days": 741
+  },
+  "U-0089": {
+    "customer_id": "U-0089",
+    "median_amount": 4200.0,
+    "primary_district": "Cumilla",
+    "primary_device": "DEV-U-0089-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0030",
+      "U-0099",
+      "U-0052"
+    ],
+    "account_age_days": 790
+  },
+  "U-0090": {
+    "customer_id": "U-0090",
+    "median_amount": 4200.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0090-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0058",
+      "U-0021",
+      "U-0091"
+    ],
+    "account_age_days": 455
+  },
+  "U-0091": {
+    "customer_id": "U-0091",
+    "median_amount": 1500.0,
+    "primary_district": "Rangpur",
+    "primary_device": "DEV-U-0091-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0014",
+      "U-0034",
+      "U-0090"
+    ],
+    "account_age_days": 991
+  },
+  "U-0092": {
+    "customer_id": "U-0092",
+    "median_amount": 2150.0,
+    "primary_district": "Sylhet",
+    "primary_device": "DEV-U-0092-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0099",
+      "U-0079",
+      "U-0094"
+    ],
+    "account_age_days": 420
+  },
+  "U-0093": {
+    "customer_id": "U-0093",
+    "median_amount": 3500.0,
+    "primary_district": "Chattogram",
+    "primary_device": "DEV-U-0093-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0085",
+      "U-0003",
+      "U-0049"
+    ],
+    "account_age_days": 328
+  },
+  "U-0094": {
+    "customer_id": "U-0094",
+    "median_amount": 1500.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0094-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0053",
+      "U-0081",
+      "U-0013"
+    ],
+    "account_age_days": 256
+  },
+  "U-0095": {
+    "customer_id": "U-0095",
+    "median_amount": 2150.0,
+    "primary_district": "Sylhet",
+    "primary_device": "DEV-U-0095-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0056",
+      "U-0064",
+      "U-0033"
+    ],
+    "account_age_days": 946
+  },
+  "U-0096": {
+    "customer_id": "U-0096",
+    "median_amount": 2150.0,
+    "primary_district": "Cumilla",
+    "primary_device": "DEV-U-0096-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0094",
+      "U-0055",
+      "U-0029"
+    ],
+    "account_age_days": 845
+  },
+  "U-0097": {
+    "customer_id": "U-0097",
+    "median_amount": 2150.0,
+    "primary_district": "Dhaka",
+    "primary_device": "DEV-U-0097-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0083",
+      "U-0055",
+      "U-0011"
+    ],
+    "account_age_days": 1057
+  },
+  "U-0098": {
+    "customer_id": "U-0098",
+    "median_amount": 2800.0,
+    "primary_district": "Jessore",
+    "primary_device": "DEV-U-0098-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0011",
+      "U-0010",
+      "U-0058"
+    ],
+    "account_age_days": 894
+  },
+  "U-0099": {
+    "customer_id": "U-0099",
+    "median_amount": 1500.0,
+    "primary_district": "Sylhet",
+    "primary_device": "DEV-U-0099-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0077",
+      "U-0004",
+      "U-0007"
+    ],
+    "account_age_days": 537
+  },
+  "U-0100": {
+    "customer_id": "U-0100",
+    "median_amount": 3500.0,
+    "primary_district": "Kushtia",
+    "primary_device": "DEV-U-0100-P1",
+    "usual_hours": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "usual_counterparties": [
+      "U-0068",
+      "U-0020",
+      "U-0042"
+    ],
+    "account_age_days": 1150
+  }
+}

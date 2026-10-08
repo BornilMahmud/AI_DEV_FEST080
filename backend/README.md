@@ -1,59 +1,93 @@
-# upay Sentinel — Backend Intelligence Layer
+# upay Sentinel — Authoritative Backend Risk Intelligence Layer
 
-Enterprise Risk & Trust Intelligence Backend for Mobile Financial Services (MFS) built for the **DIU CPC × upay AI Hackathon 2026**.
+Enterprise Risk & Trust Intelligence Backend for Mobile Financial Services (MFS) in Bangladesh, built for the **DIU CPC × upay AI Hackathon 2026**.
 
 ---
 
 ## ⚡ Tech Stack & Architecture
 
 - **Runtime & Server**: Node.js + Express 5 + TypeScript + `tsx`
-- **Database**: Supabase PostgreSQL with Row Level Security (RLS)
-- **AI & Copilot**: Google Gemini 2.5 (`@google/genai` with Function Calling & Grounded Tool Execution)
-- **ML Risk Engine**: XGBoost Fraud Scoring, Isolation Forest Anomaly Detection, Velocity Sliding Windows, Risk Fusion (0–100)
+- **Database**: Supabase PostgreSQL (`https://xhgxmsgsxqpffzmpehtn.supabase.co`) with Row Level Security (RLS) & PostgREST
+- **Authentication**: Firebase Auth (Email/Password, Google OAuth, GitHub OAuth) + Supabase profile synchronization
+- **AI & Copilot**: Google Gemini (`@google/genai` / `@google/generative-ai` with structured investigation reasoning and deterministic fallback)
+- **Authoritative Risk Engine**: Multi-Detector Pipeline (Behavioral Baseline, Velocity Burst, ATO/USSD Pin Reset, Mule Ring Syndicate Cluster #17, Bangladesh Bank Circular Compliance Rules, and ML Calibration)
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. Install Dependencies
-```bash
-npm install
-```
-
-### 2. Environment Variables
-Verify `.env` has:
+### 1. Environment Configuration
+Verify `backend/.env` has:
 ```env
 PORT=3001
-VITE_SUPABASE_URL=https://odexyyeipgspqvdepvoi.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_pSbK4D35fp2K5UCtunJN2Q_nKjfzvhB
+SUPABASE_URL=https://xhgxmsgsxqpffzmpehtn.supabase.co
+SUPABASE_SECRET_KEY=your_supabase_secret_key_here
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_AW3O9YE91ne_eg66F4et9g_U7w3crxi
 GEMINI_API_KEY=your_gemini_api_key_here
 GEMINI_MODEL=gemini-2.5-flash
 ```
 
-### 3. Run Server
+### 2. Database Schema
+Execute [`backend/supabase/unified_schema.sql`](./supabase/unified_schema.sql) in your Supabase Dashboard SQL Editor to establish:
+- `profiles`
+- `customers`
+- `transactions`
+- `risk_assessments`
+- `alerts`
+- `investigation_cases`
+- `case_notes`
+- `evidence_items`
+- `audit_events`
+- `network_nodes`
+- `network_edges`
+- `simulation_runs`
+
+### 3. Run Server & Tests
 ```bash
-# Development mode with auto-reload
+# Start backend server
 npm run dev
 
-# Production start
-npm start
+# Run automated backend API & security test suite (14/14 tests)
+npm test
+
+# Run core risk engine test suite (13/13 tests from root)
+cd .. && npm test
 ```
 
 Server runs on: **`http://localhost:3001`**
 
 ---
 
-## 📡 API Endpoints
+## 📡 API Endpoints Matrix
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/health` | System telemetry, model states, DB connection |
-| `GET` | `/api/transactions` | Paginated transactions with risk scores & filters |
-| `POST` | `/api/transactions` | Ingest new transaction into pipeline |
-| `POST` | `/api/risk/evaluate` | ML Ensemble risk scoring (0–100) & SHAP explainability |
-| `POST` | `/api/scenarios/run` | One-click attack simulation (ATO, Mule Ring, SIM Swap, etc.) |
-| `POST` | `/api/copilot/chat` | Gemini Copilot conversational assistant with tool calling |
-| `POST` | `/api/copilot/explain` | Structured explanation of high-risk factors |
-| `POST` | `/api/copilot/action` | AI recommended decision action (Approve / Hold / Block / Escalate) |
-| `GET` | `/api/investigations` | Active investigation cases and dossiers |
-| `GET` | `/api/metrics` | Portfolio metrics, loss prevention, volume stats |
+| Method | Endpoint | Description | Auth / Governance | Status |
+|---|---|---|---|---|
+| `GET` | `/api/health` | Health check & Supabase connection telemetry | Public | Operational |
+| `GET` | `/ready` | Process readiness & uptime probe | Public | Operational |
+| `POST` | `/api/v1/transactions` | Ingest transaction through 6-detector risk pipeline | Zod Validated | Operational |
+| `GET` | `/api/v1/transactions` | Server-side paginated & filtered transactions | Analyst / Admin | Operational |
+| `GET` | `/api/v1/transactions/:id` | Detailed transaction record with full assessment | Analyst / Admin | Operational |
+| `GET` | `/api/v1/transactions/:id/risk` | Isolated risk signals, rule hits, and XAI factors | Analyst / Admin | Operational |
+| `GET` | `/api/v1/transactions/:id/audit`| Transaction audit trail with actor records | Audit / Investigator | Operational |
+| `POST` | `/api/v1/transactions/:id/decision` | Human Analyst Action (`HOLD`, `STEP_UP`, `ESCALATE`, `MARK_SAFE`, `RELEASE`) | Human-in-the-Loop | Operational |
+| `GET` | `/api/v1/alerts` | Active fraud alert queue with unread status | Analyst | Operational |
+| `POST` | `/api/v1/alerts/:id/acknowledge` | Acknowledge alert | Analyst | Operational |
+| `POST` | `/api/v1/alerts/:id/resolve` | Resolve alert | Analyst | Operational |
+| `GET` | `/api/v1/customers` | Customer risk list with baseline analytics | Analyst | Operational |
+| `GET` | `/api/v1/customers/:id` | Customer 360 Risk Dossier with deviations | Analyst | Operational |
+| `GET` | `/api/v1/network` | Graph nodes & edges for syndicate visualization | Investigator | Operational |
+| `GET` | `/api/v1/network/money-trail/:id` | 4-Stage Forensic Pipeline (Origin → Layering → Cashout → Exfil) | Investigator | Operational |
+| `POST` | `/api/v1/simulation/:scenario` | 1-Click Simulation (`ato`, `mule`, `velocity`, `sim_swap`, `normal`) | Judge / Demo | Operational |
+| `POST` | `/api/v1/copilot/chat` | Gemini Copilot AI investigation & BFIU SAR staging | Analyst / AI | Operational |
+| `GET` | `/api/v1/copilot/briefing` | Executive shift intelligence summary | Analyst / AI | Operational |
+| `GET` | `/api/v1/analytics` | Aggregated portfolio fraud metrics & risk distribution | Executive / Analyst | Operational |
+| `GET` | `/api/v1/analytics/benchmarks` | Held-out 100-sample benchmark dataset evaluation | Audited | Operational |
+| `GET` | `/api/v1/audit` | Append-only immutable system audit logs | Audit / Admin | Operational |
+
+---
+
+## 🔒 Security & Governance
+
+1. **Strict Human-in-the-Loop Governance**: The AI Copilot and automated risk engine recommend holds and biometric step-ups; no autonomous funds blocking occurs without analyst oversight and audit trail.
+2. **Immutable Audit Trail**: All state mutations (`ANALYST_HOLD`, `ANALYST_RELEASE`, `EVALUATE_TRANSACTION`, `SIMULATION_RUN`) are logged to an append-only audit stream with correlation request IDs.
+3. **Resilient Data Architecture**: Built on `@supabase/supabase-js` PostgREST API with seamless in-memory fallback stores to guarantee zero downtime during network or migration transitions.

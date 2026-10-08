@@ -1,0 +1,70 @@
+{
+  "dataset_name": "upay Sentinel Multi-Layer Fraud Intelligence Dataset",
+  "version": "1.0.0",
+  "layers": {
+    "dataset_a_paysim": {
+      "source": "PaySim Mobile Money Financial Simulator (Kaggle / Edgar Lopez-Rojas)",
+      "purpose": "Transaction-level fraud detection baseline",
+      "format": "CSV (step, type, amount, nameOrig, nameDest, isFraud, isFlaggedFraud)",
+      "leakage_safeguard": "STRICT EXCLUSION of post-authorization balance fields (newbalanceOrig, newbalanceDest, oldbalanceOrg, oldbalanceDest) to prevent synthetic simulator artifact leakage.",
+      "features_used": [
+        "amount",
+        "hour",
+        "day_of_week",
+        "transaction_type",
+        "channel"
+      ]
+    },
+    "dataset_b_sentinel_mfs": {
+      "source": "Sentinel Synthetic Bangladesh MFS Behavioral Dataset (Domain-Grounded)",
+      "purpose": "Customer 30-day baseline profiling and behavioral anomaly detection",
+      "customer_profiles": 100,
+      "profile_attributes": [
+        "median_amount",
+        "primary_district",
+        "primary_device",
+        "usual_hours",
+        "usual_counterparties",
+        "account_age_days"
+      ],
+      "attack_typologies": [
+        "ATO_NOCTURNAL",
+        "MULE_CLUSTER_17",
+        "VELOCITY_BURST",
+        "SIM_SWAP_DRAIN"
+      ],
+      "features_used": [
+        "amount_vs_customer_baseline",
+        "customer_velocity_10m",
+        "customer_velocity_1h",
+        "device_known",
+        "device_change",
+        "location_change",
+        "new_counterparty",
+        "sim_swap_indicator",
+        "account_takeover_indicator",
+        "night_transaction"
+      ]
+    },
+    "dataset_c_amlsim": {
+      "source": "IBM AMLSim Financial Network & Typology Simulator",
+      "purpose": "Network graph intelligence and money-laundering pattern analysis",
+      "typologies": [
+        "Mule_Layering",
+        "Fan_Out",
+        "Fan_In",
+        "Smurfing_Structuring",
+        "Cycle_Hawala"
+      ],
+      "features_used": [
+        "mule_cluster_link",
+        "high_value_indicator",
+        "micro_structuring_indicator",
+        "rapid_drain_indicator"
+      ]
+    }
+  },
+  "target_label": "is_fraud (Binary: 0=Legitimate, 1=Fraud/Anomaly/Laundering)",
+  "features_total": 20,
+  "methodology": "Two-layer feature fusion: Transaction + Behavioral/Network, real-time millisecond evaluation without future state leakage"
+}
