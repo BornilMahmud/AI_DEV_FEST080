@@ -10,7 +10,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.5_Flash-orange?style=flat-square&logo=google)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Unit_Tests-13_Passing-brightgreen?style=flat-square)](#4-run-automated-unit--benchmark-tests)
+[![Tests](https://img.shields.io/badge/Unit_Tests-13_Passing-brightgreen?style=flat-square)](#4-run-automated-unit--benchmark-tests)      
 [![Accuracy](https://img.shields.io/badge/Benchmark_Accuracy-100%25-success?style=flat-square)](#grounded-model-evaluation--benchmark-metrics)
 [![Bilingual](https://img.shields.io/badge/i18n-English_%7C_বাংলা-purple?style=flat-square)](#6-bilingual-localization--enterprise-design-system)
 
