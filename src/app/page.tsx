@@ -23,8 +23,6 @@ import { LoginPage, UserProfile } from "@/components/auth/LoginPage";
 import { HelpModal } from "@/components/ui/HelpModal";
 import { GlassAiChatbot } from "@/components/chat/GlassAiChatbot";
 import { SentinelIntro } from "@/components/ui/SentinelIntro";
-import { SecurityIntelligenceView } from "@/components/security/SecurityIntelligenceView";
-import { ImmutableAuditView } from "@/components/audit/ImmutableAuditView";
 
 function SentinelAppShell() {
   const {
@@ -328,20 +326,6 @@ function SentinelAppShell() {
             <AnalyticsView
               onNavigate={handleNavigate}
               onOpenReport={() => setIsReportModalOpen(true)}
-            />
-          )}
-
-          {currentPage === "security" && (
-            <SecurityIntelligenceView
-              onNavigate={handleNavigate}
-              onNotify={showNotification}
-            />
-          )}
-
-          {currentPage === "audit" && (
-            <ImmutableAuditView
-              onNavigate={handleNavigate}
-              onNotify={showNotification}
             />
           )}
         </main>

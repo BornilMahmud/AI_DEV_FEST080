@@ -17,8 +17,6 @@ import {
   LogOut,
   Globe,
   Sliders,
-  Lock,
-  History,
 } from "lucide-react";
 import { UserProfile } from "../auth/LoginPage";
 import { useSentinel } from "@/context/SentinelContext";
@@ -42,7 +40,7 @@ interface NavGroup {
   sectionKey: string;
   items: {
     id: NavigationPage;
-    labelKey: "navOverview" | "navTransactions" | "navRisk" | "navNetwork" | "navInvestigations" | "navCustomers" | "navAlerts" | "navAnalytics" | "navSecurity" | "navAudit";
+    labelKey: "navOverview" | "navTransactions" | "navRisk" | "navNetwork" | "navInvestigations" | "navCustomers" | "navAlerts" | "navAnalytics";
     icon: React.ReactNode;
   }[];
 }
@@ -75,7 +73,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { id: "risk", labelKey: "navRisk", icon: <ShieldAlert size={15} /> },
         { id: "network", labelKey: "navNetwork", icon: <Share2 size={15} /> },
         { id: "alerts", labelKey: "navAlerts", icon: <Bell size={15} /> },
-        { id: "security", labelKey: "navSecurity", icon: <Lock size={15} /> },
       ],
     },
     {
@@ -89,7 +86,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       sectionKey: language === "bn" ? "নিয়ন্ত্রণ ও বিএফআইইউ" : "BFIU GOVERNANCE & SAR",
       items: [
         { id: "analytics", labelKey: "navAnalytics", icon: <BarChart3 size={15} /> },
-        { id: "audit", labelKey: "navAudit", icon: <History size={15} /> },
       ],
     },
   ];

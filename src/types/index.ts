@@ -9,9 +9,7 @@ export type NavigationPage =
   | "investigation"
   | "customers"
   | "alerts"
-  | "analytics"
-  | "security"
-  | "audit";
+  | "analytics";
 
 export type TransactionType =
   | "Wallet Transfer"

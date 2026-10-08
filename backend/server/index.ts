@@ -46,8 +46,7 @@ const supabaseKey =
   process.env.SUPABASE_SECRET_KEY ||
   process.env.SUPABASE_PUBLISHABLE_KEY ||
   process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-  "sb_publishable_AW3O9YE91ne_eg66F4et9g_U7w3crxi";
+  "";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Security Service & Auth Middleware
@@ -414,31 +413,19 @@ app.get(
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-      let records: any[] = [];
+      const { data, error } = await supabase
+        .from("login_ip_history")
+        .select("*")
+        .or(`user_id.eq.${id},firebase_uid.eq.${id}`)
+        .order("last_seen_at", { ascending: false });
 
-      try {
-        let query = supabase.from("login_ip_history").select("*");
-        if (isUuid) {
-          query = query.or(`user_id.eq.${id},firebase_uid.eq.${id}`);
-        } else {
-          query = query.eq("firebase_uid", id);
-        }
-        const { data, error } = await query.order("last_seen_at", { ascending: false });
-        if (!error && data && data.length > 0) {
-          records = data;
-        }
-      } catch {}
-
-      if (records.length === 0) {
-        records = securityService.getInMemoryIpHistory(id);
-      }
+      if (error) throw error;
 
       res.json({
         success: true,
         userId: id,
-        history: records,
-        count: records.length,
+        history: data || [],
+        count: data?.length || 0,
         ipDescription: "Observed login IP addresses (approximate network routing)",
         meta: { requestId: req.requestId },
       });
@@ -457,27 +444,19 @@ app.get(
   async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-      let records: any[] = [];
+      const { data, error } = await supabase
+        .from("login_sessions")
+        .select("*")
+        .or(`user_id.eq.${id},firebase_uid.eq.${id}`)
+        .order("login_at", { ascending: false });
 
-      try {
-        let query = supabase.from("login_sessions").select("*");
-        if (isUuid) {
-          query = query.or(`user_id.eq.${id},firebase_uid.eq.${id}`);
-        } else {
-          query = query.eq("firebase_uid", id);
-        }
-        const { data, error } = await query.order("login_at", { ascending: false });
-        if (!error && data && data.length > 0) {
-          records = data;
-        }
-      } catch {}
+      if (error) throw error;
 
       res.json({
         success: true,
         userId: id,
-        sessions: records,
-        count: records.length,
+        sessions: data || [],
+        count: data?.length || 0,
         meta: { requestId: req.requestId },
       });
     } catch (err: any) {

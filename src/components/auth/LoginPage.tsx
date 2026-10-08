@@ -12,13 +12,15 @@ import {
   CheckCircle2,
   Sparkles,
 } from "lucide-react";
-import { auth, googleProvider, githubProvider } from "@/lib/firebase";
 import {
+  auth,
+  googleProvider,
+  githubProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
-} from "firebase/auth";
+} from "@/lib/firebase";
 import { syncFirebaseUserToSupabase } from "@/lib/supabase";
 
 export interface UserProfile {

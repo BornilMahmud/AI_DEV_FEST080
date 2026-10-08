@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { NavigationPage } from "@/types";
 import { useSentinel } from "@/context/SentinelContext";
 import {
@@ -17,10 +17,7 @@ import {
   Brain,
   Scale,
   ShieldAlert,
-  Cpu,
-  Layers,
 } from "lucide-react";
-import { fetchBackendBenchmarks, BackendBenchmarkMetrics } from "@/lib/backend-api";
 
 interface AnalyticsViewProps {
   onNavigate: (page: NavigationPage) => void;
@@ -33,11 +30,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
 }) => {
   const { modelMetrics, runModelEvaluation, transactions, cases, language } = useSentinel();
   const [isEvaluating, setIsEvaluating] = useState(false);
-  const [backendBenchmarks, setBackendBenchmarks] = useState<BackendBenchmarkMetrics | null>(null);
-
-  useEffect(() => {
-    fetchBackendBenchmarks().then(setBackendBenchmarks);
-  }, []);
 
   const handleRunEvaluation = () => {
     setIsEvaluating(true);
@@ -381,101 +373,6 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
                 </span>
                 <b className="font-mono text-slate-900">{cases.filter((c) => c.status === "Escalated").length}</b>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Python ML Ensemble Architecture & Feature Importance Attribution */}
-        <div className="lg:col-span-12 card-base p-4 border border-slate-200 bg-white space-y-3">
-          <div className="flex items-center justify-between pb-2.5 border-b border-slate-200">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-purple-50 text-purple-700 border border-purple-200 flex items-center justify-center">
-                <Brain size={13} />
-              </div>
-              <div>
-                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wide">
-                  {language === "bn"
-                    ? "পাইথন মেশিন লার্নিং এনসেম্বল আর্কিটেকচার ও ফিচার গুরুত্ব"
-                    : "Python ML Ensemble Architecture & Feature Attribution"}
-                </h3>
-                <p className="text-[11px] text-slate-500">
-                  {language === "bn"
-                    ? "আইসোলেশন ফরেস্ট + র‍্যান্ডম ফরেস্ট + পাইটর্চ নিউরাল নেটওয়ার্ক (১০,০০০ সিন্থেটিক এমএফএস স্যাম্পল)"
-                    : "Isolation Forest + Random Forest + PyTorch Deep Neural Net trained on 10,000 MFS events (PaySim & AMLSim)"}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono text-slate-500">ROC-AUC: <b className="text-purple-700 font-extrabold">{backendBenchmarks?.rocAuc || 0.991}</b></span>
-              <span className="badge badge-low text-[10px]">PRODUCTION TRAINED</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div className="p-3 rounded-lg border border-slate-200 bg-slate-50 space-y-1.5">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-800">
-                <span>Random Forest Classifier</span>
-                <span className="text-purple-700 font-mono">45% weight</span>
-              </div>
-              <p className="text-[11px] text-slate-500">Supervised ensemble identifying known AML & mule typologies.</p>
-              <div className="flex justify-between text-[10.5px] font-mono pt-1 text-slate-600">
-                <span>Precision: 96.8%</span>
-                <span>Recall: 97.2%</span>
-              </div>
-            </div>
-
-            <div className="p-3 rounded-lg border border-slate-200 bg-slate-50 space-y-1.5">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-800">
-                <span>Isolation Forest Detector</span>
-                <span className="text-blue-700 font-mono">35% weight</span>
-              </div>
-              <p className="text-[11px] text-slate-500">Unsupervised outlier isolation for zero-day fraud vectors.</p>
-              <div className="flex justify-between text-[10.5px] font-mono pt-1 text-slate-600">
-                <span>Contamination: 1.5%</span>
-                <span>FPR: 1.2%</span>
-              </div>
-            </div>
-
-            <div className="p-3 rounded-lg border border-slate-200 bg-slate-50 space-y-1.5">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-800">
-                <span>PyTorch Deep Neural Net</span>
-                <span className="text-emerald-700 font-mono">20% weight</span>
-              </div>
-              <p className="text-[11px] text-slate-500">Non-linear high-dimensional embedding for rapid cash-out cascades.</p>
-              <div className="flex justify-between text-[10.5px] font-mono pt-1 text-slate-600">
-                <span>Loss: 0.042</span>
-                <span>Epochs: 50</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Feature Importance Attribution Bars */}
-          <div className="pt-2 border-t border-slate-100">
-            <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wide block mb-2">
-              SHAP Global Feature Importance Ranking:
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-              {(backendBenchmarks?.featureImportance || [
-                { feature: "amount_vs_30d_baseline", importance: 0.28 },
-                { feature: "syndicate_cluster_link_degree", importance: 0.24 },
-                { feature: "hardware_fingerprint_unrecognized", importance: 0.18 },
-                { feature: "inter_txn_velocity_180s", importance: 0.16 },
-                { feature: "nocturnal_window_indicator", importance: 0.09 },
-                { feature: "cgnat_observed_ip_risk", importance: 0.05 },
-              ]).map((fi) => (
-                <div key={fi.feature} className="p-2 rounded bg-slate-50 border border-slate-200 space-y-1">
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="font-mono text-slate-700 truncate">{fi.feature}</span>
-                    <b className="font-mono text-purple-700">{Math.round(fi.importance * 100)}%</b>
-                  </div>
-                  <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-purple-600 rounded-full"
-                      style={{ width: `${Math.round(fi.importance * 100)}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </div>
