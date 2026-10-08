@@ -7,6 +7,7 @@
   "scripts": {
     "start": "tsx server/index.ts",
     "dev": "tsx watch server/index.ts",
+    "test": "tsx test/backend-api.test.ts",
     "seed": "node scripts/seed.js",
     "seed:behavior": "node scripts/seed-behavior.js",
     "migrate": "node scripts/migrate.js"
@@ -17,8 +18,9 @@
     "@supabase/supabase-js": "^2.49.1",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "jose": "^6.2.12",
     "pg": "^8.23.1",
-    "zod": "^4.6.5"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

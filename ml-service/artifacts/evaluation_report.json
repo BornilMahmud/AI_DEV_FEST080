@@ -1,0 +1,36 @@
+{
+  "evaluation_timestamp": "2026-10-08T10:23:20.427199+00:00",
+  "model_version": "sentinel-ml-v1.0.0",
+  "feature_version": "features-v1",
+  "frameworks": [
+    "scikit-learn (HistGradientBoosting + IsolationForest)",
+    "PyTorch"
+  ],
+  "dataset_architecture": {
+    "tier_1": "PaySim mobile-money (leakage-safe, simulator balances stripped)",
+    "tier_2": "Sentinel Synthetic MFS (30-day customer baselines + behavioral injections)",
+    "tier_3": "IBM AMLSim (network laundering typologies)"
+  },
+  "sample_size": 1750,
+  "fraud_count": 63,
+  "normal_count": 1687,
+  "metrics": {
+    "accuracy": 0.9994,
+    "precision": 0.9844,
+    "recall": 1.0,
+    "f1_score": 0.9921,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "false_positive_rate": 0.0006,
+    "false_negative_rate": 0.0,
+    "confusion_matrix": {
+      "true_positives": 63,
+      "false_positives": 1,
+      "true_negatives": 1686,
+      "false_negatives": 0
+    }
+  },
+  "threshold": 0.5,
+  "is_leakage_safe": true,
+  "regulatory_disclaimer": "Evaluated on multi-source domain-grounded benchmark with verified post-authorization balance leakage safeguards."
+}

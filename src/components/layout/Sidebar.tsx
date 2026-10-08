@@ -139,13 +139,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="my-2.5 px-2">
           <button
             onClick={toggleLanguage}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-semibold text-slate-700 transition-colors"
+            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 text-xs font-semibold text-slate-700 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.985]"
           >
             <span className="flex items-center gap-1.5 text-[11.5px]">
               <Globe size={13} className="text-blue-600" />
               <span>{language === "bn" ? "ভাষা: বাংলা" : "Language: English"}</span>
             </span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-white border border-slate-200 font-mono text-blue-600 font-bold">
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-white border border-slate-200 font-mono text-blue-600 font-bold shadow-subtle">
               {language === "bn" ? "EN Switch" : "বাংলা সুইচ"}
             </span>
           </button>
@@ -166,7 +166,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <button
                       key={item.id}
                       onClick={() => handleNav(item.id)}
-                      className={`nav-item nav-${item.id} w-full text-left transition-colors ${
+                      className={`nav-item nav-${item.id} w-full text-left ${
                         isActive ? "active" : ""
                       }`}
                       aria-current={isActive ? "page" : undefined}

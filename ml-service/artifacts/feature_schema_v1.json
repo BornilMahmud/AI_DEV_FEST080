@@ -1,0 +1,106 @@
+{
+  "version": "features-v1",
+  "features_count": 20,
+  "features": [
+    {
+      "name": "amount",
+      "type": "float",
+      "index": 0
+    },
+    {
+      "name": "hour",
+      "type": "float",
+      "index": 1
+    },
+    {
+      "name": "day_of_week",
+      "type": "float",
+      "index": 2
+    },
+    {
+      "name": "transaction_type",
+      "type": "float",
+      "index": 3
+    },
+    {
+      "name": "channel",
+      "type": "float",
+      "index": 4
+    },
+    {
+      "name": "amount_vs_customer_baseline",
+      "type": "float",
+      "index": 5
+    },
+    {
+      "name": "customer_velocity_10m",
+      "type": "float",
+      "index": 6
+    },
+    {
+      "name": "customer_velocity_1h",
+      "type": "float",
+      "index": 7
+    },
+    {
+      "name": "customer_velocity_24h",
+      "type": "float",
+      "index": 8
+    },
+    {
+      "name": "device_known",
+      "type": "float",
+      "index": 9
+    },
+    {
+      "name": "device_change",
+      "type": "float",
+      "index": 10
+    },
+    {
+      "name": "location_change",
+      "type": "float",
+      "index": 11
+    },
+    {
+      "name": "new_counterparty",
+      "type": "float",
+      "index": 12
+    },
+    {
+      "name": "mule_cluster_link",
+      "type": "float",
+      "index": 13
+    },
+    {
+      "name": "sim_swap_indicator",
+      "type": "float",
+      "index": 14
+    },
+    {
+      "name": "account_takeover_indicator",
+      "type": "float",
+      "index": 15
+    },
+    {
+      "name": "night_transaction",
+      "type": "float",
+      "index": 16
+    },
+    {
+      "name": "high_value_indicator",
+      "type": "float",
+      "index": 17
+    },
+    {
+      "name": "micro_structuring_indicator",
+      "type": "float",
+      "index": 18
+    },
+    {
+      "name": "rapid_drain_indicator",
+      "type": "float",
+      "index": 19
+    }
+  ]
+}

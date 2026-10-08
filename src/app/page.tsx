@@ -22,6 +22,7 @@ import { AppTour } from "@/components/ui/AppTour";
 import { LoginPage, UserProfile } from "@/components/auth/LoginPage";
 import { HelpModal } from "@/components/ui/HelpModal";
 import { GlassAiChatbot } from "@/components/chat/GlassAiChatbot";
+import { SentinelIntro } from "@/components/ui/SentinelIntro";
 
 function SentinelAppShell() {
   const {
@@ -52,12 +53,17 @@ function SentinelAppShell() {
   const [isHelpOpen, setIsHelpOpen] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [hasMounted, setHasMounted] = useState<boolean>(false);
+  const [showIntro, setShowIntro] = useState<boolean>(true);
 
   // Restore session from localStorage on client mount & enforce white-theme
   useEffect(() => {
     setHasMounted(true);
     document.documentElement.classList.remove("dark");
     try {
+      const seen = sessionStorage.getItem("sentinel_intro_seen");
+      if (seen) {
+        setShowIntro(false);
+      }
       const saved = localStorage.getItem("sentinel_user");
       if (saved) {
         setCurrentUser(JSON.parse(saved));
@@ -171,22 +177,44 @@ function SentinelAppShell() {
 
   if (hasMounted && !currentUser) {
     return (
-      <LoginPage
-        onLogin={(profile) => {
-          setCurrentUser(profile);
-          try {
-            localStorage.setItem("sentinel_user", JSON.stringify(profile));
-          } catch {
-            // ignore
-          }
-          showNotification(`Welcome, ${profile.name} — Authenticated via Google SSO`);
-        }}
-      />
+      <>
+        {showIntro && (
+          <SentinelIntro
+            onComplete={() => {
+              try {
+                sessionStorage.setItem("sentinel_intro_seen", "true");
+              } catch {}
+              setShowIntro(false);
+            }}
+          />
+        )}
+        <LoginPage
+          onLogin={(profile) => {
+            setCurrentUser(profile);
+            try {
+              localStorage.setItem("sentinel_user", JSON.stringify(profile));
+            } catch {
+              // ignore
+            }
+            showNotification(`Welcome, ${profile.name} — Authenticated via Google SSO`);
+          }}
+        />
+      </>
     );
   }
 
   return (
     <div className="app flex min-h-screen bg-[var(--bg)]">
+      {showIntro && (
+        <SentinelIntro
+          onComplete={() => {
+            try {
+              sessionStorage.setItem("sentinel_intro_seen", "true");
+            } catch {}
+            setShowIntro(false);
+          }}
+        />
+      )}
       {/* Persistent Left Sidebar */}
       <Sidebar
         currentPage={currentPage}

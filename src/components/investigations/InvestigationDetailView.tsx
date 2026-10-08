@@ -128,23 +128,23 @@ export const InvestigationDetailView: React.FC<InvestigationDetailViewProps> = (
 
       {/* KPI Exposure Grid */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="card-base p-3.5 border border-slate-200 bg-white">
+        <div className="card-base hover-lift p-3.5 border border-slate-200 bg-white">
           <span className="text-[11px] text-slate-500 block">{t("colCustomer")}</span>
           <b className="font-mono text-sm text-blue-600 block mt-1">{customer}</b>
         </div>
-        <div className="card-base p-3.5 border border-slate-200 bg-white">
+        <div className="card-base hover-lift p-3.5 border border-slate-200 bg-white">
           <span className="text-[11px] text-slate-500 block">{t("colRiskScore")}</span>
           <b className="font-mono text-sm text-rose-600 block mt-1">{riskScore} / 100</b>
         </div>
-        <div className="card-base p-3.5 border border-slate-200 bg-white">
+        <div className="card-base hover-lift p-3.5 border border-slate-200 bg-white">
           <span className="text-[11px] text-slate-500 block">{isBn ? "মোট লেনদেন" : "Transactions"}</span>
           <b className="font-mono text-sm text-slate-800 block mt-1">{activeCase.transactionsCount} Txns</b>
         </div>
-        <div className="card-base p-3.5 border border-slate-200 bg-white">
+        <div className="card-base hover-lift p-3.5 border border-slate-200 bg-white">
           <span className="text-[11px] text-slate-500 block">{isBn ? "সিন্ডিকেট সংযোগ" : "Syndicate Ties"}</span>
           <b className="font-mono text-sm text-slate-800 block mt-1">{activeCase.networkConnections} Nodes</b>
         </div>
-        <div className="card-base p-3.5 border border-slate-200 bg-white">
+        <div className="card-base hover-lift p-3.5 border border-slate-200 bg-white">
           <span className="text-[11px] text-slate-500 block">{isBn ? "ঝুঁকিপূর্ণ আর্থিক এক্সপোজার" : "Capital Exposure"}</span>
           <b className="font-mono text-sm text-rose-600 block mt-1">৳{exposure.toLocaleString()}</b>
         </div>
@@ -354,7 +354,7 @@ export const InvestigationDetailView: React.FC<InvestigationDetailViewProps> = (
       </div>
 
       {/* Persistent Bottom Action Bar with Human Oversight Safeguards */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/98 border-t border-slate-200 px-5 py-2.5 flex flex-wrap items-center justify-between gap-2">
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-5 py-2.5 flex flex-wrap items-center justify-between gap-2 shadow-drawer">
         <div className="flex items-center gap-2 text-xs text-slate-600">
           <ShieldAlert size={15} className="text-amber-600 shrink-0" />
           <span>
@@ -370,27 +370,27 @@ export const InvestigationDetailView: React.FC<InvestigationDetailViewProps> = (
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleAction("MARK_SAFE", isBn ? "ভুয়া সতর্কবার্তা হিসেবে চিহ্নিত" : "Marked false positive")}
-            className="btn btn-secondary text-xs"
+            className="btn btn-action-safe text-xs"
           >
             {isBn ? "ভুয়া সতর্কতা" : "False Positive"}
           </button>
           <button
             onClick={() => handleAction("STEP_UP", isBn ? "গ্রাহককে বায়োমেট্রিক ২এফএ পাঠানো হয়েছে" : "Biometric 2FA requested")}
-            className="btn btn-secondary text-xs flex items-center gap-1"
+            className="btn btn-action-stepup text-xs flex items-center gap-1"
           >
             <KeyRound size={12} />
             <span>{t("actionStepUp")}</span>
           </button>
           <button
             onClick={() => handleAction("HOLD", isBn ? "লেনদেন সফলভাবে স্থগিত রাখা হয়েছে" : "Settlement hold executed")}
-            className="btn btn-danger text-xs flex items-center gap-1"
+            className="btn btn-action-hold text-xs flex items-center gap-1"
           >
             <PauseCircle size={13} />
             <span>{t("actionHold")}</span>
           </button>
           <button
             onClick={() => handleAction("RELEASE", isBn ? "কেস নিষ্পন্ন ও তহবিল অবমুক্ত" : "Case closed")}
-            className="btn btn-primary text-xs flex items-center gap-1"
+            className="btn btn-action-release text-xs flex items-center gap-1"
           >
             <CheckCircle2 size={13} />
             <span>{isBn ? "কেস নিষ্পত্তি" : "Close Case"}</span>

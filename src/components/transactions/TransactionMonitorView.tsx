@@ -222,7 +222,7 @@ export const TransactionMonitorView: React.FC<TransactionMonitorViewProps> = ({
                 <tr
                   key={txn.id}
                   onClick={() => onSelectTransaction(txn)}
-                  className="hover:bg-slate-50 cursor-pointer transition-colors"
+                  className="hover:bg-blue-50/40 cursor-pointer transition-colors duration-150 group"
                 >
                   <td className="py-2.5 px-3 font-mono font-bold text-slate-900">
                     {txn.id}
@@ -269,8 +269,10 @@ export const TransactionMonitorView: React.FC<TransactionMonitorViewProps> = ({
                       {txn.status}
                     </span>
                   </td>
-                  <td className="py-2.5 px-3 text-right text-blue-600 font-semibold hover:underline">
-                    {isBn ? "বিবরণ →" : "Inspect →"}
+                  <td className="py-2.5 px-3 text-right text-blue-600 font-semibold">
+                    <span className="inline-flex items-center gap-0.5 group-hover:translate-x-0.5 group-hover:text-blue-700 transition-all">
+                      {isBn ? "বিবরণ →" : "Inspect →"}
+                    </span>
                   </td>
                 </tr>
               ))}

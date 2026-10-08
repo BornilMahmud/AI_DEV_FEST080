@@ -213,6 +213,7 @@ export const BangladeshMuleGraph: React.FC<BangladeshMuleGraphProps> = ({
                       fill="#FFFFFF"
                       stroke="#CBD5E1"
                       strokeWidth="1"
+                      className="transition-all"
                     />
                     <text
                       x="0"
@@ -243,17 +244,18 @@ export const BangladeshMuleGraph: React.FC<BangladeshMuleGraphProps> = ({
                 <g
                   key={node.id}
                   transform={`translate(${node.x}, ${node.y})`}
-                  className="cursor-pointer"
+                  className="cursor-pointer group"
                   onClick={() => setSelectedNodeId(node.id)}
                 >
                   {/* Selected ring */}
                   {isSelected && (
                     <circle
-                      r="28"
+                      r="29"
                       fill="none"
                       stroke={color}
                       strokeWidth="2"
                       strokeDasharray="4 2"
+                      className="opacity-80"
                     />
                   )}
 
@@ -263,6 +265,8 @@ export const BangladeshMuleGraph: React.FC<BangladeshMuleGraphProps> = ({
                     fill="#FFFFFF"
                     stroke={color}
                     strokeWidth="3"
+                    className="transition-transform duration-150 group-hover:scale-105"
+                    style={{ transformOrigin: "0 0" }}
                   />
 
                   {/* Icon label representation */}
