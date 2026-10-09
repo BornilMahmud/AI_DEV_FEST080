@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { BangladeshTransactionMap } from "./BangladeshTransactionMap";
 import { BangladeshMuleGraph } from "./BangladeshMuleGraph";
+import { SpotlightCard } from "@/components/ui/SpotlightCard";
 import { fetchMoneyTrail, MoneyTrailStep } from "@/lib/backend-api";
 
 interface FraudNetworkViewProps {
@@ -33,6 +34,7 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
 }) => {
   const { language, t } = useSentinel();
   const [viewMode, setViewMode] = useState<"trail" | "map">("trail");
+  const [selectedStage, setSelectedStage] = useState<number | null>(null);
   const [trailModalOpen, setTrailModalOpen] = useState<boolean>(false);
   const [trailSteps, setTrailSteps] = useState<MoneyTrailStep[]>([]);
   const isBn = language === "bn";
@@ -110,7 +112,20 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
       {/* 4-Stage MFS Money Trail Pipeline Grid with Arrows */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 my-2">
         {/* Stage 1: Victim Wallets */}
-        <div className="relative bg-white border border-rose-200 rounded-xl p-3.5 shadow-none flex flex-col justify-between hover:border-rose-400 transition-all">
+        <SpotlightCard
+          color="purple"
+          glowSize="medium"
+          lightsEdges={true}
+          lag="short"
+          onClick={() => setSelectedStage(selectedStage === 1 ? null : 1)}
+          className={`relative bg-white border border-rose-200 rounded-xl p-3.5 shadow-none flex flex-col justify-between hover:border-rose-400 transition-all cursor-pointer ${
+            selectedStage === 1
+              ? "ring-2 ring-rose-500/40 border-rose-400 shadow-card"
+              : selectedStage !== null
+              ? "opacity-75"
+              : ""
+          }`}
+        >
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-mono font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200 uppercase tracking-wider">
@@ -134,13 +149,26 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
             <b className="text-rose-600 font-extrabold">৳48,500</b>
           </div>
           {/* Connecting Arrow for Desktop */}
-          <div className="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white border border-slate-300 text-slate-500 items-center justify-center shadow-sm">
+          <div className="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white border border-slate-300 text-slate-500 items-center justify-center shadow-sm pointer-events-none">
             <ArrowRight size={13} className="text-blue-600" />
           </div>
-        </div>
+        </SpotlightCard>
 
         {/* Stage 2: Intermediary Mule Conduits */}
-        <div className="relative bg-white border border-indigo-200 rounded-xl p-3.5 shadow-none flex flex-col justify-between hover:border-indigo-400 transition-all">
+        <SpotlightCard
+          color="purple"
+          glowSize="medium"
+          lightsEdges={true}
+          lag="short"
+          onClick={() => setSelectedStage(selectedStage === 2 ? null : 2)}
+          className={`relative bg-white border border-indigo-200 rounded-xl p-3.5 shadow-none flex flex-col justify-between hover:border-indigo-400 transition-all cursor-pointer ${
+            selectedStage === 2
+              ? "ring-2 ring-indigo-500/40 border-indigo-400 shadow-card"
+              : selectedStage !== null
+              ? "opacity-75"
+              : ""
+          }`}
+        >
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 uppercase tracking-wider">
@@ -163,13 +191,26 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
             <span className="text-slate-400">{isBn ? "হপ গতি:" : "Hop Speed:"}</span>
             <b className="text-indigo-600 font-extrabold">4-6 hops &lt; 90s</b>
           </div>
-          <div className="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white border border-slate-300 text-slate-500 items-center justify-center shadow-sm">
+          <div className="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white border border-slate-300 text-slate-500 items-center justify-center shadow-sm pointer-events-none">
             <ArrowRight size={13} className="text-blue-600" />
           </div>
-        </div>
+        </SpotlightCard>
 
         {/* Stage 3: Rogue Agent Points */}
-        <div className="relative bg-white border border-amber-200 rounded-xl p-3.5 shadow-none flex flex-col justify-between hover:border-amber-400 transition-all">
+        <SpotlightCard
+          color="purple"
+          glowSize="medium"
+          lightsEdges={true}
+          lag="short"
+          onClick={() => setSelectedStage(selectedStage === 3 ? null : 3)}
+          className={`relative bg-white border border-amber-200 rounded-xl p-3.5 shadow-none flex flex-col justify-between hover:border-amber-400 transition-all cursor-pointer ${
+            selectedStage === 3
+              ? "ring-2 ring-amber-500/40 border-amber-400 shadow-card"
+              : selectedStage !== null
+              ? "opacity-75"
+              : ""
+          }`}
+        >
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 uppercase tracking-wider">
@@ -192,13 +233,26 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
             <span className="text-slate-400">{isBn ? "ক্যাশ ড্রেইন:" : "Extraction:"}</span>
             <b className="text-amber-700 font-extrabold">88% Night OTC</b>
           </div>
-          <div className="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white border border-slate-300 text-slate-500 items-center justify-center shadow-sm">
+          <div className="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white border border-slate-300 text-slate-500 items-center justify-center shadow-sm pointer-events-none">
             <ArrowRight size={13} className="text-blue-600" />
           </div>
-        </div>
+        </SpotlightCard>
 
         {/* Stage 4: Underground Liquidation */}
-        <div className="relative bg-white border border-purple-200 rounded-xl p-3.5 shadow-none flex flex-col justify-between hover:border-purple-400 transition-all">
+        <SpotlightCard
+          color="purple"
+          glowSize="medium"
+          lightsEdges={true}
+          lag="short"
+          onClick={() => setSelectedStage(selectedStage === 4 ? null : 4)}
+          className={`relative bg-white border border-purple-200 rounded-xl p-3.5 shadow-none flex flex-col justify-between hover:border-purple-400 transition-all cursor-pointer ${
+            selectedStage === 4
+              ? "ring-2 ring-purple-500/40 border-purple-400 shadow-card"
+              : selectedStage !== null
+              ? "opacity-75"
+              : ""
+          }`}
+        >
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-mono font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200 uppercase tracking-wider">
@@ -221,7 +275,7 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
             <span className="text-slate-400">{isBn ? "রিকভারি ঝুঁকি:" : "Recovery:"}</span>
             <b className="text-purple-700 font-extrabold">Black-box Siphon</b>
           </div>
-        </div>
+        </SpotlightCard>
       </div>
 
       {/* Main View Area */}

@@ -10,6 +10,10 @@ export type NavigationPage =
   | "customers"
   | "alerts"
   | "analytics"
+  | "customer-portal"
+  | "models"
+  | "datasets"
+  | "system-health"
   | "security"
   | "audit";
 

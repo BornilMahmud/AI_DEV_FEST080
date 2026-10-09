@@ -8,15 +8,19 @@
     "start": "tsx server/index.ts",
     "dev": "tsx watch server/index.ts",
     "test": "tsx test/backend-api.test.ts",
+    "test:ecosystem": "tsx test/mfs-customer-ecosystem.test.ts",
+    "test:all": "tsx test/backend-api.test.ts && tsx test/mfs-customer-ecosystem.test.ts",
     "seed": "node scripts/seed.js",
     "seed:behavior": "node scripts/seed-behavior.js",
-    "migrate": "node scripts/migrate.js"
+    "migrate": "node scripts/migrate.js",
+    "migrate:ecosystem": "node scripts/migrate-mfs-ecosystem.js"
   },
   "dependencies": {
     "@google/genai": "^2.27.0",
     "@google/generative-ai": "^0.24.0",
     "@supabase/supabase-js": "^2.49.1",
     "cors": "^2.8.6",
+    "dotenv": "^18.0.6",
     "express": "^5.2.1",
     "jose": "^6.2.12",
     "pg": "^8.23.1",

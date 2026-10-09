@@ -1,7 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { ClientIpDetails } from "./ip-detection.js";
 
-export type SystemRole = "ADMIN" | "ANALYST" | "INVESTIGATOR" | "VIEWER";
+export type SystemRole = "ADMIN" | "ANALYST" | "INVESTIGATOR" | "VIEWER" | "CUSTOMER";
 export type SecurityRiskLevel = "NORMAL" | "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
 export interface UserProfileRecord {
@@ -39,10 +39,6 @@ export class SecurityService {
 
   constructor(private supabase: SupabaseClient) {}
 
-  getInMemoryIpHistory(idOrUid: string): any[] {
-    return this.inMemoryIpHistory.get(idOrUid) || [];
-  }
-
   /**
    * Resolves or creates user profile in Supabase.
    * Authoritative: The role is ALWAYS resolved from the database, never from client input.
@@ -54,8 +50,9 @@ export class SecurityService {
     avatarUrl: string | null;
     observedIp: string;
     userAgent: string;
+    role?: SystemRole;
   }): Promise<UserProfileRecord> {
-    const { firebaseUid, email, displayName, avatarUrl, observedIp, userAgent } = params;
+    const { firebaseUid, email, displayName, avatarUrl, observedIp, userAgent, role } = params;
 
     // 1. Look up existing profile by firebase_uid
     const { data: existing, error: fetchErr } = await this.supabase
@@ -82,10 +79,9 @@ export class SecurityService {
         .select()
         .single();
 
-      if (!updateErr && updated) {
-        return updated as UserProfileRecord;
-      }
-      return existing as UserProfileRecord;
+      const resolved = (!updateErr && updated) ? (updated as UserProfileRecord) : (existing as UserProfileRecord);
+      await this.getOrCreateWallet(resolved.id, resolved.email);
+      return resolved;
     }
 
     // 2. Also check if a profile exists by email (e.g. pre-seeded demo user)
@@ -112,21 +108,20 @@ export class SecurityService {
         .select()
         .single();
 
-      if (!linkErr && linked) {
-        return linked as UserProfileRecord;
-      }
-      return emailMatch as UserProfileRecord;
+      const resolved = (!linkErr && linked) ? (linked as UserProfileRecord) : (emailMatch as UserProfileRecord);
+      await this.getOrCreateWallet(resolved.id, resolved.email);
+      return resolved;
     }
 
     // 3. First time login - assign default role safely
-    let assignedRole: SystemRole = "ANALYST";
+    let assignedRole: SystemRole = role || "CUSTOMER";
     let isDemo = false;
 
     if (email.includes("judge") || email.includes("admin")) {
       assignedRole = "ADMIN";
       isDemo = true;
-    } else if (email.includes("investigator") || email.includes("siam")) {
-      assignedRole = "INVESTIGATOR";
+    } else if (email.includes("investigator") || email.includes("siam") || email.includes("arman")) {
+      assignedRole = "ANALYST";
     } else if (email.includes("viewer") || email.includes("observer")) {
       assignedRole = "VIEWER";
     }
@@ -160,11 +155,13 @@ export class SecurityService {
       } as UserProfileRecord;
       this.inMemoryProfiles.set(fallbackObj.id, fallbackObj);
       this.inMemoryProfiles.set(firebaseUid, fallbackObj);
+      await this.getOrCreateWallet(fallbackObj.id, fallbackObj.email);
       return fallbackObj;
     }
 
     this.inMemoryProfiles.set(created.id, created as UserProfileRecord);
     this.inMemoryProfiles.set(firebaseUid, created as UserProfileRecord);
+    await this.getOrCreateWallet(created.id, (created as UserProfileRecord).email);
     return created as UserProfileRecord;
   }
 
@@ -198,6 +195,15 @@ export class SecurityService {
       .insert([payload])
       .select("id")
       .single();
+
+    // Also record normalized user device
+    this.recordUserDevice({
+      userId: userId.startsWith("local-") ? null : userId,
+      firebaseUid,
+      ipAddress: ipDetails.ipAddress,
+      userAgent,
+      deviceFingerprint,
+    }).catch(() => {});
 
     if (error) {
       console.warn("[SecurityService] Non-blocking login_sessions insert note:", error.message);
@@ -567,6 +573,20 @@ export class SecurityService {
     return auditId;
   }
 
+  async recordAuditEvent(params: {
+    actor: string;
+    actorRole: string;
+    action: string;
+    entity: string;
+    entityId?: string;
+    reason: string;
+    requestId?: string;
+    previousState?: any;
+    newState?: any;
+  }): Promise<string> {
+    return this.logAuditEvent(params);
+  }
+
   /**
    * Retrieves in-memory IP history for tests/fallbacks.
    */
@@ -660,5 +680,184 @@ export class SecurityService {
       securityRisk: currentIpRecord?.risk_level || "NORMAL",
       recentSecurityEvents: events || [],
     };
+  }
+
+  /**
+   * Wallet Management for Upay MFS Customer Portal.
+   */
+  async getOrCreateWallet(userId: string, customerRef?: string): Promise<any> {
+    if (!userId || userId.startsWith("local-")) {
+      return {
+        id: `mock-wallet-${userId}`,
+        user_id: userId,
+        balance: 45250.00,
+        currency: "BDT",
+        status: "ACTIVE",
+        daily_limit: 100000.00,
+        monthly_limit: 500000.00,
+      };
+    }
+
+    try {
+      const { data: existing } = await this.supabase
+        .from("wallets")
+        .select("*")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (existing) {
+        return existing;
+      }
+
+      const newWallet = {
+        user_id: userId,
+        customer_id: customerRef || `CUST-${userId.substring(0, 8)}`,
+        balance: 45250.00,
+        currency: "BDT",
+        status: "ACTIVE",
+        daily_limit: 100000.00,
+        monthly_limit: 500000.00,
+      };
+
+      const { data: created, error } = await this.supabase
+        .from("wallets")
+        .insert([newWallet])
+        .select()
+        .single();
+
+      if (error) {
+        return newWallet;
+      }
+      return created;
+    } catch {
+      return {
+        id: `wallet-${userId}`,
+        user_id: userId,
+        balance: 45250.00,
+        currency: "BDT",
+        status: "ACTIVE",
+        daily_limit: 100000.00,
+        monthly_limit: 500000.00,
+      };
+    }
+  }
+
+  async getWallet(userId: string): Promise<any> {
+    return this.getOrCreateWallet(userId);
+  }
+
+  async updateWalletBalance(userId: string, delta: number): Promise<{ success: boolean; newBalance: number }> {
+    const wallet = await this.getOrCreateWallet(userId);
+    const newBal = Number(wallet.balance) + delta;
+    if (newBal < 0) {
+      return { success: false, newBalance: Number(wallet.balance) };
+    }
+
+    if (!userId.startsWith("local-")) {
+      await this.supabase
+        .from("wallets")
+        .update({ balance: newBal, updated_at: new Date().toISOString() })
+        .eq("user_id", userId);
+    }
+    return { success: true, newBalance: newBal };
+  }
+
+  /**
+   * Device Intelligence & Recording.
+   */
+  async recordUserDevice(params: {
+    userId: string | null;
+    firebaseUid: string;
+    ipAddress: string;
+    userAgent: string;
+    deviceFingerprint?: string;
+  }): Promise<void> {
+    const { userId, firebaseUid, ipAddress, userAgent, deviceFingerprint } = params;
+    const devId = deviceFingerprint || `DEV-${Buffer.from(userAgent.slice(0, 40)).toString("base64").slice(0, 12)}`;
+    
+    let browser = "Chrome";
+    if (userAgent.includes("Firefox")) browser = "Firefox";
+    else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) browser = "Safari";
+    else if (userAgent.includes("Edge")) browser = "Edge";
+
+    let os = "Windows";
+    if (userAgent.includes("Mac")) os = "macOS";
+    else if (userAgent.includes("Linux")) os = "Linux";
+    else if (userAgent.includes("Android")) os = "Android";
+    else if (userAgent.includes("iPhone") || userAgent.includes("iPad")) os = "iOS";
+
+    const devClass = (userAgent.includes("Mobile") || userAgent.includes("Android") || userAgent.includes("iPhone")) ? "Mobile" : "Desktop";
+
+    try {
+      const { data: existing } = await this.supabase
+        .from("user_devices")
+        .select("*")
+        .eq("firebase_uid", firebaseUid)
+        .eq("device_id", devId)
+        .maybeSingle();
+
+      if (existing) {
+        await this.supabase
+          .from("user_devices")
+          .update({
+            last_seen_at: new Date().toISOString(),
+            ip_address: ipAddress,
+            session_count: (existing.session_count || 1) + 1,
+          })
+          .eq("id", existing.id);
+      } else {
+        await this.supabase
+          .from("user_devices")
+          .insert([{
+            user_id: userId,
+            firebase_uid: firebaseUid,
+            device_id: devId,
+            browser,
+            operating_system: os,
+            device_class: devClass,
+            user_agent: userAgent,
+            ip_address: ipAddress,
+            first_seen_at: new Date().toISOString(),
+            last_seen_at: new Date().toISOString(),
+            is_trusted: true,
+            status: "ACTIVE",
+            session_count: 1,
+          }]);
+      }
+    } catch (err: any) {
+      console.warn("[SecurityService] Device recording note:", err.message);
+    }
+  }
+
+  async getUserDevices(userIdOrUid: string): Promise<any[]> {
+    try {
+      const { data } = await this.supabase
+        .from("user_devices")
+        .select("*")
+        .or(`user_id.eq.${userIdOrUid},firebase_uid.eq.${userIdOrUid}`)
+        .order("last_seen_at", { ascending: false });
+      return data || [];
+    } catch {
+      return [];
+    }
+  }
+
+  async revokeOtherSessions(userId: string, currentSessionId?: string): Promise<number> {
+    try {
+      let query = this.supabase
+        .from("login_sessions")
+        .update({ session_status: "REVOKED" })
+        .eq("user_id", userId)
+        .eq("session_status", "ACTIVE");
+      
+      if (currentSessionId) {
+        query = query.neq("id", currentSessionId);
+      }
+
+      const { data } = await query.select("id");
+      return data?.length || 0;
+    } catch {
+      return 0;
+    }
   }
 }

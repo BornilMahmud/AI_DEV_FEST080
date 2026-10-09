@@ -24,6 +24,7 @@ import {
   Cpu,
 } from "lucide-react";
 import { useSentinel } from "@/context/SentinelContext";
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import {
   fetchTransactionAudit,
   postAnalystDecision,
@@ -183,7 +184,9 @@ export const TransactionDrawer: React.FC<TransactionDrawerProps> = ({
                     {isBn ? "গণনাকৃত ঝুঁকি স্কোর (হাইব্রিড ফিউশন)" : "Fused Risk Score (Rule + Python ML)"}
                   </span>
                   <div className="flex items-baseline gap-1 mt-0.5 font-mono">
-                    <span
+                    <AnimatedNumber
+                      value={transaction.riskScore}
+                      durationMs={350}
                       className={`text-2xl font-extrabold ${
                         transaction.riskLevel === "Critical"
                           ? "text-rose-700"
@@ -191,9 +194,7 @@ export const TransactionDrawer: React.FC<TransactionDrawerProps> = ({
                           ? "text-amber-700"
                           : "text-emerald-700"
                       }`}
-                    >
-                      {transaction.riskScore}
-                    </span>
+                    />
                     <span className="text-xs text-slate-500 font-semibold">/ 100</span>
                   </div>
                 </div>

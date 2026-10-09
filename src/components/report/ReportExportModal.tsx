@@ -4,12 +4,18 @@ import React, { useState } from "react";
 import {
   FileText,
   X,
-  Download,
   Copy,
   Printer,
   Check,
   ShieldCheck,
   Building,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  QrCode,
+  Award,
+  Layers,
+  Code2,
 } from "lucide-react";
 import { useSentinel } from "@/context/SentinelContext";
 
@@ -26,11 +32,12 @@ export const ReportExportModal: React.FC<ReportExportModalProps> = ({
 }) => {
   const { language, t } = useSentinel();
   const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState<"dossier" | "text">("dossier");
   const isBn = language === "bn";
 
   if (!isOpen) return null;
 
-  const reportDate = new Date().toLocaleDateString("en-GB", {
+  const reportDate = new Date().toLocaleDateString(isBn ? "bn-BD" : "en-GB", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -138,82 +145,699 @@ END OF DOSSIER — OFFICIAL MFS REGULATORY SUBMISSION
 
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
-    if (printWindow) {
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>upay Sentinel BFIU STR Report</title>
-            <style>
-              body { font-family: monospace; font-size: 12px; line-height: 1.4; padding: 20px; white-space: pre-wrap; }
-            </style>
-          </head>
-          <body>${activeText}</body>
-        </html>
-      `);
-      printWindow.document.close();
+    if (!printWindow) return;
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="${isBn ? "bn" : "en"}">
+        <head>
+          <meta charset="utf-8" />
+          <title>BFIU STR Dossier - STR-2026-INV1042</title>
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+          <style>
+            @page {
+              size: A4 portrait;
+              margin: 14mm 15mm 14mm 15mm;
+            }
+            * {
+              box-sizing: border-box;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            body {
+              font-family: 'Hind Siliguri', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+              color: #0f172a;
+              background: #ffffff;
+              margin: 0;
+              padding: 0;
+              font-size: 11pt;
+              line-height: 1.5;
+            }
+            .header-bar {
+              border-bottom: 2px solid #0f172a;
+              padding-bottom: 12px;
+              margin-bottom: 16px;
+              text-align: center;
+              position: relative;
+            }
+            .gov-sub {
+              font-size: 9pt;
+              font-weight: 600;
+              letter-spacing: 1px;
+              color: #475569;
+              text-transform: uppercase;
+              margin-bottom: 2px;
+            }
+            .gov-title {
+              font-size: 15pt;
+              font-weight: 700;
+              color: #0f172a;
+              margin: 0 0 3px 0;
+            }
+            .gov-dept {
+              font-size: 11pt;
+              font-weight: 600;
+              color: #0369a1;
+              margin: 0 0 2px 0;
+            }
+            .gov-law {
+              font-size: 8.5pt;
+              color: #64748b;
+            }
+            .badge-row {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              background: #f8fafc;
+              border: 1px solid #cbd5e1;
+              border-radius: 6px;
+              padding: 8px 12px;
+              margin-bottom: 18px;
+              font-size: 9.5pt;
+            }
+            .badge-confidential {
+              background: #fef2f2;
+              border: 1px solid #fecaca;
+              color: #991b1b;
+              font-weight: 700;
+              padding: 2px 8px;
+              border-radius: 4px;
+              font-size: 8.5pt;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+            .section-title {
+              font-size: 11pt;
+              font-weight: 700;
+              color: #0f172a;
+              border-bottom: 1px solid #cbd5e1;
+              padding-bottom: 4px;
+              margin: 18px 0 10px 0;
+              display: flex;
+              align-items: center;
+              gap: 6px;
+            }
+            table.meta-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 16px;
+              font-size: 9.5pt;
+            }
+            table.meta-table td {
+              padding: 7px 10px;
+              border: 1px solid #e2e8f0;
+              vertical-align: top;
+            }
+            table.meta-table td.label {
+              width: 25%;
+              background: #f8fafc;
+              font-weight: 600;
+              color: #334155;
+            }
+            table.meta-table td.value {
+              width: 25%;
+              color: #0f172a;
+            }
+            table.timeline-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 16px;
+              font-size: 9pt;
+            }
+            table.timeline-table th {
+              background: #f1f5f9;
+              color: #1e293b;
+              padding: 6px 10px;
+              border: 1px solid #cbd5e1;
+              text-align: left;
+              font-weight: 700;
+            }
+            table.timeline-table td {
+              padding: 6px 10px;
+              border: 1px solid #e2e8f0;
+              vertical-align: top;
+            }
+            .vector-grid {
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 8px;
+              margin-bottom: 16px;
+            }
+            .vector-card {
+              border: 1px solid #e2e8f0;
+              background: #f8fafc;
+              border-radius: 6px;
+              padding: 8px 10px;
+              font-size: 8.5pt;
+            }
+            .vector-header {
+              display: flex;
+              justify-content: space-between;
+              font-weight: 700;
+              color: #0f172a;
+              margin-bottom: 3px;
+            }
+            .vector-tag {
+              color: #b91c1c;
+              background: #fee2e2;
+              padding: 1px 6px;
+              border-radius: 3px;
+              font-size: 8pt;
+              font-weight: 700;
+            }
+            .directive-list {
+              margin: 0;
+              padding-left: 20px;
+              font-size: 9.5pt;
+              line-height: 1.6;
+              color: #1e293b;
+            }
+            .directive-list li {
+              margin-bottom: 5px;
+            }
+            .sign-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 30px;
+              margin-top: 26px;
+              padding-top: 16px;
+              page-break-inside: avoid;
+            }
+            .sign-box {
+              border-top: 1.5px solid #0f172a;
+              padding-top: 6px;
+              font-size: 9pt;
+              color: #334155;
+            }
+            .sign-name {
+              font-weight: 700;
+              color: #0f172a;
+              font-size: 10pt;
+            }
+            .footer-legal {
+              margin-top: 22px;
+              padding-top: 8px;
+              border-top: 1px dashed #cbd5e1;
+              font-size: 8pt;
+              color: #64748b;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              font-family: monospace;
+            }
+            @media print {
+              body { background: white; }
+              .no-print { display: none !important; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header-bar">
+            <div class="gov-sub">${isBn ? "গণপ্রজাতন্ত্রী বাংলাদেশ সরকার · বাংলাদেশ ব্যাংক" : "PEOPLE'S REPUBLIC OF BANGLADESH · BANGLADESH BANK"}</div>
+            <h1 class="gov-title">${isBn ? "বাংলাদেশ ফাইন্যান্সিয়াল ইন্টেলিজেন্স ইউনিট (BFIU)" : "BANGLADESH FINANCIAL INTELLIGENCE UNIT (BFIU)"}</h1>
+            <div class="gov-dept">${isBn ? "সন্দেহজনক লেনদেন ডসিয়ার (STR / SAR FORM)" : "SUSPICIOUS TRANSACTION REPORT DOSSIER (STR / SAR)"}</div>
+            <div class="gov-law">${isBn ? "মানি লন্ডারিং প্রতিরোধ আইন, ২০১২ (ধারা ২৫) এবং বিএফআইইউ সার্কুলার নং ২৫/২০২৩ অনুযায়ী দাখিলকৃত" : "Statutory Filing pursuant to Money Laundering Prevention Act, 2012 (Sec 25) & BFIU Circular 25/2023"}</div>
+          </div>
+
+          <div class="badge-row">
+            <div><strong>${isBn ? "কেস নং:" : "Case Ref:"}</strong> STR-2026-INV1042</div>
+            <div><strong>${isBn ? "প্রতিষ্ঠান:" : "Reporting Entity:"}</strong> upay (UCB Fintech Co. Ltd)</div>
+            <div class="badge-confidential">${isBn ? "অতীব গোপনীয় ও বিশেষাধিকার প্রাপ্ত" : "CONFIDENTIAL & PRIVILEGED"}</div>
+            <div><strong>${isBn ? "তারিখ:" : "Filing Date:"}</strong> ${reportDate} · 02:18 AM</div>
+          </div>
+
+          <div class="section-title">
+            <span>${isBn ? "১. ডসিয়ার কেস সারসংক্ষেপ (Case Intelligence Summary)" : "1. CASE INTELLIGENCE SUMMARY"}</span>
+          </div>
+
+          <table class="meta-table">
+            <tr>
+              <td class="label">${isBn ? "প্রধান অভিযুক্ত (Suspect)" : "Primary Suspect"}</td>
+              <td class="value"><strong>01712-894102</strong><br/>${isBn ? "তানভীর আহমেদ (গ্রাহক ওয়ালেট)" : "Tanvir Ahmed (Customer Wallet)"}</td>
+              <td class="label">${isBn ? "প্রাপক কন্ডুইট (Beneficiary)" : "Beneficiary Conduit"}</td>
+              <td class="value"><strong>01833-883100</strong><br/>${isBn ? "মিউল চক্র ১৭-এর হাব" : "Mule Syndicate Cluster #17 Hub"}</td>
+            </tr>
+            <tr>
+              <td class="label">${isBn ? "অপরাধের ধরন (Classification)" : "Threat Classification"}</td>
+              <td class="value">${isBn ? "মানি মিউল সিন্ডিকেট চক্র ও একাউন্ট দখল (ATO)" : "Coordinated Mule Syndicate & ATO"}</td>
+              <td class="label">${isBn ? "ঝুঁকি স্কোর ও আস্থা (AI Score)" : "Risk Score & Confidence"}</td>
+              <td class="value"><strong>94 / 100 [CRITICAL RISK]</strong><br/>${isBn ? "মডেল কনফিডেন্স: ৯৬.৪%" : "Model Confidence: 96.4%"}</td>
+            </tr>
+            <tr>
+              <td class="label">${isBn ? "সন্দেহভাজন অর্থ (Disputed Volume)" : "Disputed Volume"}</td>
+              <td class="value"><strong>৳48,500 BDT</strong></td>
+              <td class="label">${isBn ? "সিন্ডিকেট মোট এক্সপোজার" : "Cumulative Exposure"}</td>
+              <td class="value"><strong>৳2,840,000 BDT</strong> (17 Wallets)</td>
+            </tr>
+          </table>
+
+          <div class="section-title">
+            <span>${isBn ? "২. ঘটনার ধারাবাহিক বিবরণ ও অডিট ট্রেইল (Incident Sequence & Audit Trail)" : "2. INCIDENT SEQUENCE & AUDIT TRAIL"}</span>
+          </div>
+
+          <table class="timeline-table">
+            <thead>
+              <tr>
+                <th style="width: 18%;">${isBn ? "সময়" : "Time (UTC+6)"}</th>
+                <th style="width: 48%;">${isBn ? "ঘটনা ও বিবরণ" : "Event & Description"}</th>
+                <th style="width: 20%;">${isBn ? "চ্যানেল / গেটওয়ে" : "Channel / Gateway"}</th>
+                <th style="width: 14%;">${isBn ? "পর্যায়" : "Risk State"}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>02:01 AM</strong></td>
+                <td>${isBn ? "অপরিচিত ডিভাইস DEV-8821 (Samsung S23) দিয়ে ওয়ালেটে প্রথমবার প্রবেশ।" : "Unrecognized device DEV-8821 (Samsung S23) authenticated into wallet."}</td>
+                <td>Mirpur-10 Cellular Node</td>
+                <td><span style="color: #d97706; font-weight: 600;">Anomaly</span></td>
+              </tr>
+              <tr>
+                <td><strong>02:05 AM</strong></td>
+                <td>${isBn ? "ক্রেডেনশিয়াল পরীক্ষার উদ্দেশ্যে ৳১,৫০০ টাকার ছোট টেস্ট লেনদেন সম্পন্ন।" : "Small probing transfer of ৳1,500 executed to verify credentials."}</td>
+                <td>MFS P2P Gateway</td>
+                <td><span style="color: #0284c7; font-weight: 600;">Probing</span></td>
+              </tr>
+              <tr>
+                <td><strong>02:08 AM</strong></td>
+                <td>${isBn ? "১৮০ সেকেন্ডের মধ্যে ৩টি দ্রুতগতির লেনদেন সম্পন্ন (মাইক্রো-স্ট্রাকচারিং)।" : "Velocity burst: 3 rapid transfers executed within 180 seconds."}</td>
+                <td>High-Velocity Core</td>
+                <td><span style="color: #dc2626; font-weight: 600;">Burst Alert</span></td>
+              </tr>
+              <tr>
+                <td><strong>02:13 AM</strong></td>
+                <td>${isBn ? "মূল ৳৪৮,৫০০ টাকার বড় স্থানান্তর প্রাপক ০১৮৩৩-৮৮৩১০০-এর উদ্দেশ্যে পাঠানো হয়।" : "Primary critical transfer of ৳48,500 initiated targeting recipient 01833-883100."}</td>
+                <td>MFS Core Settlement</td>
+                <td><span style="color: #b91c1c; font-weight: 700;">Critical Flag</span></td>
+              </tr>
+              <tr>
+                <td><strong>02:15 AM</strong></td>
+                <td>${isBn ? "গ্রাফ টপোলজি নিশ্চিত করে যে প্রাপক মিউল চক্র ১৭-এর সক্রিয় সদস্য (১৭ ওয়ালেট, ৪৩ লেনদেন)।" : "Graph intelligence maps recipient as layer-1 conduit for Mule Syndicate Cluster #17."}</td>
+                <td>Graph Risk Engine</td>
+                <td><span style="color: #b91c1c; font-weight: 700;">Syndicate Hit</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="section-title">
+            <span>${isBn ? "৩. এআই ও শ্যাপ মাল্টি-ভেক্টর বিশ্লেষণ (Explainable AI / SHAP Multi-Vector Analysis)" : "3. EXPLAINABLE AI / SHAP MULTI-VECTOR ANALYSIS"}</span>
+          </div>
+
+          <div class="vector-grid">
+            <div class="vector-card">
+              <div class="vector-header">
+                <span>${isBn ? "আর্থিক পরিমাণ বিচ্যুতি (Amount Vector)" : "Amount Vector (Deviation)"}</span>
+                <span class="vector-tag">92% SHAP</span>
+              </div>
+              <div>${isBn ? "স্বাভাবিক ৩০ দিনের গড়ের তুলনায় ৪.৮ গুণ বেশি (স্বাভাবিক সীমা: ৳৬,৮০০ টাকা)।" : "Transfer amount is 4.8× above customer's 30-day baseline (৳6,800 BDT)."}</div>
+            </div>
+            <div class="vector-card">
+              <div class="vector-header">
+                <span>${isBn ? "ডিভাইস ও বায়োমেট্রিক (Hardware Vector)" : "Hardware Vector (New Device)"}</span>
+                <span class="vector-tag">78% SHAP</span>
+              </div>
+              <div>${isBn ? "DEV-8821 ডিভাইসে এই প্রথম লগইন, কোনো ঐতিহাসিক সংশ্লিষ্টতা পাওয়া যায়নি।" : "DEV-8821 is an unrecognized hardware signature with zero historic usage."}</div>
+            </div>
+            <div class="vector-card">
+              <div class="vector-header">
+                <span>${isBn ? "নৈশকালীন সময়সূচি (Temporal Nocturnal)" : "Temporal Vector (Nocturnal)"}</span>
+                <span class="vector-tag">74% SHAP</span>
+              </div>
+              <div>${isBn ? "গভীর রাত ০২:১৩ মিনিটে সংঘটিত (গ্রাহকের ঐতিহাসিক সময়: সকাল ১০টা – রাত ৯টা)।" : "Transacted at 02:13 AM (Historic activity window: 10:00 AM – 09:00 PM)."}</div>
+            </div>
+            <div class="vector-card">
+              <div class="vector-header">
+                <span>${isBn ? "প্রাপক মিউল নেটওয়ার্ক (Conduit Vector)" : "Recipient Conduit Vector"}</span>
+                <span class="vector-tag">91% SHAP</span>
+              </div>
+              <div>${isBn ? "প্রাপক একাধিক প্রতারিত অ্যাকাউন্টের টাকা দ্রুত ক্যাশ-আউটের জন্য ব্যবহারের প্রধান হাব।" : "Recipient acts as intermediary funneling funds rapidly to rogue agent points."}</div>
+            </div>
+          </div>
+
+          <div class="section-title">
+            <span>${isBn ? "৪. রেগুলেটরি সুপারিশ ও উপায়ের পদক্ষেপ (Regulatory & Enforcement Directives)" : "4. REGULATORY & ENFORCEMENT DIRECTIVES"}</span>
+          </div>
+
+          <ol class="directive-list">
+            <li><strong>${isBn ? "তহবিল সাময়িক স্থগিত (Administrative Hold):" : "Immediate Fund Hold:"}</strong> ${isBn ? "মানি লন্ডারিং প্রতিরোধ আইন ২০১২-এর ধারা ১৪ অনুযায়ী প্রাপক ০১৮৩৩-৮৮৩১০০ অ্যাকাউন্টের বহির্গামী তহবিল অবমুক্তকরণ অবিলম্বে স্থগিত রাখা।" : "Maintain immediate administrative hold on outgoing settlements from recipient 01833-883100 under Section 14 of MLPA 2012."}</li>
+            <li><strong>${isBn ? "বায়োমেট্রিক রি-ভেরিফিকেশন (2FA Challenge):" : "Biometric Re-verification:"}</strong> ${isBn ? "মূল গ্রাহক ০১৭১২-৮৯৪১০২-এর অ্যাকাউন্টে লাইভ বায়োমেট্রিক আঙুলের ছাপ ও ফেসিয়াল ২এফএ যাচাই আবশ্যক করা।" : "Require live biometric / NID verification from originating wallet 01712-894102."}</li>
+            <li><strong>${isBn ? "বিএফআইইউ সরকারি দাখিল (BFIU Transmission):" : "Direct BFIU Transmission:"}</strong> ${isBn ? "বাংলাদেশ ব্যাংক বিএফআইইউ গোয়েন্দা ডাটাবেজ এবং আইন প্রয়োগকারী সংস্থাকে (সিআইডি/ডিবি) সরকারিভাবে ডসিয়ার প্রেরণ।" : "Submit this verified STR dossier directly to the Bangladesh Financial Intelligence Unit (BFIU) core repository."}</li>
+            <li><strong>${isBn ? "হিউম্যান-ইন-দ্য-লুপ গভর্নেন্স (Dual Authorization):" : "Human Oversight Governance:"}</strong> ${isBn ? "তহবিল স্থায়ী বাজেয়াপ্তকরণের পূর্বে ব্যাংক ও এমএফএস রেগুলেশন অনুযায়ী ২ জন কমপ্লায়েন্স কর্মকর্তার যৌথ অনুমোদন নিশ্চিতকরণ।" : "Fund forfeiture requires two-officer authorization per Bangladesh Bank regulatory charter."}</li>
+          </ol>
+
+          <div class="sign-grid">
+            <div class="sign-box">
+              <div style="font-size: 8pt; color: #64748b; margin-bottom: 2px;">${isBn ? "প্রস্তুতকারী কর্মকর্তা" : "Prepared By"}</div>
+              <div class="sign-name">Arman Hossen (আরমান হোসেন)</div>
+              <div>${isBn ? "লিড ফ্রড অ্যানালিস্ট, উপায় সেন্টিনেল এসওসি" : "Lead Fraud Analyst, upay Sentinel SOC"}</div>
+              <div style="font-family: monospace; font-size: 8pt; color: #64748b;">ID: UPAY-SOC-0482 · ${reportDate}</div>
+            </div>
+            <div class="sign-box">
+              <div style="font-size: 8pt; color: #64748b; margin-bottom: 2px;">${isBn ? "অনুমোদনকারী কর্মকর্তা" : "Authorized By"}</div>
+              <div class="sign-name">Chief Compliance Officer (CAMLCO)</div>
+              <div>${isBn ? "ইউসিবি ফিনটেক কোম্পানি লিমিটেড (উপায়)" : "UCB Fintech Company Limited (upay)"}</div>
+              <div style="font-family: monospace; font-size: 8pt; color: #64748b;">REG: BFIU-MFS-REG-2021-09 · VERIFIED</div>
+            </div>
+          </div>
+
+          <div class="footer-legal">
+            <div>SHA256: 9b4e6a12df08e4c7b890f5a31e782bc4e16d8a20f793b56c4210e8d91a2f3b4c</div>
+            <div>${isBn ? "উপায় সেন্টিনেল সিকিউরিটি হাব" : "upay Sentinel Security Hub"} · BFIU-COMPLIANT</div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+
+    setTimeout(() => {
+      printWindow.focus();
       printWindow.print();
-    }
+    }, 350);
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fadeIn">
-      <div className="bg-white border border-slate-200 rounded-xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
-        {/* Header */}
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200">
-              <FileText size={16} />
+    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-5 animate-fadeIn">
+      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl">
+        {/* Modal Header */}
+        <div className="p-4 px-6 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200 shadow-xs">
+              <FileText size={18} />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-slate-900">
-                {t("bfiuReportTitle")}
-              </h2>
-              <p className="text-[11px] text-slate-500">
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm sm:text-base font-bold text-slate-900">
+                  {t("bfiuReportTitle")}
+                </h2>
+                <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  STR-2026-INV1042
+                </span>
+              </div>
+              <p className="text-[11.5px] text-slate-500">
                 {t("bfiuReportSubtitle")}
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="w-7 h-7 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center"
-          >
-            <X size={16} />
-          </button>
+
+          <div className="flex items-center gap-2">
+            {/* View Switcher: Official Dossier vs Raw Text */}
+            <div className="hidden sm:flex items-center p-0.5 rounded-lg bg-slate-100 border border-slate-200 text-xs">
+              <button
+                onClick={() => setActiveTab("dossier")}
+                className={`px-3 py-1 rounded-md font-semibold transition-colors flex items-center gap-1.5 ${
+                  activeTab === "dossier"
+                    ? "bg-white text-slate-900 shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                <Layers size={13} />
+                <span>{isBn ? "প্রিন্ট ফরম্যাট" : "Print Format"}</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("text")}
+                className={`px-3 py-1 rounded-md font-semibold transition-colors flex items-center gap-1.5 ${
+                  activeTab === "text"
+                    ? "bg-white text-slate-900 shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                <Code2 size={13} />
+                <span>{isBn ? "প্লেইন টেক্সট" : "Plain TXT"}</span>
+              </button>
+            </div>
+
+            <button
+              onClick={onClose}
+              className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Notice banner */}
-        <div className="px-4 py-2 bg-amber-50 border-b border-amber-200 text-[11px] text-amber-900 font-mono font-semibold flex items-center gap-2">
-          <ShieldCheck size={14} className="text-amber-700 shrink-0" />
-          <span>{t("strNotice")}</span>
+        <div className="px-6 py-2.5 bg-amber-50/80 border-b border-amber-200 text-[11px] text-amber-900 font-semibold flex items-center justify-between gap-2 shrink-0">
+          <div className="flex items-center gap-2">
+            <ShieldCheck size={15} className="text-amber-700 shrink-0" />
+            <span>{t("strNotice")}</span>
+          </div>
+          <span className="font-mono text-[10px] text-amber-800 bg-amber-100/70 px-2 py-0.5 rounded border border-amber-300">
+            A4 READY · BFIU CIR 25/2023
+          </span>
         </div>
 
-        {/* Text Container */}
-        <div className="p-4 overflow-y-auto flex-1 bg-slate-50">
-          <pre className="text-[11px] font-mono text-slate-800 leading-relaxed whitespace-pre-wrap select-text p-3 bg-white rounded border border-slate-200">
-            {activeText}
-          </pre>
+        {/* Content Body */}
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-100/70 space-y-4">
+          {activeTab === "dossier" ? (
+            /* Official High-Prestige Printable Dossier Preview */
+            <div className="bg-white border border-slate-300 rounded-xl shadow-sm p-6 sm:p-8 space-y-6 max-w-3xl mx-auto font-sans text-slate-900">
+              {/* Document Official Header */}
+              <div className="border-b-2 border-slate-900 pb-4 text-center space-y-1 relative">
+                <div className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">
+                  {isBn ? "গণপ্রজাতন্ত্রী বাংলাদেশ সরকার · বাংলাদেশ ব্যাংক" : "PEOPLE'S REPUBLIC OF BANGLADESH · BANGLADESH BANK"}
+                </div>
+                <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+                  {isBn ? "বাংলাদেশ ফাইন্যান্সিয়াল ইন্টেলিজেন্স ইউনিট (BFIU)" : "BANGLADESH FINANCIAL INTELLIGENCE UNIT (BFIU)"}
+                </h1>
+                <div className="text-xs sm:text-sm font-semibold text-blue-700">
+                  {isBn ? "সন্দেহজনক লেনদেন ডসিয়ার (STR / SAR FORM)" : "SUSPICIOUS TRANSACTION REPORT DOSSIER (STR / SAR)"}
+                </div>
+                <div className="text-[11px] text-slate-500">
+                  {isBn
+                    ? "মানি লন্ডারিং প্রতিরোধ আইন, ২০১২ (ধারা ২৫) এবং বিএফআইইউ সার্কুলার নং ২৫/২০২৩ অনুযায়ী দাখিলকৃত"
+                    : "Statutory Filing pursuant to Money Laundering Prevention Act, 2012 (Sec 25) & BFIU Circular 25/2023"}
+                </div>
+              </div>
+
+              {/* Document Meta Badges */}
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-lg">
+                <div>
+                  <span className="text-slate-500 font-medium">{isBn ? "কেস নং: " : "Case Ref: "}</span>
+                  <strong className="text-slate-900 font-mono">STR-2026-INV1042</strong>
+                </div>
+                <div>
+                  <span className="text-slate-500 font-medium">{isBn ? "প্রতিষ্ঠান: " : "Reporting: "}</span>
+                  <strong className="text-slate-900">upay (UCB Fintech)</strong>
+                </div>
+                <div className="text-[10.5px] font-bold text-red-700 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded uppercase tracking-wide">
+                  {isBn ? "অতীব গোপনীয় ও বিশেষাধিকার প্রাপ্ত" : "CONFIDENTIAL & PRIVILEGED"}
+                </div>
+                <div>
+                  <span className="text-slate-500 font-medium">{isBn ? "তারিখ: " : "Date: "}</span>
+                  <strong className="text-slate-900">{reportDate} · 02:18 AM</strong>
+                </div>
+              </div>
+
+              {/* Section 1: Case Summary Grid */}
+              <div className="space-y-2">
+                <div className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 pb-1 border-b border-slate-200">
+                  <Award size={14} className="text-blue-600" />
+                  <span>{isBn ? "১. ডসিয়ার কেস সারসংক্ষেপ (Case Summary)" : "1. CASE SUMMARY INTELLIGENCE"}</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                    <div className="text-[11px] text-slate-500 font-semibold">{isBn ? "প্রধান অভিযুক্ত (Suspect)" : "Primary Suspect"}</div>
+                    <div className="font-bold text-slate-900">01712-894102 (তানভীর আহমেদ)</div>
+                    <div className="text-[11px] text-slate-600">রেজিস্টার্ড গ্রাহক ওয়ালেট · Mirpur-10 Node</div>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                    <div className="text-[11px] text-slate-500 font-semibold">{isBn ? "প্রাপক কন্ডুইট (Beneficiary)" : "Beneficiary Conduit"}</div>
+                    <div className="font-bold text-slate-900">01833-883100</div>
+                    <div className="text-[11px] text-red-600 font-medium">মিউল চক্র ১৭-এর সাথে ১-হপ সরাসরি যুক্ত</div>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                    <div className="text-[11px] text-slate-500 font-semibold">{isBn ? "সন্দেহভাজন অর্থ (Disputed)" : "Disputed Volume"}</div>
+                    <div className="font-bold text-slate-900 text-sm">৳48,500 BDT</div>
+                    <div className="text-[11px] text-slate-600">সিন্ডিকেটের মোট এক্সপোজার: ৳২৮,৪০,০০০ টাকা</div>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                    <div className="text-[11px] text-slate-500 font-semibold">{isBn ? "ঝুঁকি স্কোর (AI Risk Score)" : "Risk Score & Confidence"}</div>
+                    <div className="font-bold text-red-600 text-sm">94 / 100 [CRITICAL RISK]</div>
+                    <div className="text-[11px] text-slate-600">XAI মডেল কনফিডেন্স: ৯৬.৪%</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 2: Chronological Sequence */}
+              <div className="space-y-2">
+                <div className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 pb-1 border-b border-slate-200">
+                  <Clock size={14} className="text-blue-600" />
+                  <span>{isBn ? "২. ঘটনার ধারাবাহিক বিবরণ ও অডিট ট্রেইল" : "2. CHRONOLOGICAL AUDIT TRAIL"}</span>
+                </div>
+
+                <div className="border border-slate-200 rounded-lg overflow-hidden text-xs">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-700 font-semibold">
+                        <th className="p-2.5 w-24">{isBn ? "সময়" : "Time"}</th>
+                        <th className="p-2.5">{isBn ? "ঘটনা ও বিবরণ" : "Event & Description"}</th>
+                        <th className="p-2.5 w-36">{isBn ? "চ্যানেল" : "Channel"}</th>
+                        <th className="p-2.5 w-24">{isBn ? "পর্যায়" : "State"}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 text-[11.5px] text-slate-700">
+                      <tr>
+                        <td className="p-2.5 font-mono font-semibold text-slate-900">02:01 AM</td>
+                        <td className="p-2.5">অপরিচিত ডিভাইস DEV-8821 (Samsung S23) দিয়ে ওয়ালেটে প্রথমবার প্রবেশ।</td>
+                        <td className="p-2.5 text-slate-500">Mirpur Node</td>
+                        <td className="p-2.5"><span className="text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded text-[10px] font-bold">ANOMALY</span></td>
+                      </tr>
+                      <tr>
+                        <td className="p-2.5 font-mono font-semibold text-slate-900">02:05 AM</td>
+                        <td className="p-2.5">ক্রেডেনশিয়াল পরীক্ষার উদ্দেশ্যে ৳১,৫০০ টাকার ছোট টেস্ট লেনদেন সম্পন্ন।</td>
+                        <td className="p-2.5 text-slate-500">MFS P2P</td>
+                        <td className="p-2.5"><span className="text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded text-[10px] font-bold">PROBING</span></td>
+                      </tr>
+                      <tr>
+                        <td className="p-2.5 font-mono font-semibold text-slate-900">02:08 AM</td>
+                        <td className="p-2.5">১৮০ সেকেন্ডের মধ্যে ৩টি দ্রুতগতির লেনদেন সম্পন্ন (মাইক্রো-স্ট্রাকচারিং)।</td>
+                        <td className="p-2.5 text-slate-500">High-Velocity</td>
+                        <td className="p-2.5"><span className="text-red-700 bg-red-50 px-1.5 py-0.5 rounded text-[10px] font-bold">BURST</span></td>
+                      </tr>
+                      <tr>
+                        <td className="p-2.5 font-mono font-semibold text-slate-900">02:13 AM</td>
+                        <td className="p-2.5">মূল ৳৪৮,৫০০ টাকার স্থানান্তর প্রাপক ০১৮৩৩-৮৮৩১০০-এর উদ্দেশ্যে প্রেরণ।</td>
+                        <td className="p-2.5 text-slate-500">MFS Gateway</td>
+                        <td className="p-2.5"><span className="text-red-800 bg-red-100 px-1.5 py-0.5 rounded text-[10px] font-bold">CRITICAL</span></td>
+                      </tr>
+                      <tr>
+                        <td className="p-2.5 font-mono font-semibold text-slate-900">02:15 AM</td>
+                        <td className="p-2.5">গ্রাফ টপোলজি নিশ্চিত করে যে প্রাপক মিউল চক্র ১৭-এর সক্রিয় সদস্য।</td>
+                        <td className="p-2.5 text-slate-500">Syndicate Map</td>
+                        <td className="p-2.5"><span className="text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded text-[10px] font-bold">MATCH</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Section 3: Explainable AI & SHAP */}
+              <div className="space-y-2">
+                <div className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 pb-1 border-b border-slate-200">
+                  <AlertTriangle size={14} className="text-blue-600" />
+                  <span>{isBn ? "৩. এআই ও শ্যাপ (SHAP) মাল্টি-ভেক্টর বিশ্লেষণ" : "3. EXPLAINABLE AI / SHAP ANALYSIS"}</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                    <div className="flex items-center justify-between font-bold text-slate-900 mb-1">
+                      <span>আর্থিক পরিমাণ বিচ্যুতি (Amount)</span>
+                      <span className="text-red-600 bg-red-50 px-1.5 py-0.5 rounded text-[10px] font-mono">92% SHAP</span>
+                    </div>
+                    <div className="text-[11px] text-slate-600">স্বাভাবিক ৩০ দিনের গড়ের তুলনায় ৪.৮ গুণ বেশি (স্বাভাবিক: ৳৬,৮০০)।</div>
+                  </div>
+
+                  <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                    <div className="flex items-center justify-between font-bold text-slate-900 mb-1">
+                      <span>ডিভাইস ও বায়োমেট্রিক (Hardware)</span>
+                      <span className="text-red-600 bg-red-50 px-1.5 py-0.5 rounded text-[10px] font-mono">78% SHAP</span>
+                    </div>
+                    <div className="text-[11px] text-slate-600">DEV-8821 ডিভাইসে এই প্রথম লগইন, পূর্বের কোনো রেকর্ড নেই।</div>
+                  </div>
+
+                  <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                    <div className="flex items-center justify-between font-bold text-slate-900 mb-1">
+                      <span>নৈশকালীন সময়সূচি (Temporal)</span>
+                      <span className="text-red-600 bg-red-50 px-1.5 py-0.5 rounded text-[10px] font-mono">74% SHAP</span>
+                    </div>
+                    <div className="text-[11px] text-slate-600">রাত ০২:১৩ মিনিটে লেনদেন (স্বাভাবিক সময়: সকাল ১০টা – রাত ৯টা)।</div>
+                  </div>
+
+                  <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                    <div className="flex items-center justify-between font-bold text-slate-900 mb-1">
+                      <span>প্রাপক মিউল নেটওয়ার্ক (Conduit)</span>
+                      <span className="text-red-600 bg-red-50 px-1.5 py-0.5 rounded text-[10px] font-mono">91% SHAP</span>
+                    </div>
+                    <div className="text-[11px] text-slate-600">প্রাপক একাধিক প্রতারিত অ্যাকাউন্টের টাকা দ্রুত ক্যাশ-আউটের হাব।</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 4: Regulatory Directives */}
+              <div className="space-y-2">
+                <div className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5 pb-1 border-b border-slate-200">
+                  <CheckCircle2 size={14} className="text-emerald-600" />
+                  <span>{isBn ? "৪. রেগুলেটরি সুপারিশ ও উপায়ের পদক্ষেপ" : "4. REGULATORY ENFORCEMENT DIRECTIVES"}</span>
+                </div>
+
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2 text-xs text-slate-800">
+                  <div className="flex items-start gap-2">
+                    <span className="w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">১</span>
+                    <span><strong>তহবিল সাময়িক স্থগিত:</strong> মানি লন্ডারিং প্রতিরোধ আইন ২০১২-এর ধারা ১৪ অনুযায়ী প্রাপক ০১৮৩৩-৮৮৩১০০ অ্যাকাউন্টের বহির্গামী তহবিল অবমুক্তকরণ অবিলম্বে স্থগিত রাখা।</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">২</span>
+                    <span><strong>বায়োমেট্রিক রি-ভেরিফিকেশন:</strong> মূল গ্রাহক ০১৭১২-৮৯৪১০২-এর অ্যাকাউন্টে লাইভ বায়োমেট্রিক আঙুলের ছাপ ও ফেসিয়াল ২এফএ যাচাই আবশ্যক করা।</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">৩</span>
+                    <span><strong>বিএফআইইউ সরকারি দাখিল:</strong> বাংলাদেশ ব্যাংক বিএফআইইউ গোয়েন্দা ডাটাবেজ এবং আইন প্রয়োগকারী সংস্থাকে (সিআইডি/ডিবি) সরকারিভাবে ডসিয়ার প্রেরণ।</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dual Sign-Off Block */}
+              <div className="pt-4 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
+                <div className="space-y-1">
+                  <div className="text-[10.5px] text-slate-500 uppercase font-semibold">{isBn ? "প্রস্তুতকারী কর্মকর্তা" : "Prepared By"}</div>
+                  <div className="font-bold text-slate-900 text-sm">Arman Hossen (আরমান হোসেন)</div>
+                  <div className="text-slate-600">লিড ফ্রড অ্যানালিস্ট, উপায় সেন্টিনেল এসওসি</div>
+                  <div className="text-[11px] font-mono text-slate-500">ID: UPAY-SOC-0482 · {reportDate}</div>
+                </div>
+
+                <div className="space-y-1 sm:text-right">
+                  <div className="text-[10.5px] text-slate-500 uppercase font-semibold">{isBn ? "অনুমোদনকারী কর্মকর্তা" : "Authorized By"}</div>
+                  <div className="font-bold text-slate-900 text-sm">Chief Compliance Officer (CAMLCO)</div>
+                  <div className="text-slate-600">ইউসিবি ফিনটেক কোম্পানি লিমিটেড (উপায়)</div>
+                  <div className="text-[11px] font-mono text-emerald-700 font-semibold">REG: BFIU-MFS-REG-2021-09 · VERIFIED</div>
+                </div>
+              </div>
+
+              {/* Cryptographic Verification */}
+              <div className="pt-3 border-t border-dashed border-slate-200 flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-slate-400">
+                <span>SHA-256: 9b4e6a12df08e4c7b890f5a31e782bc4e16d8a20f793b56c4210e8d91a2f3b4c</span>
+                <span>upay Sentinel Regulatory Guard</span>
+              </div>
+            </div>
+          ) : (
+            /* Plain Monospace Text view */
+            <div className="max-w-3xl mx-auto">
+              <pre className="text-[11.5px] font-mono text-slate-800 leading-relaxed whitespace-pre-wrap select-text p-4 bg-white rounded-xl border border-slate-300 shadow-sm">
+                {activeText}
+              </pre>
+            </div>
+          )}
         </div>
 
         {/* Footer actions */}
-        <div className="p-3 px-4 border-t border-slate-200 bg-white flex items-center justify-between gap-2 shrink-0">
-          <div className="text-[11px] text-slate-500 font-mono">
-            {isBn ? "প্রস্তুতকৃত: উপায় সেন্টিনেল এসওসি" : "Signed: upay Sentinel SOC Hub"}
+        <div className="p-3.5 px-6 border-t border-slate-200 bg-white flex items-center justify-between gap-2 shrink-0">
+          <div className="text-[11px] text-slate-500 font-mono flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>{isBn ? "প্রস্তুতকৃত: উপায় সেন্টিনেল এসওসি · বিএফআইইউ সার্কুলার ২৫/২০২৩ কমপ্লায়েন্ট" : "Signed: upay Sentinel SOC · BFIU Circular 25/2023 Compliant"}</span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={handleCopy}
-              className="btn btn-secondary text-xs flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors flex items-center gap-1.5 shadow-xs"
             >
-              {copied ? <Check size={13} className="text-emerald-600" /> : <Copy size={13} />}
+              {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
               <span>{copied ? (isBn ? "কপি হয়েছে" : "Copied") : (isBn ? "কপি করুন" : "Copy Text")}</span>
             </button>
 
             <button
               onClick={handlePrint}
-              className="btn btn-primary text-xs flex items-center gap-1.5"
+              className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-sm"
             >
-              <Printer size={13} />
+              <Printer size={14} />
               <span>{t("printReport")}</span>
             </button>
           </div>

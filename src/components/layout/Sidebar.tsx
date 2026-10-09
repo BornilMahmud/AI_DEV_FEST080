@@ -13,10 +13,12 @@ import {
   Bell,
   BarChart3,
   X,
-  HelpCircle,
   LogOut,
   Globe,
-  Sliders,
+  Wallet,
+  Cpu,
+  Database,
+  SlidersHorizontal,
   Lock,
   History,
 } from "lucide-react";
@@ -38,13 +40,16 @@ interface SidebarProps {
   onLogout?: () => void;
 }
 
+interface NavItem {
+  id: NavigationPage;
+  labelEn: string;
+  labelBn: string;
+  icon: React.ReactNode;
+}
+
 interface NavGroup {
   sectionKey: string;
-  items: {
-    id: NavigationPage;
-    labelKey: "navOverview" | "navTransactions" | "navRisk" | "navNetwork" | "navInvestigations" | "navCustomers" | "navAlerts" | "navAnalytics" | "navSecurity" | "navAudit";
-    icon: React.ReactNode;
-  }[];
+  items: NavItem[];
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -53,43 +58,46 @@ export const Sidebar: React.FC<SidebarProps> = ({
   unreadAlertsCount,
   isOpen = false,
   onClose,
-  onSettingsClick,
-  onTourClick,
-  onHelpClick,
   currentUser,
   onLogout,
 }) => {
   const { language, toggleLanguage, t } = useSentinel();
 
-  const navGroups: NavGroup[] = [
+  const isCustomerPortal = currentPage === "customer-portal";
+  const isBn = language === "bn";
+
+  const adminNavGroups: NavGroup[] = [
     {
-      sectionKey: language === "bn" ? "ড্যাশবোর্ড ও নিরীক্ষণ" : "MONITORING & OVERVIEW",
+      sectionKey: isBn ? "ড্যাশবোর্ড ও লেনদেন পর্যবেক্ষণ" : "MONITORING & OVERVIEW",
       items: [
-        { id: "overview", labelKey: "navOverview", icon: <LayoutGrid size={15} /> },
-        { id: "transactions", labelKey: "navTransactions", icon: <Activity size={15} /> },
+        { id: "overview", labelEn: "Overview Dashboard", labelBn: "সার্বিক ড্যাশবোর্ড", icon: <LayoutGrid size={15} /> },
+        { id: "transactions", labelEn: "Transaction Monitor", labelBn: "লেনদেন পর্যবেক্ষণ", icon: <Activity size={15} /> },
       ],
     },
     {
-      sectionKey: language === "bn" ? "ঝুঁকি ও গোয়েন্দা তথ্য" : "INTELLIGENCE & DETECTION",
+      sectionKey: isBn ? "জালিয়াতি গোয়েন্দা ও নেটওয়ার্ক" : "INTELLIGENCE & DETECTION",
       items: [
-        { id: "risk", labelKey: "navRisk", icon: <ShieldAlert size={15} /> },
-        { id: "network", labelKey: "navNetwork", icon: <Share2 size={15} /> },
-        { id: "alerts", labelKey: "navAlerts", icon: <Bell size={15} /> },
-        { id: "security", labelKey: "navSecurity", icon: <Lock size={15} /> },
+        { id: "risk", labelEn: "Risk Intelligence", labelBn: "ঝুঁকি গোয়েন্দা তথ্য", icon: <ShieldAlert size={15} /> },
+        { id: "network", labelEn: "Fraud Ring Graph", labelBn: "জালিয়াতি নেটওয়ার্ক", icon: <Share2 size={15} /> },
+        { id: "alerts", labelEn: "Alert Center", labelBn: "সতর্কবার্তা কেন্দ্র", icon: <Bell size={15} /> },
+        { id: "security", labelEn: "Security Intelligence", labelBn: "নিরাপত্তা গোয়েন্দা", icon: <Lock size={15} /> },
       ],
     },
     {
-      sectionKey: language === "bn" ? "তদন্ত ও পরিচালনা" : "OPERATIONS & INVESTIGATIONS",
+      sectionKey: isBn ? "তদন্ত ও গ্রাহক গোয়েন্দা" : "OPERATIONS & INVESTIGATIONS",
       items: [
-        { id: "investigations", labelKey: "navInvestigations", icon: <Briefcase size={15} /> },
-        { id: "customers", labelKey: "navCustomers", icon: <Users size={15} /> },
+        { id: "investigations", labelEn: "Investigation Cases", labelBn: "তদন্ত ও মামলা", icon: <Briefcase size={15} /> },
+        { id: "customers", labelEn: "Customer Risk Profile", labelBn: "গ্রাহক ঝুঁকি প্রোফাইল", icon: <Users size={15} /> },
+        { id: "audit", labelEn: "Immutable Audit Trail", labelBn: "অডিট ট্রেইল", icon: <History size={15} /> },
       ],
     },
     {
-      sectionKey: language === "bn" ? "নিয়ন্ত্রণ ও বিএফআইইউ" : "BFIU GOVERNANCE & SAR",
+      sectionKey: isBn ? "এমএল মডেল ও সিস্টেম পরিচালনা" : "ML MODELS & PLATFORM GOVERNANCE",
       items: [
-        { id: "analytics", labelKey: "navAnalytics", icon: <BarChart3 size={15} /> },
-        { id: "audit", labelKey: "navAudit", icon: <History size={15} /> },
+        { id: "models", labelEn: "ML Model Registry", labelBn: "মেশিন লার্নিং মডেল", icon: <Cpu size={15} /> },
+        { id: "datasets", labelEn: "Dataset Governance", labelBn: "ডেটাবেস গভর্নেন্স", icon: <Database size={15} /> },
+        { id: "system-health", labelEn: "System Health & Latency", labelBn: "সিস্টেম স্বাস্থ্য ও স্ট্যাটাস", icon: <SlidersHorizontal size={15} /> },
+        { id: "analytics", labelEn: "BFIU & SAR Analytics", labelBn: "বিএফআইইউ ও সার অ্যানালিটিক্স", icon: <BarChart3 size={15} /> },
       ],
     },
   ];
@@ -110,8 +118,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       <aside className={`sidebar ${isOpen ? "open" : ""}`} aria-label="Main Navigation">
         {/* Brand Header */}
-        <div className="brand" onClick={() => handleNav("overview")}>
-          <div className="brand-mark bg-blue-600 text-white rounded font-extrabold text-sm flex items-center justify-center">
+        <div className="brand cursor-pointer" onClick={() => handleNav(isCustomerPortal ? "customer-portal" : "overview")}>
+          <div className="brand-mark bg-blue-600 text-white rounded-lg font-extrabold text-sm flex items-center justify-center">
             u
           </div>
           <div className="min-w-0 flex-1">
@@ -122,7 +130,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </span>
             </div>
             <div className="brand-sub text-[9.5px] text-slate-500 font-medium tracking-wider">
-              {language === "bn" ? "জালিয়াতি প্রতিরোধ প্ল্যাটফর্ম" : "BANGLADESH RISK CONSOLE"}
+              {isBn ? "দ্বিপাক্ষিক MFS ও ঝুঁকি প্ল্যাটফর্ম" : "TWO-SIDED MFS ECOSYSTEM"}
             </div>
           </div>
           {onClose && (
@@ -139,53 +147,111 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </div>
 
+        {/* Portal Switcher (Customer Wallet <-> Admin Control Center) */}
+        <div className="my-2 px-1">
+          <div className="p-1 rounded-xl bg-slate-100 border border-slate-200/80 grid grid-cols-2 gap-1 text-[11px] font-bold">
+            <button
+              onClick={() => handleNav("customer-portal")}
+              className={`py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+                isCustomerPortal
+                  ? "bg-white text-blue-700 shadow-sm border border-slate-200"
+                  : "text-slate-500 hover:text-slate-900"
+              }`}
+            >
+              <Wallet size={13} className={isCustomerPortal ? "text-blue-600" : "text-slate-400"} />
+              <span>{isBn ? "গ্রাহক ওয়ালেট" : "Customer"}</span>
+            </button>
+            <button
+              onClick={() => handleNav("overview")}
+              className={`py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+                !isCustomerPortal
+                  ? "bg-white text-blue-700 shadow-sm border border-slate-200"
+                  : "text-slate-500 hover:text-slate-900"
+              }`}
+            >
+              <ShieldAlert size={13} className={!isCustomerPortal ? "text-blue-600" : "text-slate-400"} />
+              <span>{isBn ? "সিকিউরিটি অ্যাডমিন" : "Admin / SOC"}</span>
+            </button>
+          </div>
+        </div>
+
         {/* Language Switcher Bar in Sidebar */}
-        <div className="my-2.5 px-2">
+        <div className="mb-2 px-1">
           <button
             onClick={toggleLanguage}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 text-xs font-semibold text-slate-700 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.985]"
+            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 text-xs font-semibold text-slate-700 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.985]"
           >
             <span className="flex items-center gap-1.5 text-[11.5px]">
               <Globe size={13} className="text-blue-600" />
-              <span>{language === "bn" ? "ভাষা: বাংলা" : "Language: English"}</span>
+              <span>{isBn ? "ভাষা: বাংলা" : "Language: English"}</span>
             </span>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-white border border-slate-200 font-mono text-blue-600 font-bold shadow-subtle">
-              {language === "bn" ? "EN Switch" : "বাংলা সুইচ"}
+              {isBn ? "EN Switch" : "বাংলা সুইচ"}
             </span>
           </button>
         </div>
 
         {/* Navigation Categories */}
         <nav className="flex-1 overflow-y-auto space-y-3 py-1 pr-1">
-          {navGroups.map((group) => (
-            <div key={group.sectionKey}>
+          {isCustomerPortal ? (
+            /* Customer Portal Navigation */
+            <div className="space-y-1">
               <div className="nav-section-title text-[9.5px] font-bold text-slate-400 tracking-wider">
-                {group.sectionKey}
+                {isBn ? "গ্রাহক সেবা ও পোর্টাল" : "CUSTOMER PORTAL"}
               </div>
-              <div className="space-y-0.5">
-                {group.items.map((item) => {
-                  const isActive = currentPage === item.id;
-                  const isAlert = item.id === "alerts" && unreadAlertsCount > 0;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => handleNav(item.id)}
-                      className={`nav-item nav-${item.id} w-full text-left ${
-                        isActive ? "active" : ""
-                      }`}
-                      aria-current={isActive ? "page" : undefined}
-                    >
-                      <span className={isActive ? "text-blue-600" : "text-slate-400"}>
-                        {item.icon}
-                      </span>
-                      <span className="truncate flex-1">{t(item.labelKey)}</span>
-                      {isAlert && <span className="nav-count">{unreadAlertsCount}</span>}
-                    </button>
-                  );
-                })}
+              <button
+                onClick={() => handleNav("customer-portal")}
+                className="nav-item active w-full text-left"
+              >
+                <Wallet size={15} className="text-blue-600" />
+                <span className="truncate flex-1">{isBn ? "ওয়ালেট ও লেনদেন সেবা" : "Upay MFS Wallet"}</span>
+              </button>
+
+              <div className="pt-3">
+                <div className="nav-section-title text-[9.5px] font-bold text-slate-400 tracking-wider">
+                  {isBn ? "অ্যাডমিন নিরাপত্তা সুইচ" : "CONTROL ACCESS"}
+                </div>
+                <button
+                  onClick={() => handleNav("overview")}
+                  className="nav-item w-full text-left hover:bg-slate-100"
+                >
+                  <ShieldAlert size={15} className="text-slate-400" />
+                  <span className="truncate flex-1">{isBn ? "জালিয়াতি কন্ট্রোল সেন্টার" : "Admin Fraud Center"}</span>
+                </button>
               </div>
             </div>
-          ))}
+          ) : (
+            /* Admin & Fraud SOC Navigation */
+            adminNavGroups.map((group) => (
+              <div key={group.sectionKey}>
+                <div className="nav-section-title text-[9.5px] font-bold text-slate-400 tracking-wider">
+                  {group.sectionKey}
+                </div>
+                <div className="space-y-0.5">
+                  {group.items.map((item) => {
+                    const isActive = currentPage === item.id;
+                    const isAlert = item.id === "alerts" && unreadAlertsCount > 0;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => handleNav(item.id)}
+                        className={`nav-item nav-${item.id} w-full text-left ${
+                          isActive ? "active" : ""
+                        }`}
+                        aria-current={isActive ? "page" : undefined}
+                      >
+                        <span className={isActive ? "text-blue-600" : "text-slate-400"}>
+                          {item.icon}
+                        </span>
+                        <span className="truncate flex-1">{isBn ? item.labelBn : item.labelEn}</span>
+                        {isAlert && <span className="nav-count">{unreadAlertsCount}</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))
+          )}
         </nav>
 
         {/* Operational Engine Health Status */}
@@ -193,22 +259,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="pulse bg-emerald-500" />
           <div className="min-w-0 flex-1">
             <b className="text-xs text-slate-800">
-              {language === "bn" ? "ডিটারমিনিস্টিক ইঞ্জিন সক্রিয়" : "Deterministic Engine Online"}
+              {isBn ? "দ্বিপাক্ষিক প্ল্যাটফর্ম অনলাইন" : "Two-Sided Platform Online"}
             </b>
             <small className="text-[10px] text-slate-500 block truncate">
-              {language === "bn" ? "বাংলাদেশ ব্যাংক BFIU সংযোগ চালু" : "BFIU Link & Rule Engine v2.4"}
+              {isBn ? "গ্রাহক ওয়ালেট + এআই জালিয়াতি ইঞ্জিন" : "Wallet + Scikit & PyTorch Engine"}
             </small>
           </div>
         </div>
 
-        {/* Analyst Profile & Sign Out */}
+        {/* User Profile & Sign Out */}
         <div className="analyst-profile border-t border-slate-200 pt-2">
           <div className="avatar bg-blue-50 text-blue-700 border border-blue-200">
             {currentUser?.avatar || "OP"}
           </div>
           <div className="min-w-0 flex-1">
-            <b className="text-xs text-slate-800">{currentUser?.name || "Risk Analyst"}</b>
-            <small className="text-[10px] text-slate-500">{currentUser?.role || "SOC Lead"}</small>
+            <b className="text-xs text-slate-800 truncate block">{currentUser?.name || "Authorized User"}</b>
+            <small className="text-[10px] text-slate-500 truncate block">{currentUser?.role || "Verified User"}</small>
           </div>
           {onLogout && (
             <button

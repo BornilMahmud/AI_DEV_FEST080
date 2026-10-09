@@ -20,6 +20,7 @@ import {
   Cpu,
   Layers,
 } from "lucide-react";
+import { SpotlightCard } from "@/components/ui/SpotlightCard";
 import { fetchBackendBenchmarks, BackendBenchmarkMetrics } from "@/lib/backend-api";
 
 interface AnalyticsViewProps {
@@ -135,10 +136,17 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {/* KPI Cards with Purple Spotlight */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {analyticsKpis.map((kpi, i) => (
-          <div key={i} className="card-base p-3.5 border border-slate-200 bg-white">
+          <SpotlightCard
+            key={i}
+            color="purple"
+            glowSize="medium"
+            lightsEdges={true}
+            lag="short"
+            className="p-3.5 border border-slate-200 bg-white rounded-xl shadow-subtle"
+          >
             <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
               <span>{kpi.title}</span>
               <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0">
@@ -151,7 +159,7 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
             <div className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
               <span>{kpi.change}</span>
             </div>
-          </div>
+          </SpotlightCard>
         ))}
       </div>
 

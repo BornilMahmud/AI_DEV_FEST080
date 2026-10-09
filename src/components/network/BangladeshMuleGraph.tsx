@@ -14,6 +14,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useSentinel } from "@/context/SentinelContext";
+import { SpotlightCard } from "@/components/ui/SpotlightCard";
 
 export interface MFSGraphNode {
   id: string;
@@ -176,19 +177,35 @@ export const BangladeshMuleGraph: React.FC<BangladeshMuleGraphProps> = ({
         {/* SVG Interactive Canvas */}
         <div className="lg:col-span-8 bg-slate-50 border border-slate-200 rounded-lg p-3 relative flex items-center justify-center min-h-[380px] overflow-hidden">
           <svg viewBox="0 0 920 400" className="w-full h-full max-h-[380px] select-none">
-            {/* Background grid */}
+            {/* Background grid & flow animations */}
             <defs>
               <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
                 <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#E2E8F0" strokeWidth="1" />
               </pattern>
+              <style>{`
+                @keyframes flowPulse {
+                  from { stroke-dashoffset: 18; }
+                  to { stroke-dashoffset: 0; }
+                }
+                .edge-flow {
+                  animation: flowPulse 0.85s linear infinite;
+                }
+                @media (prefers-reduced-motion: reduce) {
+                  .edge-flow {
+                    animation: none;
+                  }
+                }
+              `}</style>
             </defs>
             <rect width="920" height="400" fill="url(#grid)" />
 
-            {/* Connecting Edges */}
+            {/* Connecting Edges with flow beam */}
             {MFS_LINKS.map((link, idx) => {
               const src = MFS_NODES.find((n) => n.id === link.sourceId);
               const tgt = MFS_NODES.find((n) => n.id === link.targetId);
               if (!src || !tgt) return null;
+
+              const isConnected = link.sourceId === selectedNode.id || link.targetId === selectedNode.id;
 
               return (
                 <g key={idx}>
@@ -197,10 +214,11 @@ export const BangladeshMuleGraph: React.FC<BangladeshMuleGraphProps> = ({
                     y1={src.y}
                     x2={tgt.x}
                     y2={tgt.y}
-                    stroke="#EF4444"
-                    strokeWidth="2.5"
-                    strokeDasharray="6 3"
-                    strokeOpacity="0.85"
+                    stroke={isConnected ? "#DC2626" : "#94A3B8"}
+                    strokeWidth={isConnected ? "3" : "1.8"}
+                    strokeDasharray={isConnected ? "6 3" : "4 4"}
+                    strokeOpacity={isConnected ? "1" : "0.45"}
+                    className={isConnected ? "edge-flow transition-all duration-200" : "transition-all duration-200"}
                   />
                   {/* Amount Badge in middle of edge */}
                   <g transform={`translate(${(src.x + tgt.x) / 2}, ${(src.y + tgt.y) / 2})`}>
@@ -211,15 +229,15 @@ export const BangladeshMuleGraph: React.FC<BangladeshMuleGraphProps> = ({
                       height="20"
                       rx="4"
                       fill="#FFFFFF"
-                      stroke="#CBD5E1"
-                      strokeWidth="1"
-                      className="transition-all"
+                      stroke={isConnected ? "#DC2626" : "#CBD5E1"}
+                      strokeWidth={isConnected ? "1.5" : "1"}
+                      className="transition-all duration-200 shadow-sm"
                     />
                     <text
                       x="0"
                       y="3"
                       textAnchor="middle"
-                      fill="#DC2626"
+                      fill={isConnected ? "#DC2626" : "#64748B"}
                       fontSize="9.5"
                       fontWeight="bold"
                       fontFamily="monospace"
@@ -247,16 +265,25 @@ export const BangladeshMuleGraph: React.FC<BangladeshMuleGraphProps> = ({
                   className="cursor-pointer group"
                   onClick={() => setSelectedNodeId(node.id)}
                 >
-                  {/* Selected ring */}
+                  {/* Selected spotlight halo & pulse */}
                   {isSelected && (
-                    <circle
-                      r="29"
-                      fill="none"
-                      stroke={color}
-                      strokeWidth="2"
-                      strokeDasharray="4 2"
-                      className="opacity-80"
-                    />
+                    <>
+                      <circle
+                        r="34"
+                        fill="rgba(168, 85, 247, 0.12)"
+                        stroke="rgba(168, 85, 247, 0.5)"
+                        strokeWidth="1.5"
+                        className="animate-statusPulse"
+                      />
+                      <circle
+                        r="27"
+                        fill="none"
+                        stroke={color}
+                        strokeWidth="2"
+                        strokeDasharray="4 2"
+                        className="opacity-90"
+                      />
+                    </>
                   )}
 
                   {/* Outer circle */}
@@ -265,7 +292,7 @@ export const BangladeshMuleGraph: React.FC<BangladeshMuleGraphProps> = ({
                     fill="#FFFFFF"
                     stroke={color}
                     strokeWidth="3"
-                    className="transition-transform duration-150 group-hover:scale-105"
+                    className="transition-transform duration-150 group-hover:scale-110"
                     style={{ transformOrigin: "0 0" }}
                   />
 
@@ -318,8 +345,14 @@ export const BangladeshMuleGraph: React.FC<BangladeshMuleGraphProps> = ({
           </svg>
         </div>
 
-        {/* Selected Node Telemetry Dossier Panel */}
-        <div className="lg:col-span-4 p-4 rounded-lg border border-slate-200 bg-slate-50 flex flex-col justify-between space-y-3">
+        {/* Selected Node Telemetry Dossier Panel with Purple Spotlight */}
+        <SpotlightCard
+          color="purple"
+          glowSize="medium"
+          lightsEdges={true}
+          lag="short"
+          className="lg:col-span-4 p-4 rounded-xl border border-slate-200 bg-white shadow-subtle flex flex-col justify-between space-y-3"
+        >
           <div>
             <div className="flex items-center justify-between pb-2 border-b border-slate-200">
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500">
@@ -396,7 +429,7 @@ export const BangladeshMuleGraph: React.FC<BangladeshMuleGraphProps> = ({
               <span>{t("openDossier")}</span>
             </button>
           </div>
-        </div>
+        </SpotlightCard>
       </div>
     </div>
   );

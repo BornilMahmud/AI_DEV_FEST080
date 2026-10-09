@@ -17,6 +17,7 @@ import {
   CreditCard,
   ArrowRight,
 } from "lucide-react";
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 
 interface CustomerIntelligenceViewProps {
   onNavigate: (page: NavigationPage) => void;
@@ -100,7 +101,9 @@ export const CustomerIntelligenceView: React.FC<CustomerIntelligenceViewProps> =
             <span className="text-[9.5px] text-slate-400 uppercase font-mono font-semibold">
               {language === "bn" ? "ঝুঁকি স্কোর" : "Risk Score"}
             </span>
-            <b className="text-2xl text-rose-600 block mt-0.5 font-mono font-black">{customer.riskScore}</b>
+            <b className="text-2xl text-rose-600 block mt-0.5 font-mono font-black">
+              <AnimatedNumber value={customer.riskScore} />
+            </b>
             <span className="text-[9.5px] text-slate-400 font-mono">/ 100</span>
           </div>
         </div>

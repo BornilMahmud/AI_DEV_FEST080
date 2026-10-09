@@ -143,8 +143,12 @@ h1, h2, h3, h4, h5, h6 {
   text-rendering: optimizeLegibility;
 }
 
-/* ─── Crystal-Clear Bengali Typography ───────────── */
-/* Hind Siliguri typography: ensure zero negative tracking for matras. */
+/* ─── Refined Typography & Balanced Weight Calibration ───────────── */
+b, strong {
+  font-weight: 600;
+}
+
+/* Hind Siliguri typography: ensure zero negative tracking for matras and calibrated weight */
 :lang(bn),
 .font-bangla,
 [data-lang="bn"] {
@@ -152,6 +156,24 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.005em !important;
   line-height: 1.55;
   font-feature-settings: "liga" 1, "clig" 1;
+}
+
+/* In Bengali font rendering, 700+ weight makes glyphs and matras too heavy/chunky; clamp bold to 600 */
+:lang(bn) b,
+:lang(bn) strong,
+:lang(bn) .font-bold,
+.font-bangla b,
+.font-bangla strong,
+.font-bangla .font-bold,
+[data-lang="bn"] b,
+[data-lang="bn"] strong,
+[data-lang="bn"] .font-bold {
+  font-weight: 600 !important;
+}
+
+:lang(bn) h1, :lang(bn) h2, :lang(bn) h3, :lang(bn) h4,
+.font-bangla h1, .font-bangla h2, .font-bangla h3, .font-bangla h4 {
+  font-weight: 600;
 }
 
 /* Apple SF Mono typography */
@@ -1011,6 +1033,134 @@ button, input, optgroup, select, textarea {
 }
 
 /* ═══════════════════════════════════════════════════
+   CENTRALIZED ENTERPRISE MOTION PRIMITIVES
+   Consistent, smooth GPU-accelerated micro-interactions
+═══════════════════════════════════════════════════ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translate3d(16px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes statusPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Motion Class Utilities */
+.animate-fadeIn {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-fadeUp {
+  animation: fadeUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-scaleIn {
+  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-slideInRight {
+  animation: slideInRight 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-statusPulse {
+  animation: statusPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Tactile Elevation & Press Interaction Primitives */
+.hover-lift {
+  transition: transform var(--motion-fast) var(--ease-smooth),
+              box-shadow var(--motion-fast) var(--ease-smooth),
+              border-color var(--motion-fast) ease;
+}
+.hover-lift:hover {
+  transform: translateY(-1.5px);
+  box-shadow: var(--shadow-card-hover);
+}
+.hover-lift:active {
+  transform: translateY(0.5px) scale(0.985);
+  box-shadow: var(--shadow-subtle);
+}
+
+.press-down:active {
+  transform: translateY(0.5px) scale(0.985);
+}
+
+/* Card Surface Depth */
+.card-surface {
+  position: relative;
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-subtle);
+  transition: border-color var(--motion-fast) ease,
+              box-shadow var(--motion-fast) var(--ease-smooth);
+}
+.card-surface:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* ═══════════════════════════════════════════════════
    ACCESSIBILITY: REDUCED MOTION SUPPORT (WCAG 2.1 AA)
 ═══════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
@@ -1023,4 +1173,5 @@ button, input, optgroup, select, textarea {
     scroll-behavior: auto !important;
   }
 }
+
 

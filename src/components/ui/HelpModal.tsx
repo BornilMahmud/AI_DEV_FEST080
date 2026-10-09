@@ -49,7 +49,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({
               <Shield size={20} />
             </div>
             <div>
-              <h2 id="help-modal-title" className="font-bold text-base text-slate-900 leading-tight flex items-center gap-1.5">
+              <h2 id="help-modal-title" className="font-semibold text-base text-slate-900 leading-tight flex items-center gap-1.5">
                 <span>upay Sentinel</span>
                 <span className="text-slate-400 font-normal">|</span>
                 <span className="text-emerald-700 font-medium">
@@ -75,7 +75,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({
         {/* Content Body */}
         <div className="mt-4 space-y-4 text-xs text-slate-600 leading-relaxed">
           <p>
-            <b className="text-slate-900 font-semibold">upay Sentinel</b>{" "}
+            <span className="text-slate-900 font-semibold">upay Sentinel</span>{" "}
             {language === "bn"
               ? "হলো বাংলাদেশের মোবাইল ফাইন্যান্সিয়াল সার্ভিস (MFS)-এর জন্য তৈরি কৃত্রিম বুদ্ধিমত্তাসম্পন্ন ঝুঁকি ও জালিয়াতি শনাক্তকরণ সিস্টেম। এটি ২ মিলিসেকেন্ডের মধ্যে প্রতিটি লেনদেনের ঝুঁকি মূল্যায়ন করে।"
               : "is an enterprise AI Fraud & Scam Intelligence console engineered specifically for Bangladesh's Mobile Financial Services (MFS) ecosystem, providing deterministic risk detection in under 2ms."}
@@ -83,15 +83,15 @@ export const HelpModal: React.FC<HelpModalProps> = ({
 
           {/* Core Lifecycle Box */}
           <div className="p-3.5 bg-slate-50 rounded-lg border border-slate-200 space-y-2.5">
-            <div className="font-bold text-emerald-700 text-[10.5px] uppercase tracking-wider font-mono flex items-center gap-1.5">
+            <div className="font-semibold text-emerald-800 text-[11px] uppercase tracking-wider font-mono flex items-center gap-1.5">
               <Cpu size={13} />
               {language === "bn" ? "৩টি প্রধান মূলনীতি ও কর্মপ্রক্রিয়া" : "The 3 Core Fraud Intelligence Pillars"}
             </div>
             <div className="space-y-2 text-[11.5px]">
               <div className="flex items-start gap-2">
-                <span className="w-4 h-4 rounded bg-emerald-100 text-emerald-800 font-mono text-[10px] flex items-center justify-center shrink-0 mt-0.5 font-bold">1</span>
+                <span className="w-4 h-4 rounded bg-emerald-100 text-emerald-800 font-mono text-[10px] flex items-center justify-center shrink-0 mt-0.5 font-semibold">1</span>
                 <div>
-                  <b className="text-slate-900">{language === "bn" ? "কি ঘটেছে? (What happened?)" : "What happened?"}</b>
+                  <span className="font-semibold text-slate-900 block">{language === "bn" ? "কি ঘটেছে? (What happened?)" : "What happened?"}</span>
                   <p className="text-slate-500 mt-0.5">
                     {language === "bn"
                       ? "রিয়েল-টাইম রুল ইঞ্জিন প্রতি সেকেন্ডে ১,৪০০+ লেনদেনের মধ্যে সিম সোয়াপ, অস্বাভাবিক পরিমাণ ও অফ-আওয়ার কার্যক্রম শনাক্ত করে।"
@@ -100,9 +100,9 @@ export const HelpModal: React.FC<HelpModalProps> = ({
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <span className="w-4 h-4 rounded bg-amber-100 text-amber-800 font-mono text-[10px] flex items-center justify-center shrink-0 mt-0.5 font-bold">2</span>
+                <span className="w-4 h-4 rounded bg-amber-100 text-amber-800 font-mono text-[10px] flex items-center justify-center shrink-0 mt-0.5 font-semibold">2</span>
                 <div>
-                  <b className="text-slate-900">{language === "bn" ? "কেন এটি ঝুঁকিপূর্ণ? (Why is it risky?)" : "Why is it risky?"}</b>
+                  <span className="font-semibold text-slate-900 block">{language === "bn" ? "কেন এটি ঝুঁকিপূর্ণ? (Why is it risky?)" : "Why is it risky?"}</span>
                   <p className="text-slate-500 mt-0.5">
                     {language === "bn"
                       ? "TreeSHAP ফিচার এক্সপ্ল্যানিবিলিটি, সেলুলার বিটিএস টাওয়ার বিচ্যুতি এবং ৮টি প্রশাসনিক বিভাগের ভৌগোলিক ফান্ড-ফ্লো বিশ্লেষণ।"
@@ -111,9 +111,9 @@ export const HelpModal: React.FC<HelpModalProps> = ({
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <span className="w-4 h-4 rounded bg-purple-100 text-purple-800 font-mono text-[10px] flex items-center justify-center shrink-0 mt-0.5 font-bold">3</span>
+                <span className="w-4 h-4 rounded bg-purple-100 text-purple-800 font-mono text-[10px] flex items-center justify-center shrink-0 mt-0.5 font-semibold">3</span>
                 <div>
-                  <b className="text-slate-900">{language === "bn" ? "বিশ্লেষকের করণীয় কি? (What should the analyst do next?)" : "What should the analyst do next?"}</b>
+                  <span className="font-semibold text-slate-900 block">{language === "bn" ? "বিশ্লেষকের করণীয় কি? (What should the analyst do next?)" : "What should the analyst do next?"}</span>
                   <p className="text-slate-500 mt-0.5">
                     {language === "bn"
                       ? "জেমিনি এআই কো-পাইলট ঝুঁকি বিশ্লেষণ করে সরাসরি পরামর্শ দেয়: ওয়ালেট স্থগিত, ওটিপি পুনরায় যাচাই অথবা বিএফআইইউ এসএআর রিপোর্ট পেশ।"
@@ -126,26 +126,26 @@ export const HelpModal: React.FC<HelpModalProps> = ({
 
           {/* Keyboard Shortcuts Reference */}
           <div>
-            <div className="font-bold text-slate-900 text-[11px] uppercase tracking-wider font-mono mb-2 flex items-center gap-1.5">
+            <div className="font-semibold text-slate-800 text-[11px] uppercase tracking-wider font-mono mb-2 flex items-center gap-1.5">
               <Command size={12} className="text-emerald-600" />
               {language === "bn" ? "কীবোর্ড শর্টকাট" : "Keyboard Shortcuts & Hotkeys"}
             </div>
             <div className="grid grid-cols-2 gap-2 text-[11.5px]">
               <div className="flex items-center justify-between p-2 rounded bg-slate-50 border border-slate-200">
                 <span className="text-slate-600">{language === "bn" ? "সহায়তা উইন্ডো" : "Help Dialog"}</span>
-                <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-mono text-[10px] font-bold">?</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-mono text-[10px] font-semibold">?</kbd>
               </div>
               <div className="flex items-center justify-between p-2 rounded bg-slate-50 border border-slate-200">
                 <span className="text-slate-600">{language === "bn" ? "ভাষা পরিবর্তন" : "Toggle Language"}</span>
-                <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-mono text-[10px] font-bold">L</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-mono text-[10px] font-semibold">L</kbd>
               </div>
               <div className="flex items-center justify-between p-2 rounded bg-slate-50 border border-slate-200">
                 <span className="text-slate-600">{language === "bn" ? "আক্রমণ সিমুলেশন" : "Simulate Scenario"}</span>
-                <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-mono text-[10px] font-bold">S</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-mono text-[10px] font-semibold">S</kbd>
               </div>
               <div className="flex items-center justify-between p-2 rounded bg-slate-50 border border-slate-200">
                 <span className="text-slate-600">{language === "bn" ? "বিএফআইইউ রিপোর্ট" : "Audit Report"}</span>
-                <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-mono text-[10px] font-bold">R</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-mono text-[10px] font-semibold">R</kbd>
               </div>
             </div>
           </div>

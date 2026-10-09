@@ -22,6 +22,8 @@ import {
   KeyRound,
   FileCheck,
 } from "lucide-react";
+import { SpotlightCard } from "@/components/ui/SpotlightCard";
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 
 interface InvestigationDetailViewProps {
   caseData?: InvestigationCase;
@@ -128,26 +130,59 @@ export const InvestigationDetailView: React.FC<InvestigationDetailViewProps> = (
 
       {/* KPI Exposure Grid */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="card-base hover-lift p-3.5 border border-slate-200 bg-white">
+        <SpotlightCard
+          color="purple"
+          glowSize="medium"
+          lightsEdges={true}
+          lag="short"
+          className="hover-lift p-3.5 border border-slate-200 bg-white rounded-xl shadow-subtle flex flex-col justify-between"
+        >
           <span className="text-[11px] text-slate-500 block">{t("colCustomer")}</span>
           <b className="font-mono text-sm text-blue-600 block mt-1">{customer}</b>
-        </div>
-        <div className="card-base hover-lift p-3.5 border border-slate-200 bg-white">
+        </SpotlightCard>
+        <SpotlightCard
+          color="purple"
+          glowSize="medium"
+          lightsEdges={true}
+          lag="short"
+          className="hover-lift p-3.5 border border-slate-200 bg-white rounded-xl shadow-subtle flex flex-col justify-between"
+        >
           <span className="text-[11px] text-slate-500 block">{t("colRiskScore")}</span>
-          <b className="font-mono text-sm text-rose-600 block mt-1">{riskScore} / 100</b>
-        </div>
-        <div className="card-base hover-lift p-3.5 border border-slate-200 bg-white">
+          <div className="flex items-baseline gap-1 mt-1 font-mono">
+            <AnimatedNumber value={riskScore} durationMs={350} className="text-sm font-bold text-rose-600" />
+            <span className="text-xs text-slate-400">/ 100</span>
+          </div>
+        </SpotlightCard>
+        <SpotlightCard
+          color="purple"
+          glowSize="medium"
+          lightsEdges={true}
+          lag="short"
+          className="hover-lift p-3.5 border border-slate-200 bg-white rounded-xl shadow-subtle flex flex-col justify-between"
+        >
           <span className="text-[11px] text-slate-500 block">{isBn ? "মোট লেনদেন" : "Transactions"}</span>
           <b className="font-mono text-sm text-slate-800 block mt-1">{activeCase.transactionsCount} Txns</b>
-        </div>
-        <div className="card-base hover-lift p-3.5 border border-slate-200 bg-white">
+        </SpotlightCard>
+        <SpotlightCard
+          color="purple"
+          glowSize="medium"
+          lightsEdges={true}
+          lag="short"
+          className="hover-lift p-3.5 border border-slate-200 bg-white rounded-xl shadow-subtle flex flex-col justify-between"
+        >
           <span className="text-[11px] text-slate-500 block">{isBn ? "সিন্ডিকেট সংযোগ" : "Syndicate Ties"}</span>
           <b className="font-mono text-sm text-slate-800 block mt-1">{activeCase.networkConnections} Nodes</b>
-        </div>
-        <div className="card-base hover-lift p-3.5 border border-slate-200 bg-white">
+        </SpotlightCard>
+        <SpotlightCard
+          color="purple"
+          glowSize="medium"
+          lightsEdges={true}
+          lag="short"
+          className="hover-lift p-3.5 border border-slate-200 bg-white rounded-xl shadow-subtle flex flex-col justify-between"
+        >
           <span className="text-[11px] text-slate-500 block">{isBn ? "ঝুঁকিপূর্ণ আর্থিক এক্সপোজার" : "Capital Exposure"}</span>
           <b className="font-mono text-sm text-rose-600 block mt-1">৳{exposure.toLocaleString()}</b>
-        </div>
+        </SpotlightCard>
       </div>
 
       {/* Tab Selector */}

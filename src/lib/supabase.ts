@@ -15,7 +15,7 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
  */
 export async function syncFirebaseUserToSupabase(
   user: FirebaseUser,
-  role: "investigator" | "analyst" | "admin" = "investigator"
+  role: "customer" | "investigator" | "analyst" | "admin" = "customer"
 ) {
   try {
     // 1. Obtain verified Firebase ID token
@@ -33,6 +33,7 @@ export async function syncFirebaseUserToSupabase(
             Authorization: `Bearer ${idToken}`,
           },
           body: JSON.stringify({
+            role: role.toUpperCase(),
             deviceFingerprint: typeof window !== "undefined" ? window.navigator.userAgent : "browser",
           }),
         });
@@ -40,7 +41,7 @@ export async function syncFirebaseUserToSupabase(
         if (response.ok) {
           const result = await response.json();
           console.log("[Sentinel Auth Sync] Backend session & IP history verified:", result);
-          return { success: true, data: result.user, session: result.session };
+          return { success: true, user: result.user, wallet: result.wallet, session: result.session, token: idToken };
         }
       } catch (backendErr: any) {
         console.warn("[Sentinel Auth Sync] Backend sync notice, using client fallback:", backendErr.message);

@@ -10,15 +10,21 @@ import {
   Globe,
   AlertCircle,
   CheckCircle2,
-  Sparkles,
+  Wallet,
+  ShieldAlert,
+  SlidersHorizontal,
 } from "lucide-react";
-import { auth, googleProvider, githubProvider } from "@/lib/firebase";
 import {
+  auth,
+  googleProvider,
+  githubProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
-} from "firebase/auth";
+} from "@/lib/firebase";
 import { syncFirebaseUserToSupabase } from "@/lib/supabase";
 
 export interface UserProfile {
@@ -27,6 +33,17 @@ export interface UserProfile {
   avatar: string;
   role: string;
   badge: string;
+  rawRole?: "CUSTOMER" | "ADMIN" | "ANALYST" | "INVESTIGATOR" | "VIEWER";
+  phone?: string;
+  token?: string;
+  wallet?: {
+    id?: string;
+    balance: number;
+    currency: string;
+    status: string;
+    dailyLimit?: number;
+    monthlyLimit?: number;
+  };
 }
 
 interface LoginPageProps {
@@ -34,33 +51,9 @@ interface LoginPageProps {
   isDarkMode?: boolean;
 }
 
-const PRESET_ACCOUNTS: UserProfile[] = [
-  {
-    name: "Arman Hossen",
-    email: "arman.hossen@upay.com.bd",
-    avatar: "AH",
-    role: "Lead Risk Analyst (SOC Tier 3)",
-    badge: "PRIMARY ANALYST",
-  },
-  {
-    name: "Siam Ahmed",
-    email: "siam.ahmed@upay.com.bd",
-    avatar: "SA",
-    role: "AML & BFIU Compliance Officer",
-    badge: "COMPLIANCE LEAD",
-  },
-  {
-    name: "AI DEV FEST Judge",
-    email: "judge.eval@diu-cpc.org",
-    avatar: "JD",
-    role: "Hackathon Evaluation Auditor",
-    badge: "EXECUTIVE OBSERVER",
-  },
-];
-
 export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [mode, setMode] = useState<"login" | "register">("login");
-  const [selectedAccount, setSelectedAccount] = useState<UserProfile>(PRESET_ACCOUNTS[0]);
+  const [selectedRole, setSelectedRole] = useState<"customer" | "analyst" | "admin">("customer");
   const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [successMsg, setSuccessMsg] = useState<string>("");
@@ -74,19 +67,66 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
   const isBn = lang === "bn";
 
+  // Check for redirect result on mount
+  React.useEffect(() => {
+    getRedirectResult(auth)
+      .then(async (result: any) => {
+        if (result && result.user) {
+          const user = result.user;
+          const syncResult = await syncFirebaseUserToSupabase(user, selectedRole);
+          const resolvedRole = (syncResult?.user?.role || (selectedRole === "customer" ? "CUSTOMER" : "ANALYST")) as any;
+          const { role, badge } = mapRoleToDisplay(resolvedRole);
+
+          const profile: UserProfile = {
+            name: user.displayName || syncResult?.user?.display_name || user.email?.split("@")[0] || "User",
+            email: user.email || "",
+            avatar: getInitials(user.displayName, user.email),
+            role,
+            badge,
+            rawRole: resolvedRole,
+            token: syncResult?.token,
+            wallet: syncResult?.wallet,
+          };
+
+          setSuccessMsg(isBn ? "গুগল সাইন-ইন সফল হয়েছে!" : "Google Authentication successful!");
+          setTimeout(() => onLogin(profile), 500);
+        }
+      })
+      .catch((err: any) => {
+        console.warn("[Auth Redirect]", err);
+      });
+  }, []);
+
   // Helper to extract initials
   const getInitials = (displayName?: string | null, emailAddr?: string | null) => {
     if (displayName) {
-      return displayName
-        .split(" ")
-        .map((p) => p[0]?.toUpperCase() || "")
-        .join("")
-        .slice(0, 2) || "U";
+      return (
+        displayName
+          .split(" ")
+          .map((p) => p[0]?.toUpperCase() || "")
+          .join("")
+          .slice(0, 2) || "U"
+      );
     }
     if (emailAddr) {
       return emailAddr.slice(0, 2).toUpperCase();
     }
     return "US";
+  };
+
+  const mapRoleToDisplay = (rawRole: string) => {
+    switch (rawRole) {
+      case "CUSTOMER":
+        return { role: "Upay MFS Wallet Customer", badge: "CUSTOMER WALLET" };
+      case "ADMIN":
+        return { role: "System Administrator", badge: "SYSTEM ADMIN" };
+      case "ANALYST":
+        return { role: "Lead Risk Analyst (SOC Tier 3)", badge: "RISK ANALYST" };
+      case "INVESTIGATOR":
+        return { role: "Financial Fraud Investigator", badge: "INVESTIGATOR" };
+      default:
+        return { role: "Upay Verified User", badge: "VERIFIED USER" };
+    }
   };
 
   // 1. Google OAuth Flow
@@ -97,22 +137,127 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      await syncFirebaseUserToSupabase(user, "analyst");
+      const syncResult = await syncFirebaseUserToSupabase(user, selectedRole);
+
+      const resolvedRole = (syncResult?.user?.role || (selectedRole === "customer" ? "CUSTOMER" : "ANALYST")) as any;
+      const { role, badge } = mapRoleToDisplay(resolvedRole);
 
       const profile: UserProfile = {
-        name: user.displayName || user.email?.split("@")[0] || "Analyst",
+        name: user.displayName || syncResult?.user?.display_name || user.email?.split("@")[0] || "User",
         email: user.email || "",
         avatar: getInitials(user.displayName, user.email),
-        role: "Authorized Financial Investigator",
-        badge: "GOOGLE SSO",
+        role,
+        badge,
+        rawRole: resolvedRole,
+        token: syncResult?.token,
+        wallet: syncResult?.wallet,
       };
+
       setSuccessMsg(isBn ? "গুগল সাইন-ইন সফল হয়েছে!" : "Google Authentication successful!");
-      setTimeout(() => onLogin(profile), 600);
+      setTimeout(() => onLogin(profile), 500);
     } catch (err: any) {
       console.error("Google Auth error:", err);
-      setErrorMsg(err.message?.replace("Firebase: ", "") || "Google Authentication failed");
+      const code = err.code || "";
+      if (code === "auth/popup-blocked") {
+        setErrorMsg(
+          isBn
+            ? "ব্রাউজার পপ-আপ উইন্ডো ব্লক করেছে। অনুগ্রহ করে ব্রাউজারের পপ-আপ অনুমোদন করুন অথবা নিচে সরাসরি ১-ক্লিক ডেমো লগইন ব্যবহার করুন।"
+            : "Browser blocked the Google popup window. Please allow popups or use 1-click Demo Login below."
+        );
+      } else if (code === "auth/popup-closed-by-user") {
+        setErrorMsg(
+          isBn
+            ? "গুগল সাইন-ইন উইন্ডোটি সম্পন্ন করার আগেই বন্ধ করা হয়েছে।"
+            : "Google Sign-in window was closed before completion."
+        );
+      } else if (code === "auth/unauthorized-domain") {
+        setErrorMsg(
+          isBn
+            ? "ডোমেইনটি ফায়ারবেস কনসোলে অনুমোদিত নয় (Firebase Authorized Domains)। 'localhost' থেকে চালান অথবা নিচে ডেমো লগইন ব্যবহার করুন।"
+            : "Domain not authorized in Firebase Console. Please open via localhost or use 1-click Demo Login below."
+        );
+      } else if (code === "auth/operation-not-allowed") {
+        setErrorMsg(
+          isBn
+            ? "ফায়ারবেস কনসোলে গুগল প্রোভাইডার সক্রিয় করা নেই। নিচে ১-ক্লিক ডেমো লগইন বাটন ব্যবহার করুন।"
+            : "Google Provider is disabled in Firebase Console. Please use 1-click Demo Login below."
+        );
+      } else if (code === "auth/network-request-failed") {
+        setErrorMsg(
+          isBn
+            ? "নেটওয়ার্ক ত্রুটি বা ব্রাউজারের থার্ড-পার্টি কুকি ব্লক রয়েছে।"
+            : "Network error or 3rd-party cookies blocked by your browser."
+        );
+      } else {
+        setErrorMsg(err.message?.replace("Firebase: ", "") || "Google Authentication failed");
+      }
       setIsAuthenticating(false);
     }
+  };
+
+  // Google Redirect Fallback
+  const handleGoogleRedirectSignIn = async () => {
+    setErrorMsg("");
+    setSuccessMsg("");
+    setIsAuthenticating(true);
+    try {
+      await signInWithRedirect(auth, googleProvider);
+    } catch (err: any) {
+      setErrorMsg(err.message?.replace("Firebase: ", "") || "Google Redirect failed");
+      setIsAuthenticating(false);
+    }
+  };
+
+  // 1-Click Quick Demo Login for instant testing
+  const handleQuickDemoLogin = (roleType: "customer" | "analyst" | "admin") => {
+    setErrorMsg("");
+    setSuccessMsg("");
+    setIsAuthenticating(true);
+
+    const demoProfiles: Record<"customer" | "analyst" | "admin", UserProfile> = {
+      customer: {
+        name: "Tanvir Ahmed (তানভীর আহমেদ)",
+        email: "tanvir.customer@upay.com.bd",
+        avatar: "TA",
+        role: "Upay MFS Wallet Customer",
+        badge: "CUSTOMER WALLET",
+        rawRole: "CUSTOMER",
+        phone: "01712-894102",
+        wallet: {
+          balance: 84250,
+          currency: "BDT",
+          status: "ACTIVE",
+          dailyLimit: 100000,
+          monthlyLimit: 500000,
+        },
+      },
+      analyst: {
+        name: "Arman Hossen (আরমান হোসেন)",
+        email: "arman@upay.com.bd",
+        avatar: "AH",
+        role: "Lead Risk Analyst (SOC Tier 3)",
+        badge: "RISK ANALYST",
+        rawRole: "ANALYST",
+        phone: "01700-112233",
+      },
+      admin: {
+        name: "Operations Admin (সিস্টেম অ্যাডমিন)",
+        email: "admin@upay.com.bd",
+        avatar: "OA",
+        role: "System Administrator",
+        badge: "SYSTEM ADMIN",
+        rawRole: "ADMIN",
+        phone: "01800-998877",
+      },
+    };
+
+    const target = demoProfiles[roleType];
+    setSuccessMsg(
+      isBn
+        ? `${target.name} হিসেবে লগইন সফল!`
+        : `Authenticated as ${roleType.toUpperCase()}!`
+    );
+    setTimeout(() => onLogin(target), 400);
   };
 
   // 2. GitHub OAuth Flow
@@ -123,17 +268,24 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     try {
       const result = await signInWithPopup(auth, githubProvider);
       const user = result.user;
-      await syncFirebaseUserToSupabase(user, "analyst");
+      const syncResult = await syncFirebaseUserToSupabase(user, selectedRole);
+
+      const resolvedRole = (syncResult?.user?.role || (selectedRole === "customer" ? "CUSTOMER" : "ANALYST")) as any;
+      const { role, badge } = mapRoleToDisplay(resolvedRole);
 
       const profile: UserProfile = {
-        name: user.displayName || user.email?.split("@")[0] || "Analyst",
+        name: user.displayName || syncResult?.user?.display_name || user.email?.split("@")[0] || "User",
         email: user.email || "",
         avatar: getInitials(user.displayName, user.email),
-        role: "Authorized Financial Investigator",
-        badge: "GITHUB SSO",
+        role,
+        badge,
+        rawRole: resolvedRole,
+        token: syncResult?.token,
+        wallet: syncResult?.wallet,
       };
+
       setSuccessMsg(isBn ? "গিটহাব সাইন-ইন সফল হয়েছে!" : "GitHub Authentication successful!");
-      setTimeout(() => onLogin(profile), 600);
+      setTimeout(() => onLogin(profile), 500);
     } catch (err: any) {
       console.error("GitHub Auth error:", err);
       setErrorMsg(err.message?.replace("Firebase: ", "") || "GitHub Authentication failed");
@@ -155,21 +307,32 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      await syncFirebaseUserToSupabase(user, "analyst");
+      const syncResult = await syncFirebaseUserToSupabase(user, selectedRole);
+
+      const resolvedRole = (syncResult?.user?.role || (selectedRole === "customer" ? "CUSTOMER" : "ANALYST")) as any;
+      const { role, badge } = mapRoleToDisplay(resolvedRole);
 
       const profile: UserProfile = {
-        name: user.displayName || email.split("@")[0],
+        name: user.displayName || syncResult?.user?.display_name || email.split("@")[0],
         email: user.email || email,
         avatar: getInitials(user.displayName, email),
-        role: "Authorized Financial Investigator",
-        badge: "FIREBASE AUTH",
+        role,
+        badge,
+        rawRole: resolvedRole,
+        token: syncResult?.token,
+        wallet: syncResult?.wallet,
       };
-      setSuccessMsg(isBn ? "লগইন সফল হয়েছে!" : "Sign-in successful!");
-      setTimeout(() => onLogin(profile), 600);
+
+      setSuccessMsg(isBn ? "লগইন সফল হয়েছে!" : "Sign-in verified via Firebase!");
+      setTimeout(() => onLogin(profile), 500);
     } catch (err: any) {
       console.error("Email login error:", err);
       const code = err.code || "";
-      if (code === "auth/invalid-credential" || code === "auth/user-not-found" || code === "auth/wrong-password") {
+      if (
+        code === "auth/invalid-credential" ||
+        code === "auth/user-not-found" ||
+        code === "auth/wrong-password"
+      ) {
         setErrorMsg(isBn ? "ভুল ইমেইল অথবা পাসওয়ার্ড" : "Invalid email or password");
       } else {
         setErrorMsg(err.message?.replace("Firebase: ", "") || "Authentication failed");
@@ -206,18 +369,27 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         await updateProfile(user, { displayName: name.trim() });
       }
 
-      await syncFirebaseUserToSupabase(user, "investigator");
+      const syncResult = await syncFirebaseUserToSupabase(user, selectedRole);
+      const resolvedRole = (syncResult?.user?.role || (selectedRole === "customer" ? "CUSTOMER" : "ANALYST")) as any;
+      const { role, badge } = mapRoleToDisplay(resolvedRole);
 
       const profile: UserProfile = {
         name: name.trim() || email.split("@")[0],
         email: user.email || email,
         avatar: getInitials(name || email.split("@")[0], email),
-        role: "Registered Financial Investigator",
-        badge: "NEW INVESTIGATOR",
+        role,
+        badge,
+        rawRole: resolvedRole,
+        token: syncResult?.token,
+        wallet: syncResult?.wallet,
       };
 
-      setSuccessMsg(isBn ? "অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!" : "Account created & registered successfully!");
-      setTimeout(() => onLogin(profile), 800);
+      setSuccessMsg(
+        isBn
+          ? "অ্যাকাউন্ট সফলভাবে তৈরি এবং অনুমোদিত হয়েছে!"
+          : "Account created and authorized in Firebase!"
+      );
+      setTimeout(() => onLogin(profile), 600);
     } catch (err: any) {
       console.error("Registration error:", err);
       const code = err.code || "";
@@ -228,16 +400,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       }
       setIsAuthenticating(false);
     }
-  };
-
-  // 5. Fast Preset Role Sign-in (for Judges and Evaluators)
-  const handleFastPresetSignIn = (preset: UserProfile) => {
-    setIsAuthenticating(true);
-    setErrorMsg("");
-    setSuccessMsg(isBn ? `${preset.name} হিসেবে সংযুক্ত হচ্ছে...` : `Entering as ${preset.name}...`);
-    setTimeout(() => {
-      onLogin(preset);
-    }, 500);
   };
 
   return (
@@ -264,8 +426,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </h1>
           <p className="text-xs text-slate-500 max-w-xs mx-auto">
             {isBn
-              ? "বাংলাদেশ মোবাইল ফাইন্যান্সিয়াল সার্ভিসেস (MFS) জালিয়াতি প্রতিরোধ ও ঝুঁকি নিয়ন্ত্রণ প্ল্যাটফর্ম"
-              : "AI-Powered MFS Fraud Intelligence Platform for Modern Digital Financial Services"}
+              ? "বাংলাদেশ মোবাইল ফাইন্যান্সিয়াল সার্ভিসেস (MFS) গ্রাহক ওয়ালেট ও এআই জালিয়াতি প্রতিরোধ ব্যবস্থা"
+              : "AI-Powered MFS Customer Wallet & Enterprise Fraud Intelligence Platform"}
           </p>
         </div>
 
@@ -303,6 +465,56 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </button>
         </div>
 
+        {/* Account Role Selector (Used during Register or Sign In context) */}
+        <div className="space-y-1.5">
+          <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block">
+            {isBn ? "পোর্টাল / অ্যাকাউন্টের ভূমিকা নির্বাচন করুন" : "Select Portal / Account Role"}
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              onClick={() => setSelectedRole("customer")}
+              className={`p-2 rounded-lg border text-left transition-all flex flex-col gap-1 items-start ${
+                selectedRole === "customer"
+                  ? "border-blue-600 bg-blue-50/70 text-blue-900 ring-1 ring-blue-500/20"
+                  : "border-slate-200 bg-slate-50 hover:bg-slate-100/70 text-slate-600"
+              }`}
+            >
+              <Wallet size={14} className={selectedRole === "customer" ? "text-blue-600" : "text-slate-400"} />
+              <span className="text-[11px] font-bold leading-tight">Customer</span>
+              <span className="text-[9px] text-slate-400 leading-none">Upay Wallet</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedRole("analyst")}
+              className={`p-2 rounded-lg border text-left transition-all flex flex-col gap-1 items-start ${
+                selectedRole === "analyst"
+                  ? "border-blue-600 bg-blue-50/70 text-blue-900 ring-1 ring-blue-500/20"
+                  : "border-slate-200 bg-slate-50 hover:bg-slate-100/70 text-slate-600"
+              }`}
+            >
+              <ShieldAlert size={14} className={selectedRole === "analyst" ? "text-blue-600" : "text-slate-400"} />
+              <span className="text-[11px] font-bold leading-tight">Analyst</span>
+              <span className="text-[9px] text-slate-400 leading-none">Fraud SOC</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedRole("admin")}
+              className={`p-2 rounded-lg border text-left transition-all flex flex-col gap-1 items-start ${
+                selectedRole === "admin"
+                  ? "border-blue-600 bg-blue-50/70 text-blue-900 ring-1 ring-blue-500/20"
+                  : "border-slate-200 bg-slate-50 hover:bg-slate-100/70 text-slate-600"
+              }`}
+            >
+              <SlidersHorizontal size={14} className={selectedRole === "admin" ? "text-blue-600" : "text-slate-400"} />
+              <span className="text-[11px] font-bold leading-tight">Admin</span>
+              <span className="text-[9px] text-slate-400 leading-none">Control Center</span>
+            </button>
+          </div>
+        </div>
+
         {/* Error / Success Feedback */}
         {errorMsg && (
           <div className="p-2.5 rounded-lg bg-rose-50 border border-rose-200 flex items-start gap-2 text-xs text-rose-700 animate-fadeIn">
@@ -326,7 +538,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             disabled={isAuthenticating}
             className="w-full p-2.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition-all flex items-center justify-center gap-2.5 text-xs font-semibold text-slate-700 hover:border-slate-400"
           >
-            {/* Google SVG Icon */}
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
@@ -362,7 +573,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             disabled={isAuthenticating}
             className="w-full p-2.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition-all flex items-center justify-center gap-2.5 text-xs font-semibold text-slate-700 hover:border-slate-400"
           >
-            {/* GitHub SVG Icon */}
             <svg className="w-4 h-4 text-slate-900 fill-current" viewBox="0 0 24 24">
               <path
                 fillRule="evenodd"
@@ -382,6 +592,42 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </button>
         </div>
 
+        {/* Quick Demo 1-Click Access Box */}
+        <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+          <div className="flex items-center justify-between text-[11px] font-semibold text-slate-700">
+            <span>{isBn ? "⚡ দ্রুত ১-ক্লিক ডেমো অ্যাক্সেস" : "⚡ Quick 1-Click Demo Access"}</span>
+            <span className="text-[10px] text-slate-400 font-normal">
+              {isBn ? "পাসওয়ার্ড ছাড়া" : "Instant Access"}
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-1.5">
+            <button
+              type="button"
+              onClick={() => handleQuickDemoLogin("customer")}
+              className="py-1.5 px-2 rounded-lg bg-white hover:bg-blue-50 hover:border-blue-300 border border-slate-200 text-[11px] font-semibold text-slate-700 transition-colors flex flex-col items-center gap-0.5 shadow-2xs"
+            >
+              <Wallet size={13} className="text-blue-600" />
+              <span className="text-[10px] leading-tight">Customer</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickDemoLogin("analyst")}
+              className="py-1.5 px-2 rounded-lg bg-white hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 text-[11px] font-semibold text-slate-700 transition-colors flex flex-col items-center gap-0.5 shadow-2xs"
+            >
+              <ShieldCheck size={13} className="text-emerald-600" />
+              <span className="text-[10px] leading-tight">SOC Analyst</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickDemoLogin("admin")}
+              className="py-1.5 px-2 rounded-lg bg-white hover:bg-purple-50 hover:border-purple-300 border border-slate-200 text-[11px] font-semibold text-slate-700 transition-colors flex flex-col items-center gap-0.5 shadow-2xs"
+            >
+              <SlidersHorizontal size={13} className="text-purple-600" />
+              <span className="text-[10px] leading-tight">Admin Center</span>
+            </button>
+          </div>
+        </div>
+
         {/* Divider */}
         <div className="relative flex items-center justify-center">
           <div className="border-t border-slate-200 w-full" />
@@ -396,12 +642,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-slate-700 flex items-center gap-1.5">
                 <Mail size={12} className="text-slate-400" />
-                <span>{isBn ? "কর্পোরেট ইমেইল" : "Analyst Email"}</span>
+                <span>{isBn ? "নিবন্ধিত ইমেইল" : "Registered Email"}</span>
               </label>
               <input
                 type="email"
                 required
-                placeholder="analyst@upay.com.bd"
+                placeholder={selectedRole === "customer" ? "customer@gmail.com" : "analyst@upay.com.bd"}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
@@ -429,7 +675,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
             >
               {isAuthenticating ? (
-                <span>{isBn ? "যাচাই করা হচ্ছে..." : "Verifying..."}</span>
+                <span>{isBn ? "যাচাই করা হচ্ছে..." : "Verifying with Firebase..."}</span>
               ) : (
                 <>
                   <span>{isBn ? "প্রবেশ করুন" : "Sign In with Email"}</span>
@@ -443,12 +689,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-slate-700 flex items-center gap-1.5">
                 <User size={12} className="text-slate-400" />
-                <span>{isBn ? "কর্মকর্তার পূর্ণ নাম" : "Full Name"}</span>
+                <span>{isBn ? "পূর্ণ নাম" : "Full Name"}</span>
               </label>
               <input
                 type="text"
                 required
-                placeholder="Arman Hossen"
+                placeholder={selectedRole === "customer" ? "Karim Uddin" : "Arman Hossen"}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
@@ -458,12 +704,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-slate-700 flex items-center gap-1.5">
                 <Mail size={12} className="text-slate-400" />
-                <span>{isBn ? "অফিসিয়াল ইমেইল" : "Official Email"}</span>
+                <span>{isBn ? "ইমেইল ঠিকানা" : "Email Address"}</span>
               </label>
               <input
                 type="email"
                 required
-                placeholder="investigator@upay.com.bd"
+                placeholder={selectedRole === "customer" ? "karim@gmail.com" : "arman@upay.com.bd"}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
@@ -506,10 +752,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
             >
               {isAuthenticating ? (
-                <span>{isBn ? "নিবন্ধন করা হচ্ছে..." : "Registering Account..."}</span>
+                <span>{isBn ? "নিবন্ধন করা হচ্ছে..." : "Registering with Firebase..."}</span>
               ) : (
                 <>
-                  <span>{isBn ? "নিবন্ধন সম্পন্ন করুন" : "Create Investigator Account"}</span>
+                  <span>
+                    {isBn
+                      ? selectedRole === "customer"
+                        ? "ওয়ালেট অ্যাকাউন্ট তৈরি করুন"
+                        : "অ্যাকাউন্ট তৈরি করুন"
+                      : selectedRole === "customer"
+                      ? "Create Upay Wallet Account"
+                      : "Create Authorized Account"}
+                  </span>
                   <ArrowRight size={13} />
                 </>
               )}
@@ -517,54 +771,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </form>
         )}
 
-        {/* 1-Click Fast Authenticate Roles for Hackathon Judging */}
-        <div className="pt-4 border-t border-slate-200 space-y-2.5">
-          <div className="flex items-center justify-between">
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">
-              {isBn ? "বিচারক / দ্রুত ডেমো ভূমিকা" : "1-Click Evaluation Roles"}
-            </div>
-            <span className="text-[10px] text-blue-600 font-semibold flex items-center gap-1">
-              <Sparkles size={11} />
-              <span>Instant Access</span>
-            </span>
-          </div>
-
-          <div className="space-y-1.5">
-            {PRESET_ACCOUNTS.map((acc) => (
-              <button
-                key={acc.email}
-                type="button"
-                onClick={() => handleFastPresetSignIn(acc)}
-                className={`w-full p-2.5 rounded-lg border text-left transition-all flex items-center justify-between active:scale-[0.985] ${
-                  selectedAccount.email === acc.email
-                    ? "border-blue-600 bg-blue-50/50 shadow-subtle"
-                    : "border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 shadow-subtle"
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded bg-blue-100 text-blue-700 font-bold text-[11px] flex items-center justify-center font-mono">
-                    {acc.avatar}
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-slate-900 leading-tight">{acc.name}</div>
-                    <div className="text-[10px] text-slate-500 leading-tight">{acc.role}</div>
-                  </div>
-                </div>
-                <span className="text-[9px] font-mono font-bold text-blue-700 bg-white px-2 py-0.5 rounded border border-blue-200">
-                  {acc.badge}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Security / Bangladesh Bank Accreditation */}
         <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-2 text-[10.5px] text-slate-500">
           <ShieldCheck size={14} className="text-emerald-600 shrink-0" />
           <span>
             {isBn
-              ? "বাংলাদেশ ব্যাংক BFIU সার্কুলার ২৫/২০২৩ কমপ্লায়েন্ট ও ফায়ারবেস সিকিউরড গেটওয়ে"
-              : "Compliant with Bangladesh Bank BFIU Circular 25/2023 & Firebase SSO"}
+              ? "বাংলাদেশ ব্যাংক BFIU সার্কুলার ২৫/২০২৩ কমপ্লায়েন্ট ও ফায়ারবেস অথরাইজড গেটওয়ে"
+              : "Compliant with Bangladesh Bank BFIU Circular 25/2023 & Firebase Authentication"}
           </span>
         </div>
       </div>

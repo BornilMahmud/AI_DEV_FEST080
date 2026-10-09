@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { BangladeshTransactionMap } from "../network/BangladeshTransactionMap";
 import { useSentinel } from "@/context/SentinelContext";
+import { SpotlightCard } from "@/components/ui/SpotlightCard";
 
 interface OverviewViewProps {
   onNavigate: (page: NavigationPage) => void;
@@ -278,10 +279,14 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
         {/* 6-Column Boxy Responsive Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
           {pipelineStages.map((stage, idx) => (
-            <div
+            <SpotlightCard
               key={idx}
               onClick={() => onNavigate(stage.page)}
-              className={`group relative rounded-xl p-2.5 sm:p-3 border hover-lift transition-all cursor-pointer flex flex-col justify-between ${stage.bgClass} ${stage.borderClass} ${stage.hoverBorderClass}`}
+              color="purple"
+              glowSize="medium"
+              lightsEdges={true}
+              lag="short"
+              className={`group rounded-xl p-2.5 sm:p-3 border hover-lift transition-all cursor-pointer flex flex-col justify-between ${stage.bgClass} ${stage.borderClass} ${stage.hoverBorderClass}`}
               title={isBn ? `${stage.titleBn} মডিউল খুলুন` : `Open ${stage.titleEn}`}
             >
               {/* Top Pill Row + Step + Connected Arrow */}
@@ -316,7 +321,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
                 <span>{isBn ? "মডিউল দেখুন" : "View Stage"}</span>
                 <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
               </div>
-            </div>
+            </SpotlightCard>
           ))}
         </div>
       </div>
@@ -324,9 +329,13 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
       {/* ─── Group 3: KPI Stat Cards ─── */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 stagger-3">
         {kpiData.map((kpi, index) => (
-          <div
+          <SpotlightCard
             key={index}
-            className="card-base hover-lift p-3.5 border border-slate-200 bg-white flex flex-col justify-between"
+            color="purple"
+            glowSize="medium"
+            lightsEdges={true}
+            lag="short"
+            className="hover-lift p-3.5 border border-slate-200 bg-white rounded-xl shadow-subtle flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-slate-500 text-xs">
               <span className="font-semibold text-slate-600 truncate">{kpi.label}</span>
@@ -342,7 +351,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
             <div className="text-[11px] text-slate-500 font-medium truncate">
               {kpi.trend}
             </div>
-          </div>
+          </SpotlightCard>
         ))}
       </div>
 

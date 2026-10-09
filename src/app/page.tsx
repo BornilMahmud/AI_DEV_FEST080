@@ -23,6 +23,10 @@ import { LoginPage, UserProfile } from "@/components/auth/LoginPage";
 import { HelpModal } from "@/components/ui/HelpModal";
 import { GlassAiChatbot } from "@/components/chat/GlassAiChatbot";
 import { SentinelIntro } from "@/components/ui/SentinelIntro";
+import { CustomerPortalView } from "@/components/customer/CustomerPortalView";
+import { ModelManagementView } from "@/components/admin/ModelManagementView";
+import { DatasetManagementView } from "@/components/admin/DatasetManagementView";
+import { SystemHealthView } from "@/components/admin/SystemHealthView";
 import { SecurityIntelligenceView } from "@/components/security/SecurityIntelligenceView";
 import { ImmutableAuditView } from "@/components/audit/ImmutableAuditView";
 
@@ -68,7 +72,11 @@ function SentinelAppShell() {
       }
       const saved = localStorage.getItem("sentinel_user");
       if (saved) {
-        setCurrentUser(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        setCurrentUser(parsed);
+        if (parsed.rawRole === "CUSTOMER") {
+          setCurrentPage("customer-portal");
+        }
       }
     } catch {
       // Fallback if localStorage unavailable
@@ -198,7 +206,12 @@ function SentinelAppShell() {
             } catch {
               // ignore
             }
-            showNotification(`Welcome, ${profile.name} — Authenticated via Google SSO`);
+            if (profile.rawRole === "CUSTOMER") {
+              setCurrentPage("customer-portal");
+            } else {
+              setCurrentPage("overview");
+            }
+            showNotification(`Welcome, ${profile.name} — Authenticated via Firebase`);
           }}
         />
       </>
@@ -331,11 +344,31 @@ function SentinelAppShell() {
             />
           )}
 
+          {currentPage === "customer-portal" && currentUser && (
+            <CustomerPortalView
+              currentUser={currentUser}
+              onNavigateAdmin={() => handleNavigate("overview")}
+              onLogout={handleLogout}
+            />
+          )}
+
           {currentPage === "security" && (
             <SecurityIntelligenceView
               onNavigate={handleNavigate}
               onNotify={showNotification}
             />
+          )}
+
+          {currentPage === "models" && (
+            <ModelManagementView onNotify={showNotification} />
+          )}
+
+          {currentPage === "datasets" && (
+            <DatasetManagementView />
+          )}
+
+          {currentPage === "system-health" && (
+            <SystemHealthView />
           )}
 
           {currentPage === "audit" && (

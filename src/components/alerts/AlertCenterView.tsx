@@ -15,6 +15,7 @@ import {
   ArrowRight,
   Filter,
 } from "lucide-react";
+import { SpotlightCard } from "@/components/ui/SpotlightCard";
 
 interface AlertCenterViewProps {
   onNavigate: (page: NavigationPage) => void;
@@ -73,23 +74,59 @@ export const AlertCenterView: React.FC<AlertCenterViewProps> = ({
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="flex items-center gap-2">
-        {["All", "Critical", "High", "Medium"].map((sev) => {
-          const label = language === "bn"
-            ? (sev === "All" ? "সকল অ্যালার্ট" : sev === "Critical" ? "মারাত্মক" : sev === "High" ? "উচ্চ ঝুঁকি" : "মধ্যম")
-            : `${sev} Priority`;
+      {/* Priority Filter Bar */}
+      <div className="flex flex-wrap items-center gap-2">
+        {[
+          { key: "All", labelEn: "All Priority", labelBn: "সকল অগ্রাধিকার", count: alerts.length },
+          {
+            key: "Critical",
+            labelEn: "Critical Priority",
+            labelBn: "মারাত্মক ঝুঁকি",
+            count: alerts.filter((a) => a.severity === "Critical").length,
+            activeColor: "bg-rose-600 text-white border-rose-600 shadow-sm",
+            dotColor: "bg-rose-500",
+          },
+          {
+            key: "High",
+            labelEn: "High Priority",
+            labelBn: "উচ্চ ঝুঁকি",
+            count: alerts.filter((a) => a.severity === "High").length,
+            activeColor: "bg-amber-600 text-white border-amber-600 shadow-sm",
+            dotColor: "bg-amber-500",
+          },
+          {
+            key: "Medium",
+            labelEn: "Medium Priority",
+            labelBn: "মধ্যম ঝুঁকি",
+            count: alerts.filter((a) => a.severity === "Medium").length,
+            activeColor: "bg-blue-600 text-white border-blue-600 shadow-sm",
+            dotColor: "bg-blue-500",
+          },
+        ].map((tab) => {
+          const isActive = selectedSeverity === tab.key;
           return (
             <button
-              key={sev}
-              onClick={() => setSelectedSeverity(sev)}
-              className={`btn text-xs px-3 py-1.5 rounded-lg border transition-colors ${
-                selectedSeverity === sev
-                  ? "bg-emerald-600 text-white border-emerald-600 font-bold"
-                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+              key={tab.key}
+              onClick={() => setSelectedSeverity(tab.key)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-bold transition-all ${
+                isActive
+                  ? tab.activeColor || "bg-slate-900 text-white border-slate-900 shadow-sm"
+                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300"
               }`}
             >
-              {label}
+              {tab.dotColor && !isActive && (
+                <span className={`w-2 h-2 rounded-full ${tab.dotColor}`} />
+              )}
+              <span>{language === "bn" ? tab.labelBn : tab.labelEn}</span>
+              <span
+                className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold leading-none ${
+                  isActive
+                    ? "bg-white/25 text-white"
+                    : "bg-slate-100 text-slate-600 border border-slate-200"
+                }`}
+              >
+                {tab.count}
+              </span>
             </button>
           );
         })}
@@ -100,105 +137,146 @@ export const AlertCenterView: React.FC<AlertCenterViewProps> = ({
         {/* Left: Alert Feed */}
         <div className="lg:col-span-8 space-y-2.5">
           {filteredAlerts.length === 0 ? (
-            <div className="card-base p-8 text-center text-slate-400 border border-slate-200 bg-white">
+            <div className="card-base p-8 text-center text-slate-400 border border-slate-200 bg-white rounded-xl">
               {language === "bn"
                 ? "নির্বাচিত ফিল্টারে কোন অ্যালার্ট পাওয়া যায়নি।"
                 : "No alerts match the selected priority filter."}
             </div>
           ) : (
             filteredAlerts.map((alert) => (
-              <div
+              <SpotlightCard
                 key={alert.id}
-                className={`card-base p-3.5 flex items-center gap-3.5 transition-all border border-slate-200 bg-white ${
-                  alert.unread ? "border-l-4 border-l-rose-500" : ""
+                color={
+                  alert.severity === "Critical"
+                    ? "purple"
+                    : alert.severity === "High"
+                    ? "amber"
+                    : "blue"
+                }
+                glowSize="small"
+                lightsEdges={true}
+                lag="short"
+                className={`p-3.5 sm:p-4 transition-all border bg-white rounded-xl shadow-subtle hover-lift animate-fadeUp ${
+                  alert.unread
+                    ? "border-l-4 border-l-rose-500 border-slate-200"
+                    : "border-slate-200"
                 }`}
               >
-                {/* Icon Badge */}
-                <div
-                  className={`w-9 h-9 rounded-lg border flex items-center justify-center shrink-0 ${
-                    alert.severity === "Critical"
-                      ? "bg-rose-50 text-rose-600 border-rose-200"
-                      : alert.severity === "High"
-                      ? "bg-amber-50 text-amber-600 border-amber-200"
-                      : "bg-amber-50 text-amber-600 border-amber-200"
-                  }`}
-                >
-                  {alert.iconType === "network" ? (
-                    <Share2 size={16} />
-                  ) : alert.iconType === "shield" ? (
-                    <ShieldAlert size={16} />
-                  ) : alert.iconType === "activity" ? (
-                    <Activity size={16} />
-                  ) : (
-                    <Smartphone size={16} />
-                  )}
-                </div>
-
-                {/* Copy */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span
-                      className={`badge ${
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 w-full">
+                  {/* Left: Icon Badge + Content */}
+                  <div className="flex items-start gap-3.5 flex-1 min-w-0">
+                    {/* Icon Badge */}
+                    <div
+                      className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 mt-0.5 shadow-xs ${
                         alert.severity === "Critical"
-                          ? "badge-critical"
+                          ? "bg-rose-50 text-rose-600 border-rose-200"
                           : alert.severity === "High"
-                          ? "badge-high"
-                          : "badge-medium"
+                          ? "bg-amber-50 text-amber-600 border-amber-200"
+                          : "bg-blue-50 text-blue-600 border-blue-200"
                       }`}
                     >
-                      {alert.severity}
-                    </span>
-                    <span className="text-[10.5px] text-slate-400 font-mono">
-                      {alert.timeAgo}
-                    </span>
-                    {alert.unread && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                    )}
+                      {alert.iconType === "network" ? (
+                        <Share2 size={18} />
+                      ) : alert.iconType === "shield" ? (
+                        <ShieldAlert size={18} />
+                      ) : alert.iconType === "activity" ? (
+                        <Activity size={18} />
+                      ) : (
+                        <Smartphone size={18} />
+                      )}
+                    </div>
+
+                    {/* Copy Body */}
+                    <div className="flex-1 min-w-0">
+                      {/* Priority Tag, Time, Unread, Confidence */}
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <span
+                          className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${
+                            alert.severity === "Critical"
+                              ? "bg-rose-100 text-rose-700 border-rose-300"
+                              : alert.severity === "High"
+                              ? "bg-amber-100 text-amber-700 border-amber-300"
+                              : "bg-blue-100 text-blue-700 border-blue-300"
+                          }`}
+                        >
+                          {alert.severity}
+                        </span>
+
+                        <span className="text-[11px] text-slate-400 font-mono">
+                          {alert.timeAgo}
+                        </span>
+
+                        {alert.unread && (
+                          <span className="inline-flex items-center gap-1 text-[10px] text-rose-600 font-bold bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200 font-mono">
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                            <span>UNREAD</span>
+                          </span>
+                        )}
+
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-50 text-slate-600 border border-slate-200 font-medium">
+                          AI Confidence: <b className="text-slate-900 font-bold">{alert.confidence}%</b>
+                        </span>
+                      </div>
+
+                      {/* Alert Title */}
+                      <h3 className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
+                        {alert.title}
+                      </h3>
+
+                      {/* Description */}
+                      <p className="text-[11.5px] sm:text-xs text-slate-600 mt-0.5 leading-relaxed">
+                        {alert.description}
+                      </p>
+
+                      {/* Metadata Row */}
+                      <div className="flex items-center gap-2.5 mt-2 text-[10.5px] text-slate-400 font-mono">
+                        <span className="font-semibold text-slate-500">{alert.id}</span>
+                        <span>&bull;</span>
+                        <span>Entity: <b className="text-slate-700">{alert.relatedId}</b></span>
+                      </div>
+                    </div>
                   </div>
 
-                  <h3 className="text-xs font-bold text-slate-900 truncate">
-                    {alert.title}
-                  </h3>
-                  <p className="text-[11.5px] text-slate-500 mt-0.5 truncate">
-                    {alert.description}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-400 font-mono">
-                    <span>{alert.id}</span>
-                    <span>&bull;</span>
-                    <span>AI Confidence: {alert.confidence}%</span>
+                  {/* Right: Actions */}
+                  <div className="flex items-center gap-2 shrink-0 sm:self-center self-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto justify-end">
+                    <button
+                      onClick={() => handleDismiss(alert.id)}
+                      className="px-2.5 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-all"
+                    >
+                      {language === "bn" ? "খারিজ" : "Dismiss"}
+                    </button>
+                    <button
+                      onClick={() => handleMarkAsRead(alert.id)}
+                      className="p-1.5 text-xs text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg transition-all"
+                      title={language === "bn" ? "পঠিত হিসেবে চিহ্নিত করুন" : "Mark as Read"}
+                    >
+                      <Eye size={13} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        onOpenCase(alert.relatedId);
+                        onNavigate("investigation");
+                      }}
+                      className="px-3 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-lg transition-all flex items-center gap-1.5 shadow-sm"
+                    >
+                      <span>{language === "bn" ? "তদন্ত" : "Dossier"}</span>
+                      <ArrowRight size={12} />
+                    </button>
                   </div>
                 </div>
-
-                {/* Actions */}
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <button
-                    onClick={() => handleDismiss(alert.id)}
-                    className="btn btn-ghost text-xs text-slate-500 hover:text-slate-800 px-2"
-                  >
-                    {language === "bn" ? "খারিজ" : "Dismiss"}
-                  </button>
-                  <button
-                    onClick={() => handleMarkAsRead(alert.id)}
-                    className="btn btn-secondary text-xs px-2"
-                    title={language === "bn" ? "পঠিত হিসেবে চিহ্নিত করুন" : "Mark as Read"}
-                  >
-                    <Eye size={12} />
-                  </button>
-                  <button
-                    onClick={() => onNavigate("investigation")}
-                    className="btn btn-primary text-xs flex items-center gap-1 px-2.5"
-                  >
-                    <span>{language === "bn" ? "তদন্ত" : "Dossier"}</span>
-                    <ArrowRight size={11} />
-                  </button>
-                </div>
-              </div>
+              </SpotlightCard>
             ))
           )}
         </div>
 
         {/* Right: Alert Summary */}
-        <div className="lg:col-span-4 card-base p-4 flex flex-col justify-between space-y-4 border border-slate-200 bg-white h-fit">
+        <SpotlightCard
+          color="purple"
+          glowSize="medium"
+          lightsEdges={true}
+          lag="short"
+          className="lg:col-span-4 p-4 flex flex-col justify-between space-y-4 border border-slate-200 bg-white rounded-xl shadow-subtle h-fit"
+        >
           <div>
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wide pb-2 border-b border-slate-200">
               {language === "bn" ? "২৪ ঘণ্টার সারসংক্ষেপ" : "24h Triage Rollup"}
@@ -243,7 +321,7 @@ export const AlertCenterView: React.FC<AlertCenterViewProps> = ({
               <b className="font-mono text-slate-900">4m 12s</b>
             </div>
           </div>
-        </div>
+        </SpotlightCard>
       </div>
     </div>
   );

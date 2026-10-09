@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import path from "path";
@@ -11,12 +12,20 @@ import { createAuthMiddleware } from "./security/auth-middleware.js";
 import { createRateLimiter } from "./security/rate-limiter.js";
 import { getClientIp } from "./security/ip-detection.js";
 import { verifyFirebaseIdToken } from "./security/token-verifier.js";
+import { createCustomerRouter } from "./customer-routes.js";
+import { createMfsServicesRouter } from "./mfs-services-routes.js";
+import { createAdminRouter } from "./admin-routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load environment variables from backend/.env or root/.env
+dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.BACKEND_PORT || (process.env.PORT && process.env.PORT !== "3000" ? process.env.PORT : 3001);
 
 // CORS & Middleware
 app.use(cors({ origin: true, credentials: true }));
@@ -35,6 +44,21 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     }
   });
   next();
+});
+
+// Top-level Health Checks
+app.get(["/health", "/api/v1/health"], (req: Request, res: Response) => {
+  res.json({
+    status: "HEALTHY",
+    service: "upay-sentinel-backend",
+    timestamp: new Date().toISOString(),
+    uptimeSeconds: Math.floor(process.uptime()),
+    components: {
+      express: "UP",
+      supabase: supabase ? "CONFIGURED" : "DISCONNECTED",
+      gemini: geminiApiKey ? "READY" : "SIMULATION_FALLBACK"
+    }
+  });
 });
 
 // Initialize Supabase Client
@@ -342,6 +366,7 @@ app.post(
         avatarUrl: verified.avatarUrl,
         observedIp: ipDetails.ipAddress,
         userAgent,
+        role: req.body?.role as any,
       });
 
       // 4. Record authenticated login session
@@ -366,6 +391,8 @@ app.post(
         requestId,
       });
 
+      const wallet = await securityService.getWallet(profile.id);
+
       res.json({
         success: true,
         user: {
@@ -377,6 +404,11 @@ app.post(
           avatarUrl: profile.avatar_url,
           accountStatus: profile.account_status,
           isDemoUser: profile.is_demo_user,
+          wallet: {
+            balance: Number(wallet.balance || 45250.00),
+            currency: wallet.currency || "BDT",
+            status: wallet.status || "ACTIVE",
+          },
         },
         session: {
           id: sessionId,
@@ -413,7 +445,7 @@ app.get(
   requireRole("ADMIN", "ANALYST"),
   async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
       let records: any[] = [];
 
@@ -456,7 +488,7 @@ app.get(
   requireRole("ADMIN", "ANALYST"),
   async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
       let records: any[] = [];
 
@@ -522,7 +554,7 @@ app.get(
   authenticateUser,
   async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const isSelf = req.user?.id === id || req.user?.firebase_uid === id;
       const isPrivileged = req.user?.role === "ADMIN" || req.user?.role === "ANALYST";
 
@@ -680,6 +712,28 @@ function evaluateAuthoritativeRisk(txn: any, mlPrediction?: PythonMlPrediction) 
     scoringVersion: "v1.4.2-sentinel-fusion-py",
   };
 }
+
+// ==============================================================================
+// 3. TWO-SIDED MFS ECOSYSTEM ROUTERS (CUSTOMER PORTAL, SERVICES, ADMIN CENTER)
+// ==============================================================================
+app.use(
+  ["/api/me", "/api/v1/me"],
+  authenticateUser,
+  createCustomerRouter(supabase, securityService)
+);
+
+app.use(
+  ["/api/services", "/api/v1/services"],
+  authenticateUser,
+  createMfsServicesRouter(supabase, securityService, evaluateAuthoritativeRisk, localAlerts, localTransactions)
+);
+
+app.use(
+  ["/api/admin", "/api/v1/admin"],
+  authenticateUser,
+  requireRole("ADMIN", "ANALYST", "INVESTIGATOR"),
+  createAdminRouter(supabase, securityService)
+);
 
 // POST /api/v1/transactions - Ingest transaction through risk engine
 app.post(["/api/transactions", "/api/v1/transactions"], txnRateLimiter, async (req: Request, res: Response) => {
@@ -955,7 +1009,7 @@ app.post(
         actorRole: actorRole,
         action: `ANALYST_${normalizedDecision}`,
         entity: "transactions",
-        entityId: id,
+        entityId: id as string,
         reason: notes || `Analyst decision ${normalizedDecision} executed on ${id}`,
         requestId: req.requestId,
         previousState: { status: prevStatus },
@@ -1369,6 +1423,7 @@ app.get(
     }
   }
 );
+
 
 // ==============================================================================
 // 11. CENTRALIZED ERROR HANDLER (PHASE 26: ERROR SECURITY)

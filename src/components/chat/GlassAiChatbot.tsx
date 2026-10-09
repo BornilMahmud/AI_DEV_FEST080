@@ -206,41 +206,33 @@ export const GlassAiChatbot: React.FC<GlassAiChatbotProps> = ({
           <button
             onClick={() => setIsOpen(true)}
             aria-label="Open AI Copilot Chat"
-            className="relative flex items-center gap-2.5 px-4 py-3 rounded-full bg-white/80 hover:bg-white/95 backdrop-blur-md border border-white/90 shadow-[0_12px_36px_rgba(0,82,255,0.18),0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_44px_rgba(0,82,255,0.28)] transition-all duration-300 hover:scale-105 active:scale-95 ring-1 ring-black/[0.04]"
+            className="relative w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-400 flex items-center justify-center text-white shadow-[0_8px_24px_rgba(0,82,255,0.28),0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_32px_rgba(0,82,255,0.38)] hover:scale-105 active:scale-95 transition-all duration-200 border-2 border-white ring-2 ring-blue-500/20"
           >
-            {/* Pulsing Beacon */}
-            <span className="relative flex h-3 w-3">
+            <Sparkles size={20} className="animate-pulse" />
+
+            {/* Online Live Status Beacon */}
+            <span className="absolute bottom-0.5 right-0.5 flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-white" />
             </span>
 
-            {/* AI Icon with Gradient Glow */}
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-400 flex items-center justify-center text-white shadow-xs">
-              <Sparkles size={16} className="animate-pulse" />
-            </div>
-
-            {/* Typography Labels */}
-            <div className="text-left hidden sm:block">
-              <div className="text-xs font-black text-slate-900 leading-none flex items-center gap-1.5">
-                <span>{isBn ? "এআই কোপাইলট" : "AI Copilot"}</span>
-                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-blue-50 text-blue-700 font-bold border border-blue-200">
-                  GEMINI
-                </span>
-              </div>
-              <div className="text-[10px] text-slate-500 font-medium mt-0.5 leading-none">
-                {isBn ? "লাইভ অনুসন্ধান প্রস্তুত" : "Live Triage Assistant"}
-              </div>
-            </div>
-
-            {/* Unread Alert Ping */}
+            {/* Unread Alert Badge */}
             {hasUnread && (
-              <span className="absolute -top-1 -right-1 flex h-4 w-4">
+              <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-4 w-4 bg-[#0052FF] text-[9px] text-white font-bold items-center justify-center">
+                <span className="relative inline-flex rounded-full h-4.5 w-4.5 bg-[#0052FF] text-[9.5px] text-white font-bold items-center justify-center border-2 border-white shadow-xs">
                   1
                 </span>
               </span>
             )}
+
+            {/* Hover Tooltip */}
+            <span className="absolute right-full mr-3 px-2.5 py-1.5 rounded-lg bg-slate-900/90 backdrop-blur-xs text-white text-[11px] font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 shadow-md flex items-center gap-1.5">
+              <span>{isBn ? "এআই কোপাইলট" : "AI Copilot"}</span>
+              <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-blue-500/30 text-blue-200 border border-blue-400/30">
+                GEMINI
+              </span>
+            </span>
           </button>
         </div>
       )}
@@ -310,7 +302,7 @@ export const GlassAiChatbot: React.FC<GlassAiChatbotProps> = ({
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex gap-2.5 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex gap-2.5 animate-fadeUp ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
               >
                 {msg.sender === "bot" && (
                   <div className="w-7 h-7 rounded-xl bg-blue-100 border border-blue-200 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
@@ -438,7 +430,7 @@ export const GlassAiChatbot: React.FC<GlassAiChatbotProps> = ({
             <button
               type="submit"
               disabled={isLoading || !inputText.trim()}
-              className="w-9 h-9 rounded-xl bg-[#0052FF] hover:bg-blue-700 text-white flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-xs shrink-0"
+              className="w-9 h-9 rounded-xl bg-[#0052FF] hover:bg-blue-700 active:scale-95 text-white flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-xs shrink-0"
               title={isBn ? "পাঠান" : "Send message"}
             >
               <Send size={14} />
