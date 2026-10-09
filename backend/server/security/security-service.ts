@@ -18,6 +18,7 @@ export interface UserProfileRecord {
   last_login_at: string | null;
   last_login_ip: string | null;
   last_login_user_agent: string | null;
+  phone?: string | null;
 }
 
 export interface SecurityContextResult {
@@ -36,6 +37,7 @@ export class SecurityService {
   private inMemoryProfiles: Map<string, UserProfileRecord> = new Map();
   private inMemoryIpHistory: Map<string, any[]> = new Map();
   private inMemorySecurityEvents: Map<string, any[]> = new Map();
+  private inMemoryWallets: Map<string, any> = new Map();
 
   constructor(private supabase: SupabaseClient) {}
 
@@ -51,8 +53,9 @@ export class SecurityService {
     observedIp: string;
     userAgent: string;
     role?: SystemRole;
+    phone?: string;
   }): Promise<UserProfileRecord> {
-    const { firebaseUid, email, displayName, avatarUrl, observedIp, userAgent, role } = params;
+    const { firebaseUid, email, displayName, avatarUrl, observedIp, userAgent, role, phone } = params;
 
     // 1. Look up existing profile by firebase_uid
     const { data: existing, error: fetchErr } = await this.supabase
@@ -103,12 +106,16 @@ export class SecurityService {
           last_login_ip: observedIp,
           last_login_user_agent: userAgent,
           updated_at: new Date().toISOString(),
+          ...(phone ? { phone } : {}),
         })
         .eq("id", emailMatch.id)
         .select()
         .single();
 
       const resolved = (!linkErr && linked) ? (linked as UserProfileRecord) : (emailMatch as UserProfileRecord);
+      if (phone && !resolved.phone) {
+        resolved.phone = phone;
+      }
       await this.getOrCreateWallet(resolved.id, resolved.email);
       return resolved;
     }
@@ -139,6 +146,7 @@ export class SecurityService {
       last_login_at: new Date().toISOString(),
       last_login_ip: observedIp,
       last_login_user_agent: userAgent,
+      ...(phone ? { phone } : {}),
     };
 
     const { data: created, error: insertErr } = await this.supabase
@@ -698,6 +706,10 @@ export class SecurityService {
       };
     }
 
+    if (this.inMemoryWallets.has(userId)) {
+      return this.inMemoryWallets.get(userId);
+    }
+
     try {
       const { data: existing } = await this.supabase
         .from("wallets")
@@ -706,6 +718,7 @@ export class SecurityService {
         .maybeSingle();
 
       if (existing) {
+        this.inMemoryWallets.set(userId, existing);
         return existing;
       }
 
@@ -725,12 +738,11 @@ export class SecurityService {
         .select()
         .single();
 
-      if (error) {
-        return newWallet;
-      }
-      return created;
+      const savedWallet = created || newWallet;
+      this.inMemoryWallets.set(userId, savedWallet);
+      return savedWallet;
     } catch {
-      return {
+      const localWallet = {
         id: `wallet-${userId}`,
         user_id: userId,
         balance: 45250.00,
@@ -739,6 +751,8 @@ export class SecurityService {
         daily_limit: 100000.00,
         monthly_limit: 500000.00,
       };
+      this.inMemoryWallets.set(userId, localWallet);
+      return localWallet;
     }
   }
 
@@ -753,11 +767,19 @@ export class SecurityService {
       return { success: false, newBalance: Number(wallet.balance) };
     }
 
+    wallet.balance = newBal;
+    wallet.updated_at = new Date().toISOString();
+    this.inMemoryWallets.set(userId, wallet);
+
     if (!userId.startsWith("local-")) {
-      await this.supabase
-        .from("wallets")
-        .update({ balance: newBal, updated_at: new Date().toISOString() })
-        .eq("user_id", userId);
+      try {
+        await this.supabase
+          .from("wallets")
+          .update({ balance: newBal, updated_at: new Date().toISOString() })
+          .eq("user_id", userId);
+      } catch (err) {
+        console.warn("[SecurityService] Supabase wallet balance sync skipped:", err);
+      }
     }
     return { success: true, newBalance: newBal };
   }

@@ -204,6 +204,10 @@ export function createMfsServicesRouter(
         status: "COMPLETED",
         transaction: txnRecord,
         newBalance: updateRes.newBalance,
+        wallet: {
+          balance: updateRes.newBalance,
+          newBalance: updateRes.newBalance,
+        },
         riskScore: assessment.finalScore,
         riskLevel: assessment.riskLevel,
         riskAssessment: {
@@ -284,6 +288,10 @@ export function createMfsServicesRouter(
         transaction: txnRecord,
         fee,
         newBalance: updateRes.newBalance,
+        wallet: {
+          balance: updateRes.newBalance,
+          newBalance: updateRes.newBalance,
+        },
         riskScore: assessment.finalScore,
         meta: { requestId: req.requestId },
       });
@@ -336,6 +344,10 @@ export function createMfsServicesRouter(
         status: "COMPLETED",
         transaction: txnRecord,
         newBalance: updateRes.newBalance,
+        wallet: {
+          balance: updateRes.newBalance,
+          newBalance: updateRes.newBalance,
+        },
         isSimulation: true,
         disclaimer: "DEMO / SIMULATED TRANSACTION: In evaluation mode, card/bank gateway funding is simulated.",
         meta: { requestId: req.requestId },
@@ -349,7 +361,8 @@ export function createMfsServicesRouter(
   router.post("/payment", async (req: Request, res: Response) => {
     try {
       const user = req.user!;
-      const { merchantName, merchantCode, amount, reference, isQr } = req.body;
+      const merchantId = req.body.merchantId || req.body.merchantCode || req.body.merchantName || "MERCHANT-01";
+      const { merchantName, amount, reference, isQr } = req.body;
       const numAmount = Number(amount);
 
       if (!numAmount || numAmount <= 0) {
@@ -363,7 +376,7 @@ export function createMfsServicesRouter(
 
       const { txnId, assessment } = await runFinancialRiskCheck(req, {
         amount: numAmount,
-        recipient: merchantCode || merchantName || "MERCHANT-01",
+        recipient: merchantId,
         senderName: user.email,
         serviceType: "merchant_pay",
       });
@@ -373,7 +386,7 @@ export function createMfsServicesRouter(
         id: txnId,
         transaction_reference: txnId,
         sender_name: user.email,
-        receiver_name: merchantName || `Merchant ${merchantCode}`,
+        receiver_name: merchantName || `Merchant ${merchantId}`,
         amount: numAmount,
         currency: "BDT",
         transaction_type: isQr ? "qr_payment" : "merchant_pay",
@@ -388,6 +401,10 @@ export function createMfsServicesRouter(
         status: "COMPLETED",
         transaction: txnRecord,
         newBalance: updateRes.newBalance,
+        wallet: {
+          balance: updateRes.newBalance,
+          newBalance: updateRes.newBalance,
+        },
         riskScore: assessment.finalScore,
         meta: { requestId: req.requestId },
       });
@@ -434,6 +451,10 @@ export function createMfsServicesRouter(
         status: "COMPLETED",
         transaction: txnRecord,
         newBalance: updateRes.newBalance,
+        wallet: {
+          balance: updateRes.newBalance,
+          newBalance: updateRes.newBalance,
+        },
         isSimulation: true,
         disclaimer: "DEMO / SIMULATED TRANSACTION: Telecom carrier dispatch simulated.",
         meta: { requestId: req.requestId },
@@ -482,6 +503,10 @@ export function createMfsServicesRouter(
         status: "COMPLETED",
         transaction: txnRecord,
         newBalance: updateRes.newBalance,
+        wallet: {
+          balance: updateRes.newBalance,
+          newBalance: updateRes.newBalance,
+        },
         isSimulation: true,
         disclaimer: "DEMO / SIMULATED TRANSACTION: Utility provider API dispatch simulated.",
         meta: { requestId: req.requestId },
@@ -532,6 +557,10 @@ export function createMfsServicesRouter(
         status: "COMPLETED",
         transaction: txnRecord,
         newBalance: updateRes.newBalance,
+        wallet: {
+          balance: updateRes.newBalance,
+          newBalance: updateRes.newBalance,
+        },
         isSimulation: true,
         disclaimer: "DEMO / SIMULATED TRANSACTION: BEFTN/NPSB bank gateway settlement simulated.",
         meta: { requestId: req.requestId },
@@ -574,6 +603,10 @@ export function createMfsServicesRouter(
         status: "COMPLETED",
         transaction: txnRecord,
         newBalance: updateRes.newBalance,
+        wallet: {
+          balance: updateRes.newBalance,
+          newBalance: updateRes.newBalance,
+        },
         isSimulation: true,
         disclaimer: "DEMO / SIMULATED TRANSACTION: Inward exchange house remittance simulated with 2.5% incentive.",
         meta: { requestId: req.requestId },

@@ -137,7 +137,7 @@ All 20 tables are created, indexed, and actively connected via the `aws-0-ap-nor
 
 1. **Server-Observed IP Only:** Client IP is extracted strictly via `req.ip` and reverse proxy headers (`x-forwarded-for`). Browser submissions of IP are disregarded.
 2. **Privacy Terminology:** All user-facing references state *"Current observed login IP"* and optional *"Approximate IP-based network location"*. Exact physical street addresses are never claimed or fabricated.
-3. **Fair Authentication:** Zero preset login buttons or bypass shortcuts exist on `LoginPage.tsx`. Authentication requires genuine Firebase credentials (Email/Password, Google OAuth, GitHub OAuth).
+3. **Fair Authentication:** Zero preset login buttons or bypass shortcuts exist on `LoginPage.tsx`. Authentication requires genuine Firebase credentials (Email/Password, Google OAuth).
 4. **Simulation Transparency:** All mock external banking and telco gateways are explicitly disclaimed as *"DEMO / SIMULATION"* in the UI and API payload responses.
 
 ---

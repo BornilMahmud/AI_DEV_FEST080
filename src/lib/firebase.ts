@@ -2,7 +2,6 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import {
   getAuth,
   GoogleAuthProvider,
-  GithubAuthProvider,
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
@@ -34,7 +33,6 @@ export const auth = getAuth(app);
 // Providers
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
-export const githubProvider = new GithubAuthProvider();
 
 export {
   signInWithPopup,

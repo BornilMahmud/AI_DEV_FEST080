@@ -15,7 +15,8 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
  */
 export async function syncFirebaseUserToSupabase(
   user: FirebaseUser,
-  role: "customer" | "investigator" | "analyst" | "admin" = "customer"
+  role: "customer" | "investigator" | "analyst" | "admin" = "customer",
+  phone?: string
 ) {
   try {
     // 1. Obtain verified Firebase ID token
@@ -34,6 +35,7 @@ export async function syncFirebaseUserToSupabase(
           },
           body: JSON.stringify({
             role: role.toUpperCase(),
+            phone: phone || undefined,
             deviceFingerprint: typeof window !== "undefined" ? window.navigator.userAgent : "browser",
           }),
         });
@@ -49,7 +51,7 @@ export async function syncFirebaseUserToSupabase(
     }
 
     // 2. Direct client fallback to Supabase if backend is unreachable
-    const payload = {
+    const payload: Record<string, any> = {
       firebase_uid: user.uid,
       email: user.email || "",
       display_name: user.displayName || user.email?.split("@")[0] || "Authorized Analyst",
@@ -57,6 +59,9 @@ export async function syncFirebaseUserToSupabase(
       role: role.toUpperCase(),
       updated_at: new Date().toISOString(),
     };
+    if (phone) {
+      payload.phone = phone;
+    }
 
     const { data, error } = await supabase
       .from("profiles")

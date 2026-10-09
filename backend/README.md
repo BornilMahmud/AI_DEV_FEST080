@@ -8,7 +8,7 @@ Enterprise Risk & Trust Intelligence Backend for Mobile Financial Services (MFS)
 
 - **Runtime & Server**: Node.js + Express 5 + TypeScript + `tsx`
 - **Database**: Supabase PostgreSQL (`https://xhgxmsgsxqpffzmpehtn.supabase.co`) with Row Level Security (RLS) & PostgREST
-- **Authentication**: Firebase Auth (Email/Password, Google OAuth, GitHub OAuth) + Supabase profile synchronization
+- **Authentication**: Firebase Auth (Email/Password, Google OAuth) + Supabase profile synchronization
 - **AI & Copilot**: Google Gemini (`@google/genai` / `@google/generative-ai` with structured investigation reasoning and deterministic fallback)
 - **Authoritative Risk Engine**: Multi-Detector Pipeline (Behavioral Baseline, Velocity Burst, ATO/USSD Pin Reset, Mule Ring Syndicate Cluster #17, Bangladesh Bank Circular Compliance Rules, and ML Calibration)
 

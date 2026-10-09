@@ -1,7 +1,17 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-const BASE_URL = "http://localhost:3001";
+let BASE_URL = process.env.BACKEND_URL || "http://localhost:3001";
+
+async function resolveBaseUrl(): Promise<string> {
+  for (const url of ["http://localhost:3001", "http://localhost:3002", "http://127.0.0.1:3001", "http://127.0.0.1:3002"]) {
+    try {
+      const res = await fetch(`${url}/health`, { signal: AbortSignal.timeout(1000) });
+      if (res.ok) return url;
+    } catch {}
+  }
+  return BASE_URL;
+}
 
 // Helper for test tokens
 function createTestToken(uid: string, role: string, email?: string): string {
@@ -9,8 +19,9 @@ function createTestToken(uid: string, role: string, email?: string): string {
 }
 
 async function runSecurityAuditSuite() {
+  BASE_URL = await resolveBaseUrl();
   console.log("==============================================================================");
-  console.log(" UPAY SENTINEL — COMPREHENSIVE SECOND SECURITY AUDIT & VERIFICATION SUITE");
+  console.log(` UPAY SENTINEL — SECURITY AUDIT SUITE (Target: ${BASE_URL})`);
   console.log("==============================================================================");
 
   let passed = 0;
@@ -296,6 +307,22 @@ async function runSecurityAuditSuite() {
     assert.ok(body.profile.ipDescription.includes("Observed login IP address"));
     assert.equal(body.profile.latitude, undefined);
     assert.equal(body.profile.longitude, undefined);
+  });
+
+  // ----------------------------------------------------------------------------
+  // SECTION 6: LIVE SYSTEM SECURITY CHECKUP & DEFENSE AUDIT
+  // ----------------------------------------------------------------------------
+  console.log("\n--- 6. Live System Security Checkup & Defense Audit ---");
+
+  await check("Security Checkup endpoint returns Grade A+ with 10 verified defense vectors", async () => {
+    const res = await fetch(`${BASE_URL}/api/v1/security/checkup`);
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.success, true);
+    assert.ok(body.report.overallScore >= 95, `Expected score >= 95, got ${body.report.overallScore}`);
+    assert.equal(body.report.summary.totalChecks, 10);
+    assert.equal(body.report.summary.passed, 10);
+    assert.equal(body.report.summary.failed, 0);
   });
 
   console.log("\n==============================================================================");
