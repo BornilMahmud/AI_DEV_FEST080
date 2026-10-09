@@ -21,6 +21,7 @@ import {
   SlidersHorizontal,
   Lock,
   History,
+  User,
 } from "lucide-react";
 import { UserProfile } from "../auth/LoginPage";
 import { useSentinel } from "@/context/SentinelContext";
@@ -240,6 +241,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   {isBn ? "ওয়ালেট ও লেনদেন সেবা" : "Upay MFS Wallet & Services"}
                 </span>
               </button>
+
+              <button
+                onClick={() => handleNav("profile")}
+                className={`nav-item nav-profile w-full text-left ${
+                  currentPage === "profile" ? "active" : ""
+                }`}
+                aria-current={currentPage === "profile" ? "page" : undefined}
+                title={isBn ? "প্রোফাইল ও পাসওয়ার্ড ড্যাশবোর্ড" : "Profile & Security Dashboard"}
+              >
+                <User size={15} className={currentPage === "profile" ? "text-blue-600" : "text-slate-400"} />
+                <span className="truncate flex-1 font-medium">
+                  {isBn ? "প্রোফাইল ও পাসওয়ার্ড" : "Profile & Security"}
+                </span>
+              </button>
             </div>
           </div>
 
@@ -324,11 +339,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* User Profile & Sign Out */}
-        <div className="analyst-profile border-t border-slate-200 pt-2">
-          <UserAvatar user={currentUser} size={28} className="avatar shadow-xs" showBadge={true} />
-          <div className="min-w-0 flex-1">
-            <b className="text-xs text-slate-800 truncate block">{currentUser?.name || "Authorized User"}</b>
-            <small className="text-[10px] text-slate-500 truncate block">{currentUser?.role || "Verified User"}</small>
+        <div className="analyst-profile border-t border-slate-200 pt-2 flex items-center gap-2 group">
+          <div
+            onClick={() => handleNav("profile")}
+            className="flex items-center gap-2 flex-1 min-w-0 cursor-pointer hover:opacity-85 transition-all"
+            title={isBn ? "প্রোফাইল ও পাসওয়ার্ড ড্যাশবোর্ডে যান" : "Open Profile & Security Dashboard"}
+          >
+            <UserAvatar user={currentUser} size={28} className="avatar shadow-xs" showBadge={true} />
+            <div className="min-w-0 flex-1">
+              <b className="text-xs text-slate-800 truncate block group-hover:text-blue-600 transition-colors">
+                {currentUser?.name || "Authorized User"}
+              </b>
+              <small className="text-[10px] text-slate-500 truncate block">
+                {currentUser?.role || "Verified User"}
+              </small>
+            </div>
           </div>
           {onLogout && (
             <button

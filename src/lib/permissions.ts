@@ -10,6 +10,7 @@ export type AppRole = "CUSTOMER" | "ANALYST" | "ADMIN" | "INVESTIGATOR" | "VIEWE
 export const ROLE_PERMISSIONS: Record<AppRole, NavigationPage[]> = {
   CUSTOMER: [
     "customer-portal",
+    "profile",
   ],
   ANALYST: [
     "overview",
@@ -22,6 +23,7 @@ export const ROLE_PERMISSIONS: Record<AppRole, NavigationPage[]> = {
     "customers",
     "analytics",
     "customer-portal",
+    "profile",
   ],
   INVESTIGATOR: [
     "overview",
@@ -33,12 +35,14 @@ export const ROLE_PERMISSIONS: Record<AppRole, NavigationPage[]> = {
     "customers",
     "analytics",
     "customer-portal",
+    "profile",
   ],
   VIEWER: [
     "overview",
     "transactions",
     "alerts",
     "customer-portal",
+    "profile",
   ],
   ADMIN: [
     "overview",
@@ -56,6 +60,7 @@ export const ROLE_PERMISSIONS: Record<AppRole, NavigationPage[]> = {
     "system-health",
     "analytics",
     "customer-portal",
+    "profile",
   ],
 };
 

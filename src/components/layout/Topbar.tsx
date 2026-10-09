@@ -38,6 +38,7 @@ interface TopbarProps {
   onNavigateCustomerPortal?: () => void;
   currentPage?: NavigationPage;
   onNavigateOverview?: () => void;
+  onNavigateProfile?: () => void;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
@@ -54,6 +55,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   onNavigateCustomerPortal,
   currentPage,
   onNavigateOverview,
+  onNavigateProfile,
 }) => {
   const { language, toggleLanguage, t } = useSentinel();
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -204,6 +206,19 @@ export const Topbar: React.FC<TopbarProps> = ({
                   </span>
                 </div>
               </div>
+
+              {onNavigateProfile && (
+                <button
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    onNavigateProfile();
+                  }}
+                  className="w-full text-left px-3 py-2 text-xs text-slate-800 hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center gap-2 font-semibold"
+                >
+                  <User size={13} className="text-blue-600" />
+                  <span>{language === "bn" ? "প্রোফাইল ও পাসওয়ার্ড ড্যাশবোর্ড" : "Profile & Security Dashboard"}</span>
+                </button>
+              )}
 
               {/* Risk managers can toggle between Admin Control Center and Wallet Preview */}
               {isRiskUser && (

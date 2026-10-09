@@ -15,7 +15,8 @@ export type NavigationPage =
   | "datasets"
   | "system-health"
   | "security"
-  | "audit";
+  | "audit"
+  | "profile";
 
 export type TransactionType =
   | "Wallet Transfer"

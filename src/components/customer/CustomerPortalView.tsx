@@ -32,6 +32,7 @@ import {
   Info,
   CreditCard,
   History,
+  User,
 } from "lucide-react";
 import { UserProfile } from "@/components/auth/LoginPage";
 import { SpotlightCard } from "@/components/ui/SpotlightCard";
@@ -42,6 +43,7 @@ interface CustomerPortalViewProps {
   onNavigateAdmin?: () => void;
   onLogout?: () => void;
   onNotify?: (msg: string) => void;
+  onNavigateProfile?: () => void;
 }
 
 interface WalletState {
@@ -83,6 +85,7 @@ export const CustomerPortalView: React.FC<CustomerPortalViewProps> = ({
   onNavigateAdmin,
   onLogout,
   onNotify,
+  onNavigateProfile,
 }) => {
   // Wallet & Profile State
   const [wallet, setWallet] = useState<WalletState>({
@@ -510,6 +513,16 @@ export const CustomerPortalView: React.FC<CustomerPortalViewProps> = ({
                 <Lock size={13} />
                 <span className="text-[11px] hidden sm:inline">Security</span>
               </button>
+              {onNavigateProfile && (
+                <button
+                  onClick={onNavigateProfile}
+                  className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/15 transition-colors text-xs flex items-center gap-1 cursor-pointer"
+                  title="Manage Profile & PIN"
+                >
+                  <User size={13} />
+                  <span className="text-[11px] hidden sm:inline">Profile & PIN</span>
+                </button>
+              )}
             </div>
           </div>
 

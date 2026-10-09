@@ -29,6 +29,7 @@ import { DatasetManagementView } from "@/components/admin/DatasetManagementView"
 import { SystemHealthView } from "@/components/admin/SystemHealthView";
 import { SecurityIntelligenceView } from "@/components/security/SecurityIntelligenceView";
 import { ImmutableAuditView } from "@/components/audit/ImmutableAuditView";
+import { UserProfileDashboard } from "@/components/profile/UserProfileDashboard";
 import { auth, onAuthStateChanged } from "@/lib/firebase";
 import { ShieldAlert } from "lucide-react";
 import { canAccessPage, getDefaultPageForRole, isRiskManager } from "@/lib/permissions";
@@ -326,6 +327,7 @@ function SentinelAppShell() {
           onNavigateCustomerPortal={() => handleNavigate("customer-portal")}
           currentPage={currentPage}
           onNavigateOverview={() => handleNavigate("overview")}
+          onNavigateProfile={() => handleNavigate("profile")}
         />
 
         {/* Dynamic View Container */}
@@ -445,6 +447,22 @@ function SentinelAppShell() {
             <CustomerPortalView
               currentUser={currentUser}
               onNavigateAdmin={() => handleNavigate("overview")}
+              onLogout={handleLogout}
+              onNavigateProfile={() => handleNavigate("profile")}
+            />
+          )}
+
+          {currentPage === "profile" && currentUser && (
+            <UserProfileDashboard
+              currentUser={currentUser}
+              onUpdateUser={(updated) => {
+                setCurrentUser(updated);
+                try {
+                  localStorage.setItem("sentinel_user", JSON.stringify(updated));
+                } catch {}
+              }}
+              onNotify={showNotification}
+              onNavigate={handleNavigate}
               onLogout={handleLogout}
             />
           )}
