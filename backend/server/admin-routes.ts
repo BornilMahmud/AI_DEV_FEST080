@@ -454,7 +454,7 @@ export function createAdminRouter(supabase: SupabaseClient, securityService: Sec
         expressBackend: { status: "HEALTHY", port: 3001, latencyMs: Date.now() - startTime },
         supabasePostgres: { status: supabaseStatus, latencyMs: supabaseLatency, poolerRegion: "ap-northeast-2" },
         pythonMlService: { status: mlStatus, latencyMs: mlLatency, port: 8000, models: ["Classifier", "IsolationForest", "PyTorch"] },
-        geminiCopilot: { status: geminiAvailable ? "AVAILABLE" : "DEMO_FALLBACK", model: process.env.GEMINI_MODEL || "gemini-2.5-flash" },
+        geminiCopilot: { status: geminiAvailable ? "AVAILABLE" : "DEMO_FALLBACK", model: process.env.GEMINI_MODEL || "gemini-3.8-flash" },
       },
       health: {
         express: { status: "UP", latencyMs: Date.now() - startTime },

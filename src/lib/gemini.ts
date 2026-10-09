@@ -79,9 +79,9 @@ function extractJSON(raw: string): Record<string, unknown> | null {
 }
 
 const MODELS_IN_ORDER = [
+  "gemini-3.8-flash",
   "gemini-flash-latest",
   "gemini-2.5-flash",
-  "gemini-3.8-flash",
 ];
 
 export async function generateInvestigationAnalysis(

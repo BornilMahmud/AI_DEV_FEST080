@@ -86,7 +86,7 @@ const secRateLimiter = createRateLimiter({ windowMs: 60 * 1000, max: 60, keyPref
 
 // Gemini Client initialization (secure server-side only)
 const geminiApiKey = process.env.GEMINI_API_KEY || "";
-const geminiModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const geminiModel = process.env.GEMINI_MODEL || "gemini-3.8-flash";
 
 
 // In-Memory Fallback State (Ensures 100% graceful resilience)
