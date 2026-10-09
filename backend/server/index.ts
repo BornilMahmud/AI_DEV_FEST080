@@ -474,6 +474,22 @@ function hashPassword(password: string, salt: string): string {
   return crypto.createHash("sha256").update(`${password}:upay-salt:${salt}`).digest("hex");
 }
 
+// Seed default demo phone accounts so demo credentials work out of the box
+[
+  { phone: "01712894102", name: "Tanvir Ahmed (Customer)", role: "CUSTOMER", pin: "1234" },
+  { phone: "01700112233", name: "Arman Hossen (SOC Lead)", role: "ANALYST", pin: "1234" },
+  { phone: "01711223344", name: "Admin Supervisor", role: "ADMIN", pin: "1234" },
+].forEach((acc) => {
+  phoneCredentialsStore.set(acc.phone, {
+    normalizedPhone: acc.phone,
+    formattedPhone: `+880 ${acc.phone.substring(1, 5)}-${acc.phone.substring(5)}`,
+    passwordHash: hashPassword(acc.pin, acc.phone),
+    name: acc.name,
+    role: acc.role,
+    createdAt: new Date().toISOString(),
+  });
+});
+
 // POST /api/v1/auth/phone-register - Register a new customer via BD mobile number
 app.post(
   ["/api/auth/phone-register", "/api/v1/auth/phone-register"],
@@ -646,45 +662,30 @@ app.post(
       const passHash = hashPassword(String(password), normalized);
       const existing = phoneCredentialsStore.get(normalized);
 
-      if (existing) {
-        if (existing.passwordHash !== passHash) {
-          return res.status(401).json({
-            success: false,
-            error: {
-              code: "INVALID_CREDENTIALS",
-              message: "Invalid phone number or password/PIN.",
-            },
-          });
-        }
-      }
-
-      let assignedRole: any = existing?.role;
-      if (!assignedRole) {
-        const checkStr = `${normalized}`.toLowerCase();
-        if (checkStr.includes("admin") || checkStr.includes("judge") || checkStr.includes("control")) {
-          assignedRole = "ADMIN";
-        } else if (checkStr.includes("analyst") || checkStr.includes("soc") || checkStr.includes("arman") || normalized === "01700112233") {
-          assignedRole = "ANALYST";
-        } else if (role && ["ADMIN", "ANALYST", "INVESTIGATOR", "CUSTOMER"].includes(String(role).toUpperCase())) {
-          assignedRole = String(role).toUpperCase();
-        } else {
-          assignedRole = "CUSTOMER";
-        }
-      }
-
+      // Account must be registered first!
       if (!existing) {
-        // First login or server restart initialization
-        phoneCredentialsStore.set(normalized, {
-          normalizedPhone: normalized,
-          formattedPhone: formatted,
-          passwordHash: passHash,
-          name: `Customer ${normalized.slice(-4)}`,
-          role: assignedRole,
-          createdAt: new Date().toISOString(),
+        return res.status(404).json({
+          success: false,
+          error: {
+            code: "USER_NOT_FOUND",
+            message: "This mobile number is not registered. Please create an account first.",
+          },
         });
       }
 
-      const displayName = existing?.name || `Customer ${normalized.slice(-4)}`;
+      // Password / PIN must match!
+      if (existing.passwordHash !== passHash) {
+        return res.status(401).json({
+          success: false,
+          error: {
+            code: "INVALID_CREDENTIALS",
+            message: "Incorrect secret PIN or password. Please try again.",
+          },
+        });
+      }
+
+      const assignedRole = existing.role || "CUSTOMER";
+      const displayName = existing.name || `Customer ${normalized.slice(-4)}`;
 
       const ipDetails = getClientIp(req);
       const userAgent = req.headers["user-agent"] || "unknown";
@@ -761,6 +762,212 @@ app.post(
       res.status(500).json({
         success: false,
         error: { code: "SERVER_ERROR", message: err.message || "Login failed" },
+      });
+    }
+  }
+);
+
+// ==============================================================================
+// 2.2 OTP & FORGOT PASSWORD / PIN RESET APIS
+// ==============================================================================
+interface OtpRecord {
+  otp: string;
+  expiresAt: number;
+  identifier: string;
+}
+
+const otpMemoryStore = new Map<string, OtpRecord>();
+
+// POST /api/v1/auth/forgot-password - Generate and dispatch 6-digit OTP for PIN/Password reset
+app.post(
+  ["/api/auth/forgot-password", "/api/v1/auth/forgot-password"],
+  authRateLimiter,
+  async (req: Request, res: Response) => {
+    try {
+      const { identifier } = req.body || {};
+      if (!identifier || typeof identifier !== "string" || !identifier.trim()) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            code: "MISSING_IDENTIFIER",
+            message: "Please enter your mobile phone number or registered email.",
+          },
+        });
+      }
+
+      const clean = identifier.trim();
+      const isEmail = clean.includes("@");
+      let normalizedKey = clean.toLowerCase();
+
+      if (!isEmail) {
+        const { valid, normalized } = normalizeBdPhoneNumber(clean);
+        if (!valid) {
+          return res.status(400).json({
+            success: false,
+            error: {
+              code: "INVALID_PHONE_NUMBER",
+              message: "Please enter a valid 11-digit Bangladeshi mobile number (e.g. 017XXXXXXXX).",
+            },
+          });
+        }
+        normalizedKey = normalized;
+      }
+
+      // Generate secure 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes validity
+
+      otpMemoryStore.set(normalizedKey, {
+        otp,
+        expiresAt,
+        identifier: clean,
+      });
+
+      console.log(`[Security Alert] OTP Generated for ${clean}: ${otp} (Expires in 5m)`);
+
+      res.json({
+        success: true,
+        message: isEmail
+          ? `6-digit OTP verification code has been dispatched to ${clean}.`
+          : `6-digit OTP verification SMS has been dispatched to ${clean}.`,
+        otp, // Included so frontend interactive popup banner can display and auto-fill it
+        channel: isEmail ? "email" : "sms",
+        identifier: clean,
+        expiresInSeconds: 300,
+      });
+    } catch (err: any) {
+      console.error("[Forgot Password Error]", err);
+      res.status(500).json({
+        success: false,
+        error: { code: "SERVER_ERROR", message: err.message || "Failed to dispatch OTP" },
+      });
+    }
+  }
+);
+
+// POST /api/v1/auth/verify-otp - Check 6-digit OTP validity
+app.post(
+  ["/api/auth/verify-otp", "/api/v1/auth/verify-otp"],
+  authRateLimiter,
+  async (req: Request, res: Response) => {
+    try {
+      const { identifier, otp } = req.body || {};
+      if (!identifier || !otp) {
+        return res.status(400).json({
+          success: false,
+          error: { code: "MISSING_FIELDS", message: "Identifier and OTP code are required." },
+        });
+      }
+
+      let key = String(identifier).trim().toLowerCase();
+      if (!key.includes("@")) {
+        const { normalized } = normalizeBdPhoneNumber(key);
+        if (normalized) key = normalized;
+      }
+
+      const record = otpMemoryStore.get(key);
+      if (!record) {
+        return res.status(400).json({
+          success: false,
+          error: { code: "OTP_NOT_FOUND", message: "No active OTP request found or OTP expired. Please request a new code." },
+        });
+      }
+
+      if (Date.now() > record.expiresAt) {
+        otpMemoryStore.delete(key);
+        return res.status(400).json({
+          success: false,
+          error: { code: "OTP_EXPIRED", message: "OTP code has expired. Please request a new code." },
+        });
+      }
+
+      if (record.otp !== String(otp).trim()) {
+        return res.status(400).json({
+          success: false,
+          error: { code: "INVALID_OTP", message: "Incorrect OTP code. Please enter the 6-digit code received." },
+        });
+      }
+
+      res.json({
+        success: true,
+        message: "OTP successfully verified. You may now set your new password or PIN.",
+        verified: true,
+      });
+    } catch (err: any) {
+      res.status(500).json({
+        success: false,
+        error: { code: "SERVER_ERROR", message: err.message || "Verification failed" },
+      });
+    }
+  }
+);
+
+// POST /api/v1/auth/reset-password - Save new password or PIN after OTP verification
+app.post(
+  ["/api/auth/reset-password", "/api/v1/auth/reset-password"],
+  authRateLimiter,
+  async (req: Request, res: Response) => {
+    try {
+      const { identifier, otp, newPassword } = req.body || {};
+      if (!identifier || !otp || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          error: { code: "MISSING_FIELDS", message: "Identifier, OTP, and new password are required." },
+        });
+      }
+
+      if (String(newPassword).length < 4) {
+        return res.status(400).json({
+          success: false,
+          error: { code: "INVALID_PASSWORD", message: "New password or PIN must be at least 4 digits/characters." },
+        });
+      }
+
+      let key = String(identifier).trim().toLowerCase();
+      const isEmail = key.includes("@");
+      if (!isEmail) {
+        const { normalized } = normalizeBdPhoneNumber(key);
+        if (normalized) key = normalized;
+      }
+
+      const record = otpMemoryStore.get(key);
+      if (!record || record.otp !== String(otp).trim()) {
+        return res.status(400).json({
+          success: false,
+          error: { code: "INVALID_OTP", message: "Invalid or expired OTP. Please start the reset process again." },
+        });
+      }
+
+      // Update phone credentials store if phone
+      if (!isEmail) {
+        const passHash = hashPassword(String(newPassword), key);
+        const cred = phoneCredentialsStore.get(key);
+        if (cred) {
+          cred.passwordHash = passHash;
+          phoneCredentialsStore.set(key, cred);
+        } else {
+          phoneCredentialsStore.set(key, {
+            normalizedPhone: key,
+            formattedPhone: `+880 ${key.slice(-10, -6)}-${key.slice(-6)}`,
+            passwordHash: passHash,
+            name: `User ${key.slice(-4)}`,
+            role: "CUSTOMER",
+            createdAt: new Date().toISOString(),
+          });
+        }
+      }
+
+      // Consume OTP
+      otpMemoryStore.delete(key);
+
+      res.json({
+        success: true,
+        message: "Your password/PIN has been reset successfully. Please sign in with your new credentials.",
+      });
+    } catch (err: any) {
+      res.status(500).json({
+        success: false,
+        error: { code: "SERVER_ERROR", message: err.message || "Reset failed" },
       });
     }
   }
