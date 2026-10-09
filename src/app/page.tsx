@@ -29,6 +29,9 @@ import { DatasetManagementView } from "@/components/admin/DatasetManagementView"
 import { SystemHealthView } from "@/components/admin/SystemHealthView";
 import { SecurityIntelligenceView } from "@/components/security/SecurityIntelligenceView";
 import { ImmutableAuditView } from "@/components/audit/ImmutableAuditView";
+import { auth, onAuthStateChanged } from "@/lib/firebase";
+import { ShieldAlert } from "lucide-react";
+import { canAccessPage, getDefaultPageForRole, isRiskManager } from "@/lib/permissions";
 
 function SentinelAppShell() {
   const {
@@ -72,15 +75,48 @@ function SentinelAppShell() {
       }
       const saved = localStorage.getItem("sentinel_user");
       if (saved) {
-        const parsed = JSON.parse(saved);
+        const parsed: UserProfile = JSON.parse(saved);
+        if (
+          !parsed.provider &&
+          (parsed.email?.toLowerCase().includes("@gmail.com") ||
+            parsed.name?.toLowerCase().includes("arman") ||
+            parsed.avatar === "AH")
+        ) {
+          parsed.provider = "google";
+        }
         setCurrentUser(parsed);
-        if (parsed.rawRole === "CUSTOMER") {
-          setCurrentPage("customer-portal");
+        const defaultPage = getDefaultPageForRole(parsed.rawRole);
+        if (!canAccessPage(parsed.rawRole, currentPage)) {
+          setCurrentPage(defaultPage);
         }
       }
     } catch {
       // Fallback if localStorage unavailable
     }
+
+    const unsubscribe = onAuthStateChanged(auth, (fbUser) => {
+      if (fbUser) {
+        setCurrentUser((prev) => {
+          if (!prev) return prev;
+          const updated: UserProfile = {
+            ...prev,
+            photoURL: fbUser.photoURL || prev.photoURL,
+            provider:
+              fbUser.providerData?.[0]?.providerId === "google.com"
+                ? "google"
+                : prev.provider || "google",
+          };
+          try {
+            localStorage.setItem("sentinel_user", JSON.stringify(updated));
+          } catch {}
+          return updated;
+        });
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   // Global '?' and 'L' shortcuts
@@ -124,9 +160,41 @@ function SentinelAppShell() {
   };
 
   const handleNavigate = (page: NavigationPage) => {
+    if (!canAccessPage(currentUser?.rawRole, page)) {
+      showNotification(
+        language === "bn"
+          ? "অনুমতি নেই: আপনার রোল অনুযায়ী এই নিরাপত্তা বা ঝুঁকি ব্যবস্থাপনা ড্যাশবোর্ড ব্যবহারের অনুমতি নেই।"
+          : "Access Denied: You do not have permission to access this risk management dashboard."
+      );
+      return;
+    }
     setCurrentPage(page);
     setSelectedTransaction(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleOpenSimulation = () => {
+    if (!isRiskManager(currentUser?.rawRole)) {
+      showNotification(
+        language === "bn"
+          ? "অনুমতি নেই: শুধুমাত্র ঝুঁকি ব্যবস্থাপক ও অ্যাডমিন আক্রমণ সিমুলেশন চালাতে পারেন।"
+          : "Access Denied: Only Risk Analysts and Admins can launch attack simulations."
+      );
+      return;
+    }
+    setIsSimModalOpen(true);
+  };
+
+  const handleOpenReport = () => {
+    if (!isRiskManager(currentUser?.rawRole)) {
+      showNotification(
+        language === "bn"
+          ? "অনুমতি নেই: শুধুমাত্র ঝুঁকি ব্যবস্থাপক ও অ্যাডমিন বিএফআইইউ রিপোর্ট তৈরি করতে পারেন।"
+          : "Access Denied: Only Risk Analysts and Admins can export BFIU reports."
+      );
+      return;
+    }
+    setIsReportModalOpen(true);
   };
 
   // Background stream simulator running through unified risk engine pipeline
@@ -206,11 +274,8 @@ function SentinelAppShell() {
             } catch {
               // ignore
             }
-            if (profile.rawRole === "CUSTOMER") {
-              setCurrentPage("customer-portal");
-            } else {
-              setCurrentPage("overview");
-            }
+            const initialPage = getDefaultPageForRole(profile.rawRole);
+            setCurrentPage(initialPage);
             showNotification(`Welcome, ${profile.name} — Authenticated via Firebase`);
           }}
         />
@@ -248,8 +313,8 @@ function SentinelAppShell() {
       <div className="main-wrapper flex-1">
         {/* Topbar */}
         <Topbar
-          onOpenSimulation={() => setIsSimModalOpen(true)}
-          onOpenReport={() => setIsReportModalOpen(true)}
+          onOpenSimulation={handleOpenSimulation}
+          onOpenReport={handleOpenReport}
           unreadCount={unreadAlertsCount}
           onNavigateAlerts={() => handleNavigate("alerts")}
           searchQuery={searchQuery}
@@ -258,18 +323,50 @@ function SentinelAppShell() {
           onOpenHelp={() => setIsHelpOpen(true)}
           currentUser={currentUser}
           onLogout={handleLogout}
+          onNavigateCustomerPortal={() => handleNavigate("customer-portal")}
+          currentPage={currentPage}
+          onNavigateOverview={() => handleNavigate("overview")}
         />
 
         {/* Dynamic View Container */}
         <main className="flex-1 p-5 md:p-7 max-w-[1600px] w-full mx-auto">
-          {currentPage === "overview" && (
-            <OverviewView
-              onNavigate={handleNavigate}
-              onOpenTransactionDrawer={(txn) => setSelectedTransaction(txn)}
-              transactions={transactions}
-              onOpenReport={() => setIsReportModalOpen(true)}
-            />
-          )}
+          {!canAccessPage(currentUser?.rawRole, currentPage) ? (
+            <div className="p-8 max-w-lg mx-auto my-12 bg-white rounded-2xl border border-rose-200 shadow-card text-center space-y-4 animate-scaleUp">
+              <div className="w-14 h-14 mx-auto rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
+                <ShieldAlert size={28} />
+              </div>
+              <div className="space-y-1">
+                <h2 className="text-lg font-bold text-slate-900">
+                  {language === "bn" ? "অ্যাক্সেস সংরক্ষিত / অনুমতি নেই" : "Access Restricted"}
+                </h2>
+                <p className="text-xs text-slate-500">
+                  {language === "bn"
+                    ? "আপনার ভূমিকা অনুযায়ী এই জালিয়াতি ঝুঁকি ব্যবস্থাপনা বা অ্যাডমিন টাস্ক ব্যবহারের অনুমতি নেই।"
+                    : "Your assigned role does not have authorization to view or perform risk management tasks."}
+                </p>
+              </div>
+              <div className="inline-block px-3 py-1 rounded-full text-xs font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                ROLE: {currentUser?.badge || currentUser?.role || "CUSTOMER"}
+              </div>
+              <div className="pt-2">
+                <button
+                  onClick={() => setCurrentPage(getDefaultPageForRole(currentUser?.rawRole))}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm"
+                >
+                  {language === "bn" ? "অনুমোদিত ড্যাশবোর্ডে ফিরে যান" : "Return to Authorized Dashboard"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              {currentPage === "overview" && (
+                <OverviewView
+                  onNavigate={handleNavigate}
+                  onOpenTransactionDrawer={(txn) => setSelectedTransaction(txn)}
+                  transactions={transactions}
+                  onOpenReport={() => setIsReportModalOpen(true)}
+                />
+              )}
 
           {currentPage === "transactions" && (
             <TransactionMonitorView
@@ -377,7 +474,9 @@ function SentinelAppShell() {
               onNotify={showNotification}
             />
           )}
-        </main>
+        </>
+      )}
+    </main>
       </div>
 
       {/* Slide-out Transaction Detail Drawer */}

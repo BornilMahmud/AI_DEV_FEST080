@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { UserProfile } from "@/components/auth/LoginPage";
 import { SpotlightCard } from "@/components/ui/SpotlightCard";
+import { isRiskManager } from "@/lib/permissions";
 
 interface CustomerPortalViewProps {
   currentUser: UserProfile;
@@ -395,12 +396,14 @@ export const CustomerPortalView: React.FC<CustomerPortalViewProps> = ({
             telecom services are simulated with live backend risk engine & ML fraud intelligence protection.
           </span>
         </div>
-        {currentUser.rawRole && currentUser.rawRole !== "CUSTOMER" && onNavigateAdmin && (
+        {onNavigateAdmin && isRiskManager(currentUser?.rawRole) && (
           <button
             onClick={onNavigateAdmin}
-            className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg text-[11px] transition-colors shrink-0 shadow-sm"
+            className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg text-[11px] transition-colors shrink-0 shadow-sm flex items-center gap-1"
+            title="Open Admin Fraud Control Center"
           >
-            Switch to Admin Center
+            <span>জালিয়াতি কন্ট্রোল সেন্টার</span>
+            <span aria-hidden="true">&rarr;</span>
           </button>
         )}
       </div>

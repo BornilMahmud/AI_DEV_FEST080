@@ -14,10 +14,13 @@ import {
   LogOut,
   User,
   Globe,
-  Radio,
+  Wallet,
 } from "lucide-react";
 import { UserProfile } from "../auth/LoginPage";
 import { useSentinel } from "@/context/SentinelContext";
+import { UserAvatar } from "@/components/ui/UserAvatar";
+import { isRiskManager } from "@/lib/permissions";
+import { NavigationPage } from "@/types";
 
 interface TopbarProps {
   onOpenSimulation: () => void;
@@ -32,6 +35,9 @@ interface TopbarProps {
   onOpenHelp: () => void;
   currentUser?: UserProfile | null;
   onLogout?: () => void;
+  onNavigateCustomerPortal?: () => void;
+  currentPage?: NavigationPage;
+  onNavigateOverview?: () => void;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
@@ -45,9 +51,14 @@ export const Topbar: React.FC<TopbarProps> = ({
   onOpenHelp,
   currentUser,
   onLogout,
+  onNavigateCustomerPortal,
+  currentPage,
+  onNavigateOverview,
 }) => {
   const { language, toggleLanguage, t } = useSentinel();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const isRiskUser = isRiskManager(currentUser?.rawRole);
+  const isCustomerPortal = currentPage === "customer-portal";
 
   return (
     <header className="topbar">
@@ -66,7 +77,13 @@ export const Topbar: React.FC<TopbarProps> = ({
           <Search size={14} className="text-slate-400 shrink-0" aria-hidden="true" />
           <input
             type="text"
-            placeholder={t("searchPlaceholder")}
+            placeholder={
+              !isRiskUser
+                ? language === "bn"
+                  ? "ওয়ালেট সেবা বা সাহায্য অনুসন্ধান করুন..."
+                  : "Search wallet services or help..."
+                : t("searchPlaceholder")
+            }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             aria-label="Search"
@@ -113,35 +130,41 @@ export const Topbar: React.FC<TopbarProps> = ({
           </span>
         </button>
 
-        {/* Simulate Attack — Primary Testing CTA */}
-        <button
-          onClick={onOpenSimulation}
-          className="btn btn-primary btn-simulate text-xs"
-          aria-label="Open attack simulation workbench"
-        >
-          <Zap size={13} className="shrink-0" aria-hidden="true" />
-          <span className="hidden sm:inline">{t("simulateScenario")}</span>
-          <span className="sm:hidden">Sim</span>
-        </button>
+        {/* Simulate Attack — Primary Testing CTA (Only for Risk Managers & Admins) */}
+        {isRiskUser && (
+          <button
+            onClick={onOpenSimulation}
+            className="btn btn-primary btn-simulate text-xs"
+            aria-label="Open attack simulation workbench"
+          >
+            <Zap size={13} className="shrink-0" aria-hidden="true" />
+            <span className="hidden sm:inline">{t("simulateScenario")}</span>
+            <span className="sm:hidden">Sim</span>
+          </button>
+        )}
 
-        {/* Audit Report Export */}
-        <button
-          onClick={onOpenReport}
-          className="btn btn-secondary text-xs hidden md:inline-flex"
-          aria-label="Export Bangladesh Bank BFIU STR Report"
-        >
-          <FileDown size={13} className="shrink-0" aria-hidden="true" />
-          <span>{t("exportReport")}</span>
-        </button>
+        {/* Audit Report Export (Only for Risk Managers & Admins) */}
+        {isRiskUser && (
+          <button
+            onClick={onOpenReport}
+            className="btn btn-secondary text-xs hidden md:inline-flex"
+            aria-label="Export Bangladesh Bank BFIU STR Report"
+          >
+            <FileDown size={13} className="shrink-0" aria-hidden="true" />
+            <span>{t("exportReport")}</span>
+          </button>
+        )}
 
-        {/* Alert Notification Bell */}
-        <button
-          onClick={onNavigateAlerts}
-          className={`icon-btn ${unreadCount > 0 ? "has-alert" : ""}`}
-          aria-label={`View ${unreadCount} alerts`}
-        >
-          <Bell size={15} />
-        </button>
+        {/* Alert Notification Bell (Only for Risk Managers & Admins) */}
+        {isRiskUser && (
+          <button
+            onClick={onNavigateAlerts}
+            className={`icon-btn ${unreadCount > 0 ? "has-alert" : ""}`}
+            aria-label={`View ${unreadCount} alerts`}
+          >
+            <Bell size={15} />
+          </button>
+        )}
 
         {/* Help Modal Trigger */}
         <button
@@ -161,25 +184,57 @@ export const Topbar: React.FC<TopbarProps> = ({
             aria-label="User profile options"
             aria-expanded={showUserMenu}
           >
-            <div className="w-7 h-7 rounded bg-blue-50 border border-blue-200 text-blue-700 font-bold text-xs flex items-center justify-center shrink-0">
-              {currentUser?.avatar || "OP"}
-            </div>
+            <UserAvatar user={currentUser} size={28} className="shadow-2xs" showBadge={true} />
             <ChevronDown size={12} className="text-slate-500 hidden sm:block" />
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-white py-1.5 z-50 shadow-modal animate-scaleUp origin-top-right">
-              <div className="px-3 py-2 border-b border-slate-100">
-                <div className="text-xs font-bold text-slate-900 truncate">
-                  {currentUser?.name || "Risk Analyst"}
+            <div className="absolute right-0 mt-2 w-60 rounded-lg border border-slate-200 bg-white py-1.5 z-50 shadow-modal animate-scaleUp origin-top-right">
+              <div className="px-3 py-2 border-b border-slate-100 flex items-center gap-2.5">
+                <UserAvatar user={currentUser} size={34} className="shadow-2xs" showBadge={true} />
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs font-bold text-slate-900 truncate">
+                    {currentUser?.name || "Risk Analyst"}
+                  </div>
+                  <div className="text-[11px] text-slate-500 truncate">
+                    {currentUser?.email || "analyst@upay.com.bd"}
+                  </div>
+                  <span className="inline-block mt-0.5 px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-mono text-[9px] font-bold border border-blue-200">
+                    {currentUser?.badge || "SOC TIER-2"}
+                  </span>
                 </div>
-                <div className="text-[11px] text-slate-500 truncate">
-                  {currentUser?.email || "analyst@upay.com.bd"}
-                </div>
-                <span className="inline-block mt-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-mono text-[9px] font-bold border border-blue-200">
-                  {currentUser?.badge || "SOC TIER-2"}
-                </span>
               </div>
+
+              {/* Risk managers can toggle between Admin Control Center and Wallet Preview */}
+              {isRiskUser && (
+                isCustomerPortal ? (
+                  onNavigateOverview && (
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        onNavigateOverview();
+                      }}
+                      className="w-full text-left px-3 py-2 text-xs text-blue-700 hover:bg-blue-50 transition-colors flex items-center gap-2 font-medium"
+                    >
+                      <ShieldCheck size={13} className="text-blue-600" />
+                      <span>{language === "bn" ? "জালিয়াতি কন্ট্রোল সেন্টার" : "Fraud Control Center"}</span>
+                    </button>
+                  )
+                ) : (
+                  onNavigateCustomerPortal && (
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        onNavigateCustomerPortal();
+                      }}
+                      className="w-full text-left px-3 py-2 text-xs text-blue-700 hover:bg-blue-50 transition-colors flex items-center gap-2 font-medium"
+                    >
+                      <Wallet size={13} className="text-blue-600" />
+                      <span>{language === "bn" ? "ওয়ালেট ও লেনদেন সেবা" : "Wallet & Transactions"}</span>
+                    </button>
+                  )
+                )
+              )}
 
               <button
                 onClick={() => {

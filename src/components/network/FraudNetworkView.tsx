@@ -110,7 +110,7 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
       </div>
 
       {/* 4-Stage MFS Money Trail Pipeline Grid with Arrows */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 my-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 lg:gap-6 my-2">
         {/* Stage 1: Victim Wallets */}
         <SpotlightCard
           color="purple"
@@ -138,7 +138,7 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
             <h4 className="text-sm font-extrabold text-slate-900 leading-snug">
               {isBn ? "ভুক্তভোগী ওয়ালেট" : "Victim Wallets"}
             </h4>
-            <p className="text-[11px] text-slate-600 mt-1.5 leading-relaxed">
+            <p className="text-[11px] text-slate-600 mt-1.5 leading-relaxed pr-2 sm:pr-3">
               {isBn
                 ? "ফিশিং পিন, ওটিপি ফাঁদ অথবা সিম সোয়াপিং এর মাধ্যমে প্রাথমিক ফান্ড হ্যাকিং।"
                 : "Initial fund compromise via phished PINs, OTP traps, or SIM swap hijack."}
@@ -148,9 +148,9 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
             <span className="text-slate-400">{isBn ? "গড় ক্ষতি:" : "Avg Loss:"}</span>
             <b className="text-rose-600 font-extrabold">৳48,500</b>
           </div>
-          {/* Connecting Arrow for Desktop */}
-          <div className="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white border border-slate-300 text-slate-500 items-center justify-center shadow-sm pointer-events-none">
-            <ArrowRight size={13} className="text-blue-600" />
+          {/* Connecting Arrow for Desktop (centered between grid boxes) */}
+          <div className="hidden lg:flex absolute -right-[21px] top-1/2 -translate-y-1/2 z-20 w-6 h-6 rounded-full bg-white border border-slate-300 text-slate-500 items-center justify-center shadow-xs pointer-events-none">
+            <ArrowRight size={12} className="text-blue-600" />
           </div>
         </SpotlightCard>
 
@@ -181,7 +181,7 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
             <h4 className="text-sm font-extrabold text-slate-900 leading-snug">
               {isBn ? "মিউল কনডুইট ওয়ালেট" : "Intermediary Mule Conduits"}
             </h4>
-            <p className="text-[11px] text-slate-600 mt-1.5 leading-relaxed">
+            <p className="text-[11px] text-slate-600 mt-1.5 leading-relaxed pr-2 sm:pr-3">
               {isBn
                 ? "সুপ্ত স্টুডেন্ট ও সংগৃহীত অ্যাকাউন্টে দ্রুত মাল্টি-হপ ফ্যান-আউট স্থানান্তর।"
                 : "Rapid multi-hop fan-out distribution across recruited student wallets."}
@@ -191,8 +191,9 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
             <span className="text-slate-400">{isBn ? "হপ গতি:" : "Hop Speed:"}</span>
             <b className="text-indigo-600 font-extrabold">4-6 hops &lt; 90s</b>
           </div>
-          <div className="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white border border-slate-300 text-slate-500 items-center justify-center shadow-sm pointer-events-none">
-            <ArrowRight size={13} className="text-blue-600" />
+          {/* Connecting Arrow for Desktop (centered between grid boxes) */}
+          <div className="hidden lg:flex absolute -right-[21px] top-1/2 -translate-y-1/2 z-20 w-6 h-6 rounded-full bg-white border border-slate-300 text-slate-500 items-center justify-center shadow-xs pointer-events-none">
+            <ArrowRight size={12} className="text-blue-600" />
           </div>
         </SpotlightCard>
 
@@ -223,7 +224,7 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
             <h4 className="text-sm font-extrabold text-slate-900 leading-snug">
               {isBn ? "অসাধু এজেন্ট পয়েন্ট" : "Rogue Agent Points"}
             </h4>
-            <p className="text-[11px] text-slate-600 mt-1.5 leading-relaxed">
+            <p className="text-[11px] text-slate-600 mt-1.5 leading-relaxed pr-2 sm:pr-3">
               {isBn
                 ? "অফ-আওয়ারে ভুয়া এনআইডি ও কমপ্লায়েন্স ফাঁকি দিয়ে একযোগে ভারী ক্যাশ-আউট।"
                 : "Coordinated off-hour OTC cash extraction bypassing agent KYC checks."}
@@ -233,8 +234,9 @@ export const FraudNetworkView: React.FC<FraudNetworkViewProps> = ({
             <span className="text-slate-400">{isBn ? "ক্যাশ ড্রেইন:" : "Extraction:"}</span>
             <b className="text-amber-700 font-extrabold">88% Night OTC</b>
           </div>
-          <div className="hidden lg:flex absolute -right-3.5 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full bg-white border border-slate-300 text-slate-500 items-center justify-center shadow-sm pointer-events-none">
-            <ArrowRight size={13} className="text-blue-600" />
+          {/* Connecting Arrow for Desktop (centered between grid boxes) */}
+          <div className="hidden lg:flex absolute -right-[21px] top-1/2 -translate-y-1/2 z-20 w-6 h-6 rounded-full bg-white border border-slate-300 text-slate-500 items-center justify-center shadow-xs pointer-events-none">
+            <ArrowRight size={12} className="text-blue-600" />
           </div>
         </SpotlightCard>
 

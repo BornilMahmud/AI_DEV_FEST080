@@ -410,14 +410,16 @@ button, input, optgroup, select, textarea {
 .analyst-profile .avatar {
   width: 28px; height: 28px;
   border-radius: var(--radius-sm);
-  background: var(--brand-light);
+  background: #ffffff;
   color: var(--brand);
-  border: 1px solid var(--brand-border);
+  border: 1px solid #e2e8f0;
   font-size: 10px;
   font-weight: 700;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
 }
 .analyst-profile b         { display: block; font-size: 11px; color: var(--ink); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .analyst-profile small     { display: block; font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

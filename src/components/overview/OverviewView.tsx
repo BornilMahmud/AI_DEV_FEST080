@@ -17,6 +17,7 @@ import {
   Lock,
   Layers,
   Scale,
+  Wallet,
 } from "lucide-react";
 import { BangladeshTransactionMap } from "../network/BangladeshTransactionMap";
 import { useSentinel } from "@/context/SentinelContext";
@@ -240,6 +241,14 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => onNavigate("customer-portal")}
+            className="btn btn-secondary text-xs flex items-center gap-1.5 border-blue-200 text-blue-700 bg-blue-50/60 hover:bg-blue-100 font-semibold transition-all shadow-sm"
+            title={isBn ? "গ্রাহক ওয়ালেট ও লেনদেন সেবায় ফিরে যান" : "Return to Customer Wallet & Services"}
+          >
+            <Wallet size={13} className="text-blue-600" />
+            <span>{isBn ? "ওয়ালেট ও লেনদেন সেবা" : "Wallet & Services"}</span>
+          </button>
           <button
             onClick={onOpenReport}
             className="btn btn-secondary text-xs flex items-center gap-1.5"

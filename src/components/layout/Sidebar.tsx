@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import { UserProfile } from "../auth/LoginPage";
 import { useSentinel } from "@/context/SentinelContext";
+import { UserAvatar } from "@/components/ui/UserAvatar";
+import { canAccessPage, isRiskManager } from "@/lib/permissions";
 
 interface SidebarProps {
   currentPage: NavigationPage;
@@ -65,12 +67,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const isCustomerPortal = currentPage === "customer-portal";
   const isBn = language === "bn";
+  const userRole = currentUser?.rawRole;
+  const hasRiskAccess = isRiskManager(userRole);
 
   const adminNavGroups: NavGroup[] = [
     {
-      sectionKey: isBn ? "ড্যাশবোর্ড ও লেনদেন পর্যবেক্ষণ" : "MONITORING & OVERVIEW",
+      sectionKey: isBn ? "অ্যাডমিন নিরাপত্তা স্যুট" : "ADMIN SECURITY SUITE",
       items: [
-        { id: "overview", labelEn: "Overview Dashboard", labelBn: "সার্বিক ড্যাশবোর্ড", icon: <LayoutGrid size={15} /> },
+        { id: "overview", labelEn: "Fraud Control Center", labelBn: "জালিয়াতি কন্ট্রোল সেন্টার", icon: <ShieldAlert size={15} /> },
         { id: "transactions", labelEn: "Transaction Monitor", labelBn: "লেনদেন পর্যবেক্ষণ", icon: <Activity size={15} /> },
       ],
     },
@@ -102,7 +106,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
   ];
 
+  // Filter groups according to RBAC permissions of the current role
+  const filteredNavGroups = adminNavGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => canAccessPage(userRole, item.id)),
+    }))
+    .filter((group) => group.items.length > 0);
+
   const handleNav = (page: NavigationPage) => {
+    if (!canAccessPage(userRole, page)) {
+      return;
+    }
     onNavigate(page);
     onClose?.();
   };
@@ -118,7 +133,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       <aside className={`sidebar ${isOpen ? "open" : ""}`} aria-label="Main Navigation">
         {/* Brand Header */}
-        <div className="brand cursor-pointer" onClick={() => handleNav(isCustomerPortal ? "customer-portal" : "overview")}>
+        <div
+          className="brand cursor-pointer"
+          onClick={() => handleNav(hasRiskAccess ? (isCustomerPortal ? "customer-portal" : "overview") : "customer-portal")}
+        >
           <div className="brand-mark bg-blue-600 text-white rounded-lg font-extrabold text-sm flex items-center justify-center">
             u
           </div>
@@ -130,7 +148,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </span>
             </div>
             <div className="brand-sub text-[9.5px] text-slate-500 font-medium tracking-wider">
-              {isBn ? "দ্বিপাক্ষিক MFS ও ঝুঁকি প্ল্যাটফর্ম" : "TWO-SIDED MFS ECOSYSTEM"}
+              {!hasRiskAccess
+                ? isBn
+                  ? "গ্রাহক মোবাইল ওয়ালেট"
+                  : "CUSTOMER MOBILE WALLET"
+                : isBn
+                ? "দ্বিপাক্ষিক MFS ও ঝুঁকি প্ল্যাটফর্ম"
+                : "TWO-SIDED MFS ECOSYSTEM"}
             </div>
           </div>
           {onClose && (
@@ -147,33 +171,37 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </div>
 
-        {/* Portal Switcher (Customer Wallet <-> Admin Control Center) */}
-        <div className="my-2 px-1">
-          <div className="p-1 rounded-xl bg-slate-100 border border-slate-200/80 grid grid-cols-2 gap-1 text-[11px] font-bold">
-            <button
-              onClick={() => handleNav("customer-portal")}
-              className={`py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-                isCustomerPortal
-                  ? "bg-white text-blue-700 shadow-sm border border-slate-200"
-                  : "text-slate-500 hover:text-slate-900"
-              }`}
-            >
-              <Wallet size={13} className={isCustomerPortal ? "text-blue-600" : "text-slate-400"} />
-              <span>{isBn ? "গ্রাহক ওয়ালেট" : "Customer"}</span>
-            </button>
-            <button
-              onClick={() => handleNav("overview")}
-              className={`py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-                !isCustomerPortal
-                  ? "bg-white text-blue-700 shadow-sm border border-slate-200"
-                  : "text-slate-500 hover:text-slate-900"
-              }`}
-            >
-              <ShieldAlert size={13} className={!isCustomerPortal ? "text-blue-600" : "text-slate-400"} />
-              <span>{isBn ? "সিকিউরিটি অ্যাডমিন" : "Admin / SOC"}</span>
-            </button>
+        {/* Portal Switcher — ONLY visible for Risk Managers (Analyst & Admin) */}
+        {hasRiskAccess && (
+          <div className="my-2 px-1">
+            <div className="p-1 rounded-xl bg-slate-100 border border-slate-200/80 grid grid-cols-2 gap-1 text-[11px] font-bold">
+              <button
+                onClick={() => handleNav("customer-portal")}
+                className={`py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+                  isCustomerPortal
+                    ? "bg-white text-blue-700 shadow-sm border border-slate-200"
+                    : "text-slate-500 hover:text-slate-900"
+                }`}
+                title={isBn ? "গ্রাহক ওয়ালেট ও লেনদেন সেবা" : "Customer Wallet & Services"}
+              >
+                <Wallet size={13} className={isCustomerPortal ? "text-blue-600" : "text-slate-400"} />
+                <span>{isBn ? "ওয়ালেট সেবা" : "Wallet"}</span>
+              </button>
+              <button
+                onClick={() => handleNav("overview")}
+                className={`py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+                  !isCustomerPortal
+                    ? "bg-white text-blue-700 shadow-sm border border-slate-200"
+                    : "text-slate-500 hover:text-slate-900"
+                }`}
+                title={isBn ? "জালিয়াতি কন্ট্রোল সেন্টার" : "Fraud Control Center"}
+              >
+                <ShieldAlert size={13} className={!isCustomerPortal ? "text-blue-600" : "text-slate-400"} />
+                <span>{isBn ? "কন্ট্রোল সেন্টার" : "Control Center"}</span>
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Language Switcher Bar in Sidebar */}
         <div className="mb-2 px-1">
@@ -193,36 +221,52 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Navigation Categories */}
         <nav className="flex-1 overflow-y-auto space-y-3 py-1 pr-1">
-          {isCustomerPortal ? (
-            /* Customer Portal Navigation */
-            <div className="space-y-1">
-              <div className="nav-section-title text-[9.5px] font-bold text-slate-400 tracking-wider">
-                {isBn ? "গ্রাহক সেবা ও পোর্টাল" : "CUSTOMER PORTAL"}
-              </div>
+          {/* Customer Portal Link */}
+          <div>
+            <div className="nav-section-title text-[9.5px] font-bold text-slate-400 tracking-wider">
+              {isBn ? "গ্রাহক সেবা ও পোর্টাল" : "CUSTOMER PORTAL"}
+            </div>
+            <div className="space-y-0.5">
               <button
                 onClick={() => handleNav("customer-portal")}
-                className="nav-item active w-full text-left"
+                className={`nav-item nav-customer-portal w-full text-left ${
+                  isCustomerPortal ? "active" : ""
+                }`}
+                aria-current={isCustomerPortal ? "page" : undefined}
+                title={isBn ? "ওয়ালেট ও লেনদেন সেবা" : "Upay MFS Wallet & Services"}
               >
-                <Wallet size={15} className="text-blue-600" />
-                <span className="truncate flex-1">{isBn ? "ওয়ালেট ও লেনদেন সেবা" : "Upay MFS Wallet"}</span>
+                <Wallet size={15} className={isCustomerPortal ? "text-blue-600" : "text-slate-400"} />
+                <span className="truncate flex-1 font-medium">
+                  {isBn ? "ওয়ালেট ও লেনদেন সেবা" : "Upay MFS Wallet & Services"}
+                </span>
               </button>
+            </div>
+          </div>
 
-              <div className="pt-3">
-                <div className="nav-section-title text-[9.5px] font-bold text-slate-400 tracking-wider">
-                  {isBn ? "অ্যাডমিন নিরাপত্তা সুইচ" : "CONTROL ACCESS"}
-                </div>
+          {/* If user is inside Customer Portal AND has Risk Access: Show link back to Fraud Control Center */}
+          {isCustomerPortal && hasRiskAccess && (
+            <div className="pt-2">
+              <div className="nav-section-title text-[9.5px] font-bold text-slate-400 tracking-wider">
+                {isBn ? "অ্যাডমিন নিরাপত্তা স্যুট" : "ADMIN SECURITY SUITE"}
+              </div>
+              <div className="space-y-0.5">
                 <button
                   onClick={() => handleNav("overview")}
-                  className="nav-item w-full text-left hover:bg-slate-100"
+                  className="nav-item nav-overview w-full text-left hover:bg-slate-100"
+                  title={isBn ? "জালিয়াতি কন্ট্রোল সেন্টারে প্রবেশ করুন" : "Open Fraud Control Center"}
                 >
                   <ShieldAlert size={15} className="text-slate-400" />
-                  <span className="truncate flex-1">{isBn ? "জালিয়াতি কন্ট্রোল সেন্টার" : "Admin Fraud Center"}</span>
+                  <span className="truncate flex-1">
+                    {isBn ? "জালিয়াতি কন্ট্রোল সেন্টার" : "Fraud Control Center"}
+                  </span>
                 </button>
               </div>
             </div>
-          ) : (
-            /* Admin & Fraud SOC Navigation */
-            adminNavGroups.map((group) => (
+          )}
+
+          {/* Admin & Fraud SOC Navigation — Only rendered if user has Risk Access and not on Customer Portal */}
+          {!isCustomerPortal && hasRiskAccess && (
+            filteredNavGroups.map((group) => (
               <div key={group.sectionKey}>
                 <div className="nav-section-title text-[9.5px] font-bold text-slate-400 tracking-wider">
                   {group.sectionKey}
@@ -259,19 +303,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="pulse bg-emerald-500" />
           <div className="min-w-0 flex-1">
             <b className="text-xs text-slate-800">
-              {isBn ? "দ্বিপাক্ষিক প্ল্যাটফর্ম অনলাইন" : "Two-Sided Platform Online"}
+              {!hasRiskAccess
+                ? isBn
+                  ? "ওয়ালেট সুরক্ষা সক্রিয়"
+                  : "Wallet Shield Active"
+                : isBn
+                ? "দ্বিপাক্ষিক প্ল্যাটফর্ম অনলাইন"
+                : "Two-Sided Platform Online"}
             </b>
             <small className="text-[10px] text-slate-500 block truncate">
-              {isBn ? "গ্রাহক ওয়ালেট + এআই জালিয়াতি ইঞ্জিন" : "Wallet + Scikit & PyTorch Engine"}
+              {!hasRiskAccess
+                ? isBn
+                  ? "সেন্টিনেল এআই সার্বক্ষণিক সুরক্ষিত"
+                  : "Protected by Sentinel Engine"
+                : isBn
+                ? "গ্রাহক ওয়ালেট + এআই জালিয়াতি ইঞ্জিন"
+                : "Wallet + Scikit & PyTorch Engine"}
             </small>
           </div>
         </div>
 
         {/* User Profile & Sign Out */}
         <div className="analyst-profile border-t border-slate-200 pt-2">
-          <div className="avatar bg-blue-50 text-blue-700 border border-blue-200">
-            {currentUser?.avatar || "OP"}
-          </div>
+          <UserAvatar user={currentUser} size={28} className="avatar shadow-xs" showBadge={true} />
           <div className="min-w-0 flex-1">
             <b className="text-xs text-slate-800 truncate block">{currentUser?.name || "Authorized User"}</b>
             <small className="text-[10px] text-slate-500 truncate block">{currentUser?.role || "Verified User"}</small>

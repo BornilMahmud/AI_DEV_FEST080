@@ -109,39 +109,45 @@ export const CustomerIntelligenceView: React.FC<CustomerIntelligenceViewProps> =
         </div>
 
         {/* 5 Stats Grid - Numbers Big and Bold */}
-        <div className="lg:col-span-7 card-base p-3 sm:p-4 grid grid-cols-2 sm:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 text-center border border-slate-200 bg-white items-center">
-          <div className="p-2 sm:px-2">
-            <span className="text-[10.5px] text-slate-500 font-medium block">
+        <div className="lg:col-span-7 card-base p-3.5 sm:p-4 grid grid-cols-2 sm:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 text-center border border-slate-200 bg-white items-center shadow-xs">
+          <div className="p-2 sm:px-2.5">
+            <span className="text-[10px] sm:text-[11px] text-slate-500 font-semibold block uppercase tracking-wider">
               {language === "bn" ? "অ্যাকাউন্ট বয়স" : "Account Age"}
             </span>
-            <b className="text-base sm:text-lg font-black text-slate-900 block mt-1 font-mono tracking-tight">{customer.accountAge}</b>
-          </div>
-          <div className="p-2 sm:px-2">
-            <span className="text-[10.5px] text-slate-500 font-medium block">
-              {language === "bn" ? "৩০ দিনের লেনদেন" : "30d Volume"}
-            </span>
-            <b className="text-base sm:text-lg font-black text-slate-900 block mt-1 font-mono tracking-tight">৳1.42M</b>
-          </div>
-          <div className="p-2 sm:px-2">
-            <span className="text-[10.5px] text-slate-500 font-medium block">
-              {language === "bn" ? "গড় লেনদেন" : "Avg Transfer"}
-            </span>
-            <b className="text-base sm:text-lg font-black text-slate-900 block mt-1 font-mono tracking-tight">৳6,800</b>
-          </div>
-          <div className="p-2 sm:px-2">
-            <span className="text-[10.5px] text-slate-500 font-medium block">
-              {language === "bn" ? "পরিচিত ডিভাইস" : "Known Devices"}
-            </span>
-            <b className="text-base sm:text-lg font-black text-slate-900 block mt-1 font-mono tracking-tight">
-              2 <span className="text-xs font-bold text-slate-500">{language === "bn" ? "টি" : "Devices"}</span>
+            <b className="text-xl sm:text-2xl lg:text-[26px] font-black text-slate-900 block mt-1.5 font-mono tracking-tight leading-tight">
+              {customer.accountAge}
             </b>
           </div>
-          <div className="p-2 sm:px-2">
-            <span className="text-[10.5px] text-slate-500 font-medium block">
+          <div className="p-2 sm:px-2.5">
+            <span className="text-[10px] sm:text-[11px] text-slate-500 font-semibold block uppercase tracking-wider">
+              {language === "bn" ? "৩০ দিনের লেনদেন" : "30d Volume"}
+            </span>
+            <b className="text-xl sm:text-2xl lg:text-[26px] font-black text-slate-900 block mt-1.5 font-mono tracking-tight leading-tight">
+              ৳1.42M
+            </b>
+          </div>
+          <div className="p-2 sm:px-2.5">
+            <span className="text-[10px] sm:text-[11px] text-slate-500 font-semibold block uppercase tracking-wider">
+              {language === "bn" ? "গড় লেনদেন" : "Avg Transfer"}
+            </span>
+            <b className="text-xl sm:text-2xl lg:text-[26px] font-black text-slate-900 block mt-1.5 font-mono tracking-tight leading-tight">
+              ৳6,800
+            </b>
+          </div>
+          <div className="p-2 sm:px-2.5">
+            <span className="text-[10px] sm:text-[11px] text-slate-500 font-semibold block uppercase tracking-wider">
+              {language === "bn" ? "পরিচিত ডিভাইস" : "Known Devices"}
+            </span>
+            <b className="text-xl sm:text-2xl lg:text-[26px] font-black text-slate-900 block mt-1.5 font-mono tracking-tight leading-tight">
+              2 <span className="text-xs sm:text-[13px] font-bold text-slate-500 font-sans tracking-normal">{language === "bn" ? "টি" : "Devices"}</span>
+            </b>
+          </div>
+          <div className="p-2 sm:px-2.5">
+            <span className="text-[10px] sm:text-[11px] text-slate-500 font-semibold block uppercase tracking-wider">
               {language === "bn" ? "পরিচিত এলাকা" : "Known Hubs"}
             </span>
-            <b className="text-base sm:text-lg font-black text-slate-900 block mt-1 font-mono tracking-tight">
-              3 <span className="text-xs font-bold text-slate-500">{language === "bn" ? "টি" : "Locations"}</span>
+            <b className="text-xl sm:text-2xl lg:text-[26px] font-black text-slate-900 block mt-1.5 font-mono tracking-tight leading-tight">
+              3 <span className="text-xs sm:text-[13px] font-bold text-slate-500 font-sans tracking-normal">{language === "bn" ? "টি" : "Locations"}</span>
             </b>
           </div>
         </div>

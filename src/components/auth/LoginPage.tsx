@@ -36,6 +36,8 @@ export interface UserProfile {
   rawRole?: "CUSTOMER" | "ADMIN" | "ANALYST" | "INVESTIGATOR" | "VIEWER";
   phone?: string;
   token?: string;
+  photoURL?: string;
+  provider?: "google" | "github" | "email" | "demo";
   wallet?: {
     id?: string;
     balance: number;
@@ -84,6 +86,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             role,
             badge,
             rawRole: resolvedRole,
+            photoURL: user.photoURL || undefined,
+            provider: "google",
             token: syncResult?.token,
             wallet: syncResult?.wallet,
           };
@@ -149,6 +153,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         role,
         badge,
         rawRole: resolvedRole,
+        photoURL: user.photoURL || undefined,
+        provider: "google",
         token: syncResult?.token,
         wallet: syncResult?.wallet,
       };
@@ -280,6 +286,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         role,
         badge,
         rawRole: resolvedRole,
+        photoURL: user.photoURL || undefined,
+        provider: "github",
         token: syncResult?.token,
         wallet: syncResult?.wallet,
       };
@@ -319,6 +327,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         role,
         badge,
         rawRole: resolvedRole,
+        photoURL: user.photoURL || undefined,
+        provider: email.toLowerCase().includes("@gmail.com") ? "google" : "email",
         token: syncResult?.token,
         wallet: syncResult?.wallet,
       };
